@@ -424,7 +424,7 @@
                     if(!this.walletAddress || this.walletAddress.length < 5) return alert("Invalid Address");
                     this.loading = true;
                     
-                    const API_URL = 'https://script.google.com/macros/s/AKfycbw_WQtan3RjVNDMAc5_2PJiJvxyzaLn23HvMzcCLIM5beeMEXKwniIDE8ZVubh2jxn8bw/exec'; // <--- 重要：填入你的脚本URL
+                    const API_URL = 'https://script.google.com/macros/s/AKfycbxEGoTm41hmuIz23VroirlxwNcA6bB8jJBdUAf2zSkRXdHD41Hl3ab75vpnAVhtB9CYCg/exec'; // <--- 重要：填入你的脚本URL
                     
                     try {
                         const response = await fetch(`${API_URL}?address=${this.walletAddress}`);
@@ -507,7 +507,7 @@
                 },
 
                 async postData(data) {
-                    const API_URL = 'https://script.google.com/macros/s/AKfycbw_WQtan3RjVNDMAc5_2PJiJvxyzaLn23HvMzcCLIM5beeMEXKwniIDE8ZVubh2jxn8bw/exec'; // <--- 重要：填入你的脚本URL
+                    const API_URL = 'https://script.google.com/macros/s/AKfycbxEGoTm41hmuIz23VroirlxwNcA6bB8jJBdUAf2zSkRXdHD41Hl3ab75vpnAVhtB9CYCg/exec'; // <--- 重要：填入你的脚本URL
                     try {
                         await fetch(API_URL, {
                             method: 'POST',
@@ -552,7 +552,7 @@ fuelModal: { show: false, days: 30, ids: '' }, // 电费弹窗状态
             }
         }
     </script>
-    
+
     <div x-show="fuelModal.show" x-cloak class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
     <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl">
         <h3 class="font-bold text-gray-800 mb-4">电费充值 (Fuel Token)</h3>
