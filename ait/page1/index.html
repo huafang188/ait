@@ -30,7 +30,7 @@
 
     <header class="flex justify-between items-center p-4 sticky top-0 z-50 glass-card mx-2 mt-2 shadow-sm">
         <div class="flex items-center space-x-2 truncate">
-            <img src="https://www.528btc.com/d/file/2024-05-13/b70f4e667e54e1e75e758a01f6ee0bbf.jpg" class="w-9 h-9 rounded-full shadow-inner" alt="logo">
+            <img src="https://s1.aigei.com/src/img/gif/05/058a54de616b4c4794ac56e320be3c6a.gif?imageMogr2/auto-orient/thumbnail/!282x282r/gravity/Center/crop/282x282/quality/85/%7CimageView2/2/w/282&e=2051020800&token=P7S2Xpzfz11vAkASLTkfHN7Fw-oOZBecqeJaxypL:RjT1QRaTEQ-FOMIVTcfkNa_hAlc=" class="w-9 h-9 rounded-full shadow-inner" alt="logo">
             <h1 class="tech-title text-base sm:text-lg font-bold italic" x-text="t('title')"></h1>
         </div>
         <select x-model="lang" @change="changeLang" class="bg-blue-600 text-yellow-300 text-xs font-bold rounded-full px-4 py-2 outline-none border-none shadow-lg cursor-pointer">
@@ -76,7 +76,7 @@
                     <template x-if="isLoggedIn">
                         <template x-for="m in userData.miners">
                             <div class="text-center p-2 bg-white rounded-xl border border-blue-50 shadow-sm">
-                                <div class="text-2xl mb-1">🛰️</div>
+                                <div class="text-2xl mb-1">🖥</div>
                                 <div class="text-[9px] text-gray-500 flex justify-center items-center">
                                     <span x-text="m.id"></span>
                                     <button @click="copyText(m.id)" class="ml-1 text-blue-400">📋</button>
@@ -97,14 +97,14 @@
                     <div class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
                         <p class="text-[10px] text-gray-400 mb-1" x-text="t('dailyOutput')"></p>
                         <p class="font-bold text-sm text-indigo-700 flex items-center">
-                            <img src="https://via.placeholder.com/20?text=AIT" class="mr-1 w-4 h-4 rounded-full">
+                            <img src="https://gd-hbimg.huaban.com/a7558be6fe5454a32833276866f530e3cd6e32e52c5313-7pHG7t_fw658" class="mr-1 w-4 h-4 rounded-full">
                             <span :class="!isLoggedIn && 'blur-text'" x-text="isLoggedIn ? userData.dailyOutput + ' AIT' : '****'"></span>
                         </p>
                     </div>
                     <div class="bg-purple-50/50 p-3 rounded-xl border border-purple-100">
                         <p class="text-[10px] text-gray-400 mb-1" x-text="t('lockedAmount')"></p>
                         <p class="font-bold text-sm text-purple-700 flex items-center">
-                            <img src="https://via.placeholder.com/20?text=AIT" class="mr-1 w-4 h-4 rounded-full">
+                            <img src="https://play-lh.googleusercontent.com/U3rq7UbO60yzwr_NwjHkYM_lX-hdQE7_tw87bOkJI1LTr7PdojJ8ZApjmMkCFZwqJaQ=w240-h480-rw" class="mr-1 w-4 h-4 rounded-full">
                             <span :class="!isLoggedIn && 'blur-text'" x-text="isLoggedIn ? userData.lockedAmount + ' AIT' : '****'"></span>
                         </p>
                     </div>
@@ -484,4 +484,5 @@
         }
     </script>
 </body>
+
 </html>
