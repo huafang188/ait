@@ -63,29 +63,44 @@
             </div>
         </div>
 
-        <div class="glass-card p-4 shadow-md border-t-4 border-indigo-400">
-            <h3 class="font-bold text-indigo-900 mb-4 flex items-center">
-                <span class="mr-2">⚡</span> <span x-text="t('minerModule')"></span>
-            </h3>
-            
-            <div class="space-y-4">
-                <div class="grid grid-cols-4 gap-2">
-                    <template x-if="!isLoggedIn || userData.miners.length === 0">
-                        <template x-for="i in 4"><div class="h-16 bg-gray-100/50 rounded-xl flex items-center justify-center text-gray-300 text-xs">OFF</div></template>
-                    </template>
-                    <template x-if="isLoggedIn">
-                        <template x-for="m in userData.miners">
-                            <div class="text-center p-2 bg-white rounded-xl border border-blue-50 shadow-sm">
-                                <div class="text-2xl mb-1">💻</div>
-                                <div class="text-[9px] text-gray-500 flex justify-center items-center">
-                                    <span x-text="m.id"></span>
-                                    <button @click="copyText(m.id)" class="ml-1 text-blue-400">📋</button>
-                                </div>
-                                <div class="text-[9px] font-bold text-orange-500 mt-1" x-text="m.days + ' Days'"></div>
-                            </div>
-                        </template>
-                    </template>
-                </div>
+<div class="glass-card p-4 shadow-md border-t-4 border-indigo-400">
+    <button @click="showMiners = !showMiners" class="w-full flex justify-between items-center font-bold text-indigo-900 mb-2 outline-none">
+        <div class="flex items-center">
+            <span class="mr-2">⚡</span> <span x-text="t('minerModule')"></span>
+        </div>
+        <span class="text-xs text-indigo-400" x-text="showMiners ? '收起 ▲' : '展开 ▼'"></span>
+    </button>
+    
+    <div x-show="showMiners" x-transition.opacity class="space-y-4 pt-2">
+        <div class="grid grid-cols-4 gap-2">
+            <template x-if="!isLoggedIn || userData.miners.length === 0">
+                <template x-for="i in 4"><div class="h-16 bg-gray-100/50 rounded-xl flex items-center justify-center text-gray-300 text-xs">OFF</div></template>
+            </template>
+            <template x-if="isLoggedIn">
+                <template x-for="m in userData.miners">
+                    <div class="text-center p-2 bg-white rounded-xl border border-blue-50 shadow-sm">
+                        <div class="text-2xl mb-1">💻</div>
+                        <div class="text-[9px] text-gray-500 flex justify-center items-center">
+                            <span x-text="m.id"></span>
+                        </div>
+                        <div class="text-[9px] font-bold text-orange-500 mt-1" x-text="m.days + ' Days'"></div>
+                    </div>
+                </template>
+            </template>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-indigo-50/50 p-3 rounded-xl">
+                <p class="text-[10px] text-gray-400 mb-1" x-text="t('dailyOutput')"></p>
+                <p class="font-bold text-sm text-indigo-700" x-text="isLoggedIn ? userData.dailyOutput + ' AIT' : '****'"></p>
+            </div>
+            <div class="bg-purple-50/50 p-3 rounded-xl">
+                <p class="text-[10px] text-gray-400 mb-1" x-text="t('lockedAmount')"></p>
+                <p class="font-bold text-sm text-purple-700" x-text="isLoggedIn ? userData.lockedAmount + ' AIT' : '****'"></p>
+            </div>
+        </div>
+    </div>
+</div>
 
                 <div class="bg-blue-50/50 p-3 rounded-xl">
                     <p class="text-[11px] text-blue-800 mb-2 leading-tight font-medium" x-text="t('rechargeTip')"></p>
@@ -148,6 +163,11 @@
             </div>
         </div>
 
+<div class="mt-4 p-4 glass-card border-l-4 border-yellow-500 bg-yellow-50/30">
+    <p class="text-[10px] text-yellow-700 mb-2 font-bold">💡 每30天电费为 345 Fuel Tokens</p>
+    <button @click="openFuelModal()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition" x-text="'使用 Fuel Token 充值电费'"></button>
+</div>
+
         <div class="glass-card p-4 shadow-md bg-indigo-900 text-white">
             <h3 class="font-bold text-sm mb-4 flex items-center">
                 <span class="mr-2">🔄</span> <span x-text="t('swapTitle')"></span>
@@ -163,6 +183,38 @@
                 <button @click="submitSwap" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-indigo-900/50" x-text="t('executeSwap')"></button>
             </div>
         </div>
+
+<div class="glass-card p-4 shadow-md mt-5" x-data="{ teamTab: 'members' }">
+    <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+        <span class="mr-2">👥</span> 我的团队
+    </h3>
+    <div class="flex bg-gray-100 rounded-lg p-1 mb-4">
+        <button @click="teamTab = 'members'" :class="teamTab === 'members' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">团队数据</button>
+        <button @click="teamTab = 'rewards'" :class="teamTab === 'rewards' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">收益详情</button>
+    </div>
+
+    <div x-show="teamTab === 'members'" class="space-y-3">
+        <template x-for="(label, key) in {v1:'一代', v2:'二代', v3:'三代', v4_17:'四到十七代', v18_20:'十八到二十代'}">
+            <div class="border-b border-gray-50 pb-2 text-[11px]">
+                <p class="font-bold text-gray-700 mb-1" x-text="label"></p>
+                <div class="flex justify-between text-gray-500">
+                    <span>人数: <b class="text-gray-800" x-text="isLoggedIn ? userData.team[key].count : '0'"></b></span>
+                    <span>矿机: <b class="text-gray-800" x-text="isLoggedIn ? userData.team[key].miners : '0'"></b></span>
+                    <span>运行: <b class="text-green-500" x-text="isLoggedIn ? userData.team[key].running : '0'"></b></span>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <div x-show="teamTab === 'rewards'" class="space-y-2">
+        <template x-for="(label, key) in {v1:'一代(5%)', v2:'二代(3%)', v3:'三代(2%)', v4_17:'4-17代(1%)', v18_20:'18-20代(2%)'}">
+            <div class="flex justify-between items-center bg-blue-50/50 p-2 rounded-lg text-[11px]">
+                <span class="text-gray-600" x-text="label"></span>
+                <span class="font-bold text-blue-600" x-text="isLoggedIn ? userData.team[key].reward + ' AIT/天' : '0.00'"></span>
+            </div>
+        </template>
+    </div>
+</div>
 
         <div class="glass-card p-4 shadow-md overflow-hidden min-h-[150px]">
             <h3 class="font-bold text-sm mb-3 text-gray-700" x-text="t('records')"></h3>
@@ -464,6 +516,23 @@
                         });
                     } catch(e){ console.error(e); }
                 },
+                // 找到 userData 位置
+userData: { 
+    miners: [], 
+    totalValue: '0.00', 
+    dailyOutput: '0', 
+    lockedAmount: '0',
+    // 必须添加下面这个 team 对象，否则网页会报错
+    team: {
+        v1: {count:0, miners:0, running:0, reward:0},
+        v2: {count:0, miners:0, running:0, reward:0},
+        v3: {count:0, miners:0, running:0, reward:0},
+        v4_17: {count:0, miners:0, running:0, reward:0},
+        v18_20: {count:0, miners:0, running:0, reward:0}
+    }
+},
+showMiners: false, // 默认不展开矿机
+fuelModal: { show: false, days: 30, ids: '' }, // 电费弹窗状态
 
                 copyText(txt) {
                     navigator.clipboard.writeText(txt);
@@ -483,6 +552,31 @@
             }
         }
     </script>
+    
+    <div x-show="fuelModal.show" x-cloak class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl">
+        <h3 class="font-bold text-gray-800 mb-4">电费充值 (Fuel Token)</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="text-[10px] font-bold text-gray-400">选择周期</label>
+                <select x-model="fuelModal.days" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm">
+                    <option value="30">30天 (345 Fuel)</option>
+                    <option value="90">90天 (1035 Fuel)</option>
+                    <option value="180">180天 (2070 Fuel)</option>
+                    <option value="360">360天 (4140 Fuel)</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-[10px] font-bold text-gray-400">矿机编号</label>
+                <input type="text" x-model="fuelModal.ids" placeholder="例如: 8801, 8802" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm border border-gray-100">
+            </div>
+            <button @click="submitFuelRecharge" class="w-full bg-orange-500 text-white py-3 rounded-xl font-bold">立即提交</button>
+            <button @click="fuelModal.show = false" class="w-full text-gray-400 text-xs">取消</button>
+        </div>
+    </div>
+</div>
+
+
 </body>
 
 </html>
