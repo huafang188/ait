@@ -220,8 +220,7 @@
         <img src="https://s1.aigei.com/src/img/gif/79/796e229061fb4a1eaece3c97fc04f48b.gif?imageMogr2/auto-orient/thumbnail/!282x282r/gravity/Center/crop/282x282/quality/85/%7CimageView2/2/w/282&e=2051020800&token=P7S2Xpzfz11vAkASLTkfHN7Fw-oOZBecqeJaxypL:p3av0artTCKDqbqpij8XR2mSVrQ=" class="icon-circle">
         <h3 id="t-m1-title">矿机详情</h3>
         <div style="text-align: left; font-size: 0.85rem; margin: 15px 0;">
-            <p><b id="t-m1-p1">原始矿机</b>：10000 <span id="t-m1-p1-note">(备注：已出售1024台)</span></p>
-            <p><b id="t-m1-p2">全网在运行矿机</b>：5060 <span id="t-m1-p2-note">(备注：30000台减产)</span></p>
+            <p><b id="t-m1-p2">全网在运行矿机</b>：2312 <span id="t-m1-p2-note"></span></p>
         </div>
         <button class="btn" onclick="openModal('buyModal')" id="t-buy-btn">购买原始矿机</button>
     </div>
@@ -234,15 +233,14 @@
     </div>
 
     <div class="glass-card">
-        <h3 id="t-m3-price-title">AIT今日币价</h3>
+        <h3 id="t-m3-price-title">AIT今日币价$0.192</h3>
         <div id="chart_div" class="chart-placeholder"></div>
         <div style="text-align: left; font-size: 0.85rem;">
             <p><b>AIT (Amazon Initial Token)</b></p>
-            <p id="t-ait-info">总发行570000000枚，已产出12000000枚，已销毁200000枚</p>
+            <p id="t-ait-info">总发行570,000,000枚，已产出120,000枚，已销毁20,000枚</p>
             <br>
             <p><b>ACT (Amazon Circulating Token)</b></p>
-            <p id="t-act-info">总发行1000000000枚</p>
-            <p><span id="t-date-label">预期上线日期</span>：2026-06-01</p>
+            <p id="t-act-info">总发行210,000,000枚</p>
         </div>
         <button class="btn" onclick="openModal('walletModal')" id="t-bind-wallet">绑定钱包</button>
         <a href="https://huafang188.github.io/ait/ait/page1/" class="btn" id="t-chain-wallet">链上钱包</a>
@@ -316,9 +314,9 @@
         'en': {
             title: "Amazon On-Chain Supply",
             desc: "Amazon On-Chain Supply is a decentralized on-chain supply system independently developed by Amazon. It achieves product traceability, cross-border supply chain, and financial management through blockchain.",
-            m1_title: "Miner Details", m1_p1: "Original Miners", m1_p1_n: "(Note: 1024 Sold)", m1_p2: "Active Miners", m1_p2_n: "(Note: 30k Halving)",
+            m1_title: "Miner Details", m1_p1: "Original Miners",  m1_p2: "Active Miners" ,
             buy_btn: "Purchase Miner", nav_news: "News", nav_blog: "Blog", nav_comm: "Community", nav_serv: "Support",
-            price_t: "AIT Today Price", ait_info: "Total 570M, Produced 12M, Burned 200k", act_info: "Total 1B", date_l: "Expected Launch",
+            price_t: "AIT Today Price", ait_info: "Total 570,000,000, Produced 120,000, Burned 20,000", act_info: "Total 210,000,000", 
             bind_w: "Bind Wallet", chain_w: "On-Chain Wallet", m4_t: "On-Chain Mall", m4_d: "Purchase everything you need with AIT or ACT.",
             addr_btn: "Shipping Address", shop_btn: "Online Store", whitepaper: "Whitepaper", explorer: "Explorer",
             buy_opt: "Select Quantity", wallet_t: "Bind Wallet", addr_t: "Address Registration", submit: "Submit", warn: "Do not resubmit", success: "Submitted Successfully!"
@@ -326,9 +324,9 @@
         'zh-CN': {
             title: "Amazon On-Chain Supply",
             desc: "Amazon On-Chain Supply是一个亚马逊自主开发的去中心化链上供应体系，通过区块链技术实现商品追根溯源、打通跨境供应链、跨境金融管理的完整生态体系。",
-            m1_title: "矿机详情", m1_p1: "原始矿机", m1_p1_n: "（备注：已出售1024台）", m1_p2: "全网在运行矿机", m1_p2_n: "（备注：30000台减产）",
+            m1_title: "矿机详情", m1_p1: "原始矿机", m1_p1_n: "（备注：已出售1024台）", m1_p2: "全网在运行矿机", ,
             buy_btn: "购买原始矿机", nav_news: "新闻", nav_blog: "博客", nav_comm: "社区", nav_serv: "客服",
-            price_t: "AIT 今日币价", ait_info: "总发行570000000枚，已产出12000000枚，已销毁200000枚", act_info: "总发行1000000000枚", date_l: "预期上线日期",
+            price_t: "AIT 今日币价", ait_info: "总发行570000000枚，已产出120,000枚，已销毁20000枚", act_info: "总发行210000000枚",
             bind_w: "绑定钱包", chain_w: "链上钱包", m4_t: "链上商城", m4_d: "在这里您可以实现使用AIT或ACT购买您需要的一切。",
             addr_btn: "收货地址", shop_btn: "在线商城", whitepaper: "白皮书", explorer: "区块链浏览器",
             buy_opt: "选择购买数量", wallet_t: "绑定钱包", addr_t: "收货地址登记", submit: "提交", warn: "请勿重复提交此表单", success: "提交成功！"
@@ -568,4 +566,5 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
 };
 </script>
 </body>
+
 </html>
