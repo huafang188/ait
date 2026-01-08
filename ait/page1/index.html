@@ -295,28 +295,34 @@
         </div>
     </div>
 
-    <script>
-        function walletApp() {
-            return {
-                lang: 'zh-CN',
-                isLoggedIn: false,
-                loading: false,
-                walletAddress: '',
-                swap: { pair: 'AIT-USDT', amount: '' },
-                languages: {
-                    'zh-CN': '简体中文', 'zh-TW': '繁體中文', 'ja': '日本語', 'ko': '한국어',
-                    'ms': 'Melayu', 'ru': 'Русский', 'fr': 'Français', 'de': 'Deutsch', 'es': 'Español'
+<script>
+    function walletApp() {
+        return {
+            // --- 1. 基础状态 ---
+            lang: 'zh-CN',
+            isLoggedIn: false,
+            loading: false,
+            walletAddress: '',
+            showMiners: false, 
+            swap: { pair: 'AIT-USDT', amount: '' },
+            fuelModal: { show: false, days: 30, ids: '' },
+            modal: { show: false, type: '', title: '', amount: '', target: '', coin: 'AIT' },
+            
+            // --- 2. 语言包 ---
+            languages: {
+                'zh-CN': '简体中文', 'zh-TW': '繁體中文', 'ja': '日本語', 'ko': '한국어',
+                'ms': 'Melayu', 'ru': 'Русский', 'fr': 'Français', 'de': 'Deutsch', 'es': 'Español'
+            },
+            translations: {
+                'zh-CN': {
+                    title: '链上钱包', inputPlaceholder: '在此输入您的钱包地址', connectBtn: '连接钱包', refreshData: '更新数据', logout: '退出',
+                    minerModule: '矿机工作台', rechargeTip: '请充费时备注您的矿机编号', rechargeBtn: '电费充值',
+                    dailyOutput: '每日产币', lockedAmount: '锁仓数量', mergeMiner: '合成节点矿机', transferMiner: '节点矿机转让',
+                    totalAssets: '钱包总资产 (USD)', withdraw: '提币', deposit: '充值', transfer: '转账', swapTitle: '闪电兑换',
+                    executeSwap: '立即兑换', records: '交易记录', date: '时间', type: '操作', amount: '数额', status: '状态',
+                    inputAmount: '输入数量 (10.56)', gasTip: 'Gas费用 (0.1 TON)，提交后十分钟内处理', confirm: '确认操作',
+                    targetAddr: '请输入接收者钱包地址', success: '提交成功！', loginToView: '请先连接钱包查看记录'
                 },
-                translations: {
-                    'zh-CN': {
-                        title: '链上钱包', inputPlaceholder: '在此输入您的钱包地址', connectBtn: '连接钱包', refreshData: '更新数据', logout: '退出',
-                        minerModule: '矿机工作台', basicMiner: '原始矿机 (A-Type)', rechargeTip: '请充费时备注您的矿机编号', rechargeBtn: '电费充值',
-                        dailyOutput: '每日产币', lockedAmount: '锁仓数量', mergeMiner: '合成节点矿机', transferMiner: '节点矿机转让',
-                        totalAssets: '钱包总资产 (USD)', withdraw: '提币', deposit: '充值', transfer: '转账', swapTitle: '闪电兑换',
-                        executeSwap: '立即兑换', records: '交易记录', date: '时间', type: '操作', amount: '数额', status: '状态',
-                        inputAmount: '输入数量 (10.56)', gasTip: 'Gas费用 (0.1 TON)，提交后十分钟内处理', confirm: '确认操作',
-                        targetAddr: '请输入接收者钱包地址', success: '提交成功！', loginToView: '请先连接钱包查看记录'
-                    },
                     'zh-TW': {
                         title: '鏈上錢包', inputPlaceholder: '在此輸入您的錢包地址', connectBtn: '連接錢包', refreshData: '更新數據', logout: '退出',
                         minerModule: '礦機工作臺', basicMiner: '原始礦機 (A-Type)', rechargeTip: '請充費時備註您的礦機編號', rechargeBtn: '電費充值',
@@ -391,193 +397,179 @@
                     }
                 },
 
-                return {
-    // 1. 确保变量已定义
-    showMiners: false,
-    fuelModal: { show: false, days: 30, ids: '' }, 
-    
-    // 2. 确保函数已定义（在 methods 区域）
-    openFuelModal() {
-        this.fuelModal.show = true;
-    },
+                // ... 其他语言保持不变
+            },
 
-    // 3. 补充提交函数（防止点击提交时报错）
-    async submitFuelRecharge() {
-        if(!this.fuelModal.ids) return alert("请输入矿机编号");
-        const payload = {
-            user: this.walletAddress,
-            action: 'FUEL_RECHARGE',
-            duration: this.fuelModal.days,
-            minerIds: this.fuelModal.ids
-        };
-        await this.postData(payload);
-        alert("提交成功！");
-        this.fuelModal.show = false;
-    },
-    // ...
-}
-                // 数据状态
-                userData: { miners: [], totalValue: '0.00', dailyOutput: '0', lockedAmount: '0' },
-                coins: [
-                    { name: 'AIT', balance: 0, price: 0.192, logo: 'https://pbs.twimg.com/media/G-DbAlZbMAAgM4X?format=png&name=240x240' },
-                    { name: 'ACT', balance: 0, price: 0, logo: 'https://pbs.twimg.com/media/G-DdXH_aAAExvdl?format=png&name=240x240' },
-                    { name: 'Fuel Token', balance: 0, price: 0.15, logo: 'https://img95.699pic.com/xsj/2j/5c/rm.jpg!/fh/300' },
-                    { name: 'USDT', balance: 0, price: 1.00, logo: 'https://www.coinmetro.com/_next/static/media/USDT.e5b6b9e8.svg' },
-                    { name: 'TON', balance: 0, price: 5.38, logo: 'https://asset-metadata-service-production.s3.amazonaws.com/asset_icons/46db595e47fca18285c42eaa720fd4cdf3cc4940e1490ec07c77d21f2cf961cf.png' }
-                ],
-                logs: [],
-                modal: { show: false, type: '', title: '', amount: '', target: '', coin: 'AIT' },
-
-                init() {
-                    this.initParticles();
-                    this.detectLanguage();
-                    const saved = localStorage.getItem('onchain_wallet_addr');
-                    if(saved) {
-                        this.walletAddress = saved;
-                        this.login();
-                    }
-                },
-                t(key) { return (this.translations[this.lang] && this.translations[this.lang][key]) || this.translations['zh-CN'][key]; },
-                detectLanguage() {
-                    const nav = navigator.language.toLowerCase();
-                    const map = {'tw':'zh-TW','hk':'zh-TW','zh':'zh-CN','ja':'ja','ko':'ko','ru':'ru','ms':'ms','fr':'fr','de':'de','es':'es'};
-                    for(let key in map) { if(nav.includes(key)) { this.lang = map[key]; break; } }
-                },
-                changeLang() { /* 切换语言触发逻辑 */ },
-                
-                // 表格交互核心函数
-                async login() {
-                    if(!this.walletAddress || this.walletAddress.length < 5) return alert("Invalid Address");
-                    this.loading = true;
-                    
-                    const API_URL = 'https://script.google.com/macros/s/AKfycbxEGoTm41hmuIz23VroirlxwNcA6bB8jJBdUAf2zSkRXdHD41Hl3ab75vpnAVhtB9CYCg/exec'; // <--- 重要：填入你的脚本URL
-                    
-                    try {
-                        const response = await fetch(`${API_URL}?address=${this.walletAddress}`);
-                        const data = await response.json();
-                        
-                        if(data.user && data.user.total !== undefined) {
-                            // 绑定表格数据到 UI
-                            this.userData.totalValue = data.user.total;
-                            this.userData.dailyOutput = data.user.daily;
-                            this.userData.lockedAmount = data.user.locked;
-                            this.userData.miners = data.miners || [];
-                            
-                            // 更新代币余额
-                            this.coins.forEach(c => {
-                                if(data.user.balances && data.user.balances[c.name] !== undefined) {
-                                    c.balance = data.user.balances[c.name];
-                                }
-                            });
-                            
-                            // 更新交易记录
-                            this.logs = data.logs || [];
-                            
-                            this.isLoggedIn = true;
-                            localStorage.setItem('onchain_wallet_addr', this.walletAddress);
-                        } else {
-                            alert("Address not found in database.");
-                        }
-                    } catch (e) {
-                        console.error(e);
-                        alert("Connection failed. Check your API URL.");
-                    } finally {
-                        this.loading = false;
-                    }
-                },
-                
-                logout() {
-                    this.isLoggedIn = false;
-                    this.walletAddress = '';
-                    this.userData = { miners: [], totalValue: '0.00', dailyOutput: '0', lockedAmount: '0' };
-                    this.coins.forEach(c => c.balance = 0);
-                    this.logs = [];
-                    localStorage.removeItem('onchain_wallet_addr');
-                },
-
-                shortenAddress(addr) { return addr.slice(0,6) + '...' + addr.slice(-4); },
-                
-                openModal(type) {
-                    if(!this.isLoggedIn) return alert("Please connect wallet first");
-                    this.modal.type = type;
-                    this.modal.title = this.t(type);
-                    this.modal.show = true;
-                },
-
-                async handleModalSubmit() {
-                    if(!this.modal.amount) return alert("Enter amount");
-                    const payload = {
-                        user: this.walletAddress,
-                        action: this.modal.type,
-                        amount: this.modal.amount,
-                        coin: this.modal.coin,
-                        target: this.modal.target,
-                        timestamp: new Date().toLocaleString()
-                    };
-                    await this.postData(payload);
-                    this.modal.show = false;
-                    alert(this.t('success'));
-                },
-
-                async submitSwap() {
-                    if(!this.isLoggedIn) return alert("Please connect wallet first");
-                    if(!this.swap.amount) return alert("Enter amount");
-                    await this.postData({
-                        user: this.walletAddress,
-                        action: 'SWAP',
-                        pair: this.swap.pair,
-                        amount: this.swap.amount,
-                        timestamp: new Date().toLocaleString()
-                    });
-                    alert(this.t('success'));
-                },
-
-                async postData(data) {
-                    const API_URL = 'https://script.google.com/macros/s/AKfycbxEGoTm41hmuIz23VroirlxwNcA6bB8jJBdUAf2zSkRXdHD41Hl3ab75vpnAVhtB9CYCg/exec'; // <--- 重要：填入你的脚本URL
-                    try {
-                        await fetch(API_URL, {
-                            method: 'POST',
-                            mode: 'no-cors',
-                            body: JSON.stringify(data)
-                        });
-                    } catch(e){ console.error(e); }
-                },
-                // 找到 userData 位置
-userData: { 
-    miners: [], 
-    totalValue: '0.00', 
-    dailyOutput: '0', 
-    lockedAmount: '0',
-    // 必须添加下面这个 team 对象，否则网页会报错
-    team: {
-        v1: {count:0, miners:0, running:0, reward:0},
-        v2: {count:0, miners:0, running:0, reward:0},
-        v3: {count:0, miners:0, running:0, reward:0},
-        v4_17: {count:0, miners:0, running:0, reward:0},
-        v18_20: {count:0, miners:0, running:0, reward:0}
-    }
-},
-showMiners: false, // 默认不展开矿机
-fuelModal: { show: false, days: 30, ids: '' }, // 电费弹窗状态
-
-                copyText(txt) {
-                    navigator.clipboard.writeText(txt);
-                    alert("ID Copied: " + txt);
-                },
-
-                initParticles() {
-                    tsParticles.load("tsparticles", {
-                        particles: {
-                            number: { value: 25 },
-                            color: { value: "#6366f1" },
-                            links: { enable: true, color: "#6366f1", opacity: 0.15 },
-                            move: { enable: true, speed: 0.8 }
-                        }
-                    });
+            // --- 3. 数据模型 ---
+            userData: { 
+                miners: [], 
+                totalValue: '0.00', 
+                dailyOutput: '0', 
+                lockedAmount: '0',
+                team: {
+                    v1: {count:0, miners:0, running:0, reward:0},
+                    v2: {count:0, miners:0, running:0, reward:0},
+                    v3: {count:0, miners:0, running:0, reward:0},
+                    v4_17: {count:0, miners:0, running:0, reward:0},
+                    v18_20: {count:0, miners:0, running:0, reward:0}
                 }
+            },
+            coins: [
+                { name: 'AIT', balance: 0, price: 0.192, logo: 'https://pbs.twimg.com/media/G-DbAlZbMAAgM4X?format=png&name=240x240' },
+                { name: 'ACT', balance: 0, price: 0, logo: 'https://pbs.twimg.com/media/G-DdXH_aAAExvdl?format=png&name=240x240' },
+                { name: 'Fuel Token', balance: 0, price: 0.15, logo: 'https://img95.699pic.com/xsj/2j/5c/rm.jpg!/fh/300' },
+                { name: 'USDT', balance: 0, price: 1.00, logo: 'https://www.coinmetro.com/_next/static/media/USDT.e5b6b9e8.svg' },
+                { name: 'TON', balance: 0, price: 5.38, logo: 'https://asset-metadata-service-production.s3.amazonaws.com/asset_icons/46db595e47fca18285c42eaa720fd4cdf3cc4940e1490ec07c77d21f2cf961cf.png' }
+            ],
+            logs: [],
+
+            // --- 4. 初始化 ---
+            init() {
+                this.initParticles();
+                this.detectLanguage();
+                const saved = localStorage.getItem('onchain_wallet_addr');
+                if(saved) {
+                    this.walletAddress = saved;
+                    this.login();
+                }
+            },
+
+            // --- 5. 核心方法 ---
+            t(key) { return (this.translations[this.lang] && this.translations[this.lang][key]) || this.translations['zh-CN'][key]; },
+            
+            detectLanguage() {
+                const nav = navigator.language.toLowerCase();
+                const map = {'tw':'zh-TW','hk':'zh-TW','zh':'zh-CN','ja':'ja','ko':'ko','ru':'ru','ms':'ms','fr':'fr','de':'de','es':'es'};
+                for(let key in map) { if(nav.includes(key)) { this.lang = map[key]; break; } }
+            },
+
+            async login() {
+                if(!this.walletAddress || this.walletAddress.length < 5) return alert("Invalid Address");
+                this.loading = true;
+                const API_URL = 'https://script.google.com/macros/s/AKfycbxEGoTm41hmuIz23VroirlxwNcA6bB8jJBdUAf2zSkRXdHD41Hl3ab75vpnAVhtB9CYCg/exec';
+                
+                try {
+                    const response = await fetch(`${API_URL}?address=${this.walletAddress}`);
+                    const data = await response.json();
+                    
+                    if(data.user) {
+                        this.userData.totalValue = data.user.total || '0.00';
+                        this.userData.dailyOutput = data.user.daily || '0';
+                        this.userData.lockedAmount = data.user.locked || '0';
+                        this.userData.miners = data.miners || [];
+                        this.logs = data.logs || [];
+                        
+                        // 关键：绑定团队数据
+                        if(data.user.team) {
+                            this.userData.team = data.user.team;
+                        }
+
+                        // 更新代币余额
+                        this.coins.forEach(c => {
+                            if(data.user.balances && data.user.balances[c.name] !== undefined) {
+                                c.balance = data.user.balances[c.name];
+                            }
+                        });
+                        
+                        this.isLoggedIn = true;
+                        localStorage.setItem('onchain_wallet_addr', this.walletAddress);
+                    } else {
+                        alert("Address not found.");
+                    }
+                } catch (e) {
+                    console.error("Fetch Error:", e);
+                    alert("Connection failed.");
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            logout() {
+                this.isLoggedIn = false;
+                this.walletAddress = '';
+                localStorage.removeItem('onchain_wallet_addr');
+                location.reload(); // 彻底重置状态
+            },
+
+            // --- 6. 弹窗控制 ---
+            openFuelModal() {
+                this.fuelModal.show = true;
+            },
+
+            async submitFuelRecharge() {
+                if(!this.fuelModal.ids) return alert("请输入矿机编号");
+                const payload = {
+                    user: this.walletAddress,
+                    action: 'FUEL_RECHARGE',
+                    duration: this.fuelModal.days,
+                    minerIds: this.fuelModal.ids
+                };
+                await this.postData(payload);
+                alert("提交成功！");
+                this.fuelModal.show = false;
+                this.login(); // 刷新记录
+            },
+
+            openModal(type) {
+                if(!this.isLoggedIn) return alert("Please connect wallet first");
+                this.modal.type = type;
+                this.modal.title = this.t(type);
+                this.modal.show = true;
+            },
+
+            async handleModalSubmit() {
+                if(!this.modal.amount) return alert("Enter amount");
+                await this.postData({
+                    user: this.walletAddress,
+                    action: this.modal.type,
+                    amount: this.modal.amount,
+                    coin: this.modal.coin,
+                    target: this.modal.target
+                });
+                this.modal.show = false;
+                alert(this.t('success'));
+                this.login();
+            },
+
+            async submitSwap() {
+                if(!this.isLoggedIn) return alert("Please connect wallet first");
+                if(!this.swap.amount) return alert("Enter amount");
+                await this.postData({
+                    user: this.walletAddress,
+                    action: 'SWAP',
+                    pair: this.swap.pair,
+                    amount: this.swap.amount
+                });
+                alert(this.t('success'));
+                this.login();
+            },
+
+            async postData(data) {
+                const API_URL = 'https://script.google.com/macros/s/AKfycbxEGoTm41hmuIz23VroirlxwNcA6bB8jJBdUAf2zSkRXdHD41Hl3ab75vpnAVhtB9CYCg/exec';
+                try {
+                    await fetch(API_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify(data)
+                    });
+                } catch(e){ console.error(e); }
+            },
+
+            shortenAddress(addr) { return addr.slice(0,6) + '...' + addr.slice(-4); },
+            
+            initParticles() {
+                tsParticles.load("tsparticles", {
+                    particles: {
+                        number: { value: 25 },
+                        color: { value: "#6366f1" },
+                        links: { enable: true, color: "#6366f1", opacity: 0.15 },
+                        move: { enable: true, speed: 0.8 }
+                    }
+                });
             }
         }
-    </script>
+    }
+</script>
 
     <div x-show="fuelModal.show" x-cloak class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
     <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl">
