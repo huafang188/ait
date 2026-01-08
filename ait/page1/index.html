@@ -76,7 +76,7 @@
                     <template x-if="isLoggedIn">
                         <template x-for="m in userData.miners">
                             <div class="text-center p-2 bg-white rounded-xl border border-blue-50 shadow-sm">
-                                <div class="text-2xl mb-1">🖥</div>
+                                <div class="text-2xl mb-1">💻</div>
                                 <div class="text-[9px] text-gray-500 flex justify-center items-center">
                                     <span x-text="m.id"></span>
                                     <button @click="copyText(m.id)" class="ml-1 text-blue-400">📋</button>
@@ -97,7 +97,7 @@
                     <div class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
                         <p class="text-[10px] text-gray-400 mb-1" x-text="t('dailyOutput')"></p>
                         <p class="font-bold text-sm text-indigo-700 flex items-center">
-                            <img src="https://gd-hbimg.huaban.com/a7558be6fe5454a32833276866f530e3cd6e32e52c5313-7pHG7t_fw658" class="mr-1 w-4 h-4 rounded-full">
+                            <img src="https://s1.aigei.com/src/img/gif/9e/9edea7e35dc24e25b66d692c0fadb528.gif?imageMogr2/auto-orient/thumbnail/!282x282r/gravity/Center/crop/282x282/quality/85/%7CimageView2/2/w/282&e=2051020800&token=P7S2Xpzfz11vAkASLTkfHN7Fw-oOZBecqeJaxypL:rI1JG-teFIkUzT5vB1mSxZ98i8k=" class="mr-1 w-4 h-4 rounded-full">
                             <span :class="!isLoggedIn && 'blur-text'" x-text="isLoggedIn ? userData.dailyOutput + ' AIT' : '****'"></span>
                         </p>
                     </div>
@@ -486,3 +486,4 @@
 </body>
 
 </html>
+
