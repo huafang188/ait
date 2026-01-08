@@ -390,6 +390,32 @@
                         targetAddr: 'Dirección receptor', success: '¡Éxito!', loginToView: 'Conectar para ver registros'
                     }
                 },
+
+                return {
+    // 1. 确保变量已定义
+    showMiners: false,
+    fuelModal: { show: false, days: 30, ids: '' }, 
+    
+    // 2. 确保函数已定义（在 methods 区域）
+    openFuelModal() {
+        this.fuelModal.show = true;
+    },
+
+    // 3. 补充提交函数（防止点击提交时报错）
+    async submitFuelRecharge() {
+        if(!this.fuelModal.ids) return alert("请输入矿机编号");
+        const payload = {
+            user: this.walletAddress,
+            action: 'FUEL_RECHARGE',
+            duration: this.fuelModal.days,
+            minerIds: this.fuelModal.ids
+        };
+        await this.postData(payload);
+        alert("提交成功！");
+        this.fuelModal.show = false;
+    },
+    // ...
+}
                 // 数据状态
                 userData: { miners: [], totalValue: '0.00', dailyOutput: '0', lockedAmount: '0' },
                 coins: [
@@ -551,8 +577,9 @@ fuelModal: { show: false, days: 30, ids: '' }, // 电费弹窗状态
                 }
             }
         }
+    </script>
 
-            <div x-show="fuelModal.show" x-cloak class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div x-show="fuelModal.show" x-cloak class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
     <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl">
         <h3 class="font-bold text-gray-800 mb-4">电费充值 (Fuel Token)</h3>
         <div class="space-y-4">
@@ -575,7 +602,7 @@ fuelModal: { show: false, days: 30, ids: '' }, // 电费弹窗状态
     </div>
 </div>
 
-    </script>
+
 </body>
 
 </html>
