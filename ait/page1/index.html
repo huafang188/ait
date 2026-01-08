@@ -30,7 +30,7 @@
 
     <header class="flex justify-between items-center p-4 sticky top-0 z-50 glass-card mx-2 mt-2 shadow-sm">
         <div class="flex items-center space-x-2 truncate">
-            <img src="https://s1.aigei.com/src/img/gif/05/058a54de616b4c4794ac56e320be3c6a.gif?imageMogr2/auto-orient/thumbnail/!282x282r/gravity/Center/crop/282x282/quality/85/%7CimageView2/2/w/282&e=2051020800&token=P7S2Xpzfz11vAkASLTkfHN7Fw-oOZBecqeJaxypL:RjT1QRaTEQ-FOMIVTcfkNa_hAlc=" class="w-9 h-9 rounded-full shadow-inner" alt="logo">
+            <img src="https://s1.aigei.com/src/img/gif/8f/8fda5df49f554ae3ac99bad6c3cc5255.gif?imageMogr2/auto-orient/thumbnail/!282x282r/gravity/Center/crop/282x282/quality/85/%7CimageView2/2/w/282&e=2051020800&token=P7S2Xpzfz11vAkASLTkfHN7Fw-oOZBecqeJaxypL:aI_i43nsou7i8gH_zi1AuXfPCNU=" class="w-9 h-9 rounded-full shadow-inner" alt="logo">
             <h1 class="tech-title text-base sm:text-lg font-bold italic" x-text="t('title')"></h1>
         </div>
         <select x-model="lang" @change="changeLang" class="bg-blue-600 text-yellow-300 text-xs font-bold rounded-full px-4 py-2 outline-none border-none shadow-lg cursor-pointer">
@@ -66,7 +66,7 @@
 <div class="glass-card p-4 shadow-md border-t-4 border-indigo-400">
     <button @click="showMiners = !showMiners" class="w-full flex justify-between items-center font-bold text-indigo-900 mb-2 outline-none">
         <div class="flex items-center">
-            <span class="mr-2">⚡</span> <span x-text="t('minerModule')"></span>
+            <span class="mr-2">🌏</span> <span x-text="t('minerModule')"></span>
         </div>
         <span class="text-xs text-indigo-400" x-text="showMiners ? '收起 ▲' : '展开 ▼'"></span>
     </button>
@@ -88,7 +88,6 @@
                 </template>
             </template>
         </div>
-        
         <div class="grid grid-cols-2 gap-3">
             <div class="bg-indigo-50/50 p-3 rounded-xl">
                 <p class="text-[10px] text-gray-400 mb-1" x-text="t('dailyOutput')"></p>
@@ -112,14 +111,14 @@
                     <div class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
                         <p class="text-[10px] text-gray-400 mb-1" x-text="t('dailyOutput')"></p>
                         <p class="font-bold text-sm text-indigo-700 flex items-center">
-                            <img src="https://s1.aigei.com/src/img/gif/9e/9edea7e35dc24e25b66d692c0fadb528.gif?imageMogr2/auto-orient/thumbnail/!282x282r/gravity/Center/crop/282x282/quality/85/%7CimageView2/2/w/282&e=2051020800&token=P7S2Xpzfz11vAkASLTkfHN7Fw-oOZBecqeJaxypL:rI1JG-teFIkUzT5vB1mSxZ98i8k=" class="mr-1 w-4 h-4 rounded-full">
+                            <img src="https://cdn.pixabay.com/photo/2019/01/01/14/55/calendar-3906791_1280.jpg" class="mr-1 w-4 h-4 rounded-full">
                             <span :class="!isLoggedIn && 'blur-text'" x-text="isLoggedIn ? userData.dailyOutput + ' AIT' : '****'"></span>
                         </p>
                     </div>
                     <div class="bg-purple-50/50 p-3 rounded-xl border border-purple-100">
                         <p class="text-[10px] text-gray-400 mb-1" x-text="t('lockedAmount')"></p>
                         <p class="font-bold text-sm text-purple-700 flex items-center">
-                            <img src="https://play-lh.googleusercontent.com/U3rq7UbO60yzwr_NwjHkYM_lX-hdQE7_tw87bOkJI1LTr7PdojJ8ZApjmMkCFZwqJaQ=w240-h480-rw" class="mr-1 w-4 h-4 rounded-full">
+                            <img src="https://cdn.pixabay.com/photo/2019/10/06/11/40/lock-4529981_1280.png" class="mr-1 w-4 h-4 rounded-full">
                             <span :class="!isLoggedIn && 'blur-text'" x-text="isLoggedIn ? userData.lockedAmount + ' AIT' : '****'"></span>
                         </p>
                     </div>
@@ -162,15 +161,13 @@
                 <button @click="openModal('transfer')" class="bg-orange-500 text-white py-2.5 rounded-xl text-xs font-bold" x-text="t('transfer')"></button>
             </div>
         </div>
-
 <div class="mt-4 p-4 glass-card border-l-4 border-yellow-500 bg-yellow-50/30">
-    <p class="text-[10px] text-yellow-700 mb-2 font-bold">💡 每30天电费为 345 Fuel Tokens</p>
-    <button @click="openFuelModal()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition" x-text="'使用 Fuel Token 充值电费'"></button>
+    <p class="text-[10px] text-yellow-700 mb-2 font-bold">🔋 每30天电费为 345 Fuel Tokens</p>
+    <button @click="openFuelModal()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition">使用 Fuel Token 充值电费</button>
 </div>
-
         <div class="glass-card p-4 shadow-md bg-indigo-900 text-white">
             <h3 class="font-bold text-sm mb-4 flex items-center">
-                <span class="mr-2">🔄</span> <span x-text="t('swapTitle')"></span>
+                <span class="mr-2">📊</span> <span x-text="t('swapTitle')"></span>
             </h3>
             <div class="space-y-3">
                 <select x-model="swap.pair" class="w-full p-3 border-none rounded-xl text-sm bg-indigo-800 text-white outline-none">
@@ -186,11 +183,11 @@
 
 <div class="glass-card p-4 shadow-md mt-5" x-data="{ teamTab: 'members' }">
     <h3 class="font-bold text-gray-800 mb-4 flex items-center">
-        <span class="mr-2">👥</span> 我的团队
+        <span class="mr-2">🧑‍🤝‍🧑</span> 我的团队
     </h3>
     <div class="flex bg-gray-100 rounded-lg p-1 mb-4">
-        <button @click="teamTab = 'members'" :class="teamTab === 'members' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">团队数据</button>
-        <button @click="teamTab = 'rewards'" :class="teamTab === 'rewards' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">收益详情</button>
+        <button @click="teamTab = 'members'" :class="teamTab === 'members' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">团队</button>
+        <button @click="teamTab = 'rewards'" :class="teamTab === 'rewards' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">收益</button>
     </div>
 
     <div x-show="teamTab === 'members'" class="space-y-3">
@@ -200,16 +197,16 @@
                 <div class="flex justify-between text-gray-500">
                     <span>人数: <b class="text-gray-800" x-text="isLoggedIn ? userData.team[key].count : '0'"></b></span>
                     <span>矿机: <b class="text-gray-800" x-text="isLoggedIn ? userData.team[key].miners : '0'"></b></span>
-                    <span>运行: <b class="text-green-500" x-text="isLoggedIn ? userData.team[key].running : '0'"></b></span>
+                    <span>运行中: <b class="text-green-500" x-text="isLoggedIn ? userData.team[key].running : '0'"></b></span>
                 </div>
             </div>
         </template>
     </div>
 
     <div x-show="teamTab === 'rewards'" class="space-y-2">
-        <template x-for="(label, key) in {v1:'一代(5%)', v2:'二代(3%)', v3:'三代(2%)', v4_17:'4-17代(1%)', v18_20:'18-20代(2%)'}">
+        <template x-for="(label, key) in {v1:'一代奖励5%', v2:'二代奖励3%', v3:'三代奖励2%', v4_17:'四到十七代奖励1%', v18_20:'十八到二十代奖励2%'}">
             <div class="flex justify-between items-center bg-blue-50/50 p-2 rounded-lg text-[11px]">
-                <span class="text-gray-600" x-text="label"></span>
+                <span class="text-gray-600 font-medium" x-text="label"></span>
                 <span class="font-bold text-blue-600" x-text="isLoggedIn ? userData.team[key].reward + ' AIT/天' : '0.00'"></span>
             </div>
         </template>
@@ -221,7 +218,7 @@
             <div class="overflow-x-auto">
                 <template x-if="!isLoggedIn || logs.length === 0">
                     <div class="flex flex-col items-center justify-center py-6 text-gray-400">
-                        <span class="text-2xl mb-2">📁</span>
+                        <span class="text-2xl mb-2">📋</span>
                         <p class="text-[10px]" x-text="isLoggedIn ? 'No records found' : t('loginToView')"></p>
                     </div>
                 </template>
@@ -308,7 +305,7 @@
             fuelModal: { show: false, days: 30, ids: '' },
             modal: { show: false, type: '', title: '', amount: '', target: '', coin: 'AIT' },
             
-            // --- 2. 语言包 ---
+            // --- 2. 多语言字典 (补全了所有按钮文字) ---
             languages: {
                 'zh-CN': '简体中文', 'zh-TW': '繁體中文', 'ja': '日本語', 'ko': '한국어',
                 'ms': 'Melayu', 'ru': 'Русский', 'fr': 'Français', 'de': 'Deutsch', 'es': 'Español'
@@ -320,7 +317,7 @@
                     dailyOutput: '每日产币', lockedAmount: '锁仓数量', mergeMiner: '合成节点矿机', transferMiner: '节点矿机转让',
                     totalAssets: '钱包总资产 (USD)', withdraw: '提币', deposit: '充值', transfer: '转账', swapTitle: '闪电兑换',
                     executeSwap: '立即兑换', records: '交易记录', date: '时间', type: '操作', amount: '数额', status: '状态',
-                    inputAmount: '输入数量 (10.56)', gasTip: 'Gas费用 (0.1 TON)，提交后十分钟内处理', confirm: '确认操作',
+                    inputAmount: '输入数量 (10.56)', gasTip: 'Gas费用 (0.0TON)，提交后十分钟内处理', confirm: '确认操作',
                     targetAddr: '请输入接收者钱包地址', success: '提交成功！', loginToView: '请先连接钱包查看记录'
                 },
                     'zh-TW': {
@@ -329,7 +326,7 @@
                         dailyOutput: '每日產幣', lockedAmount: '鎖倉數量', mergeMiner: '合成節點礦機', transferMiner: '節點礦機轉讓',
                         totalAssets: '錢包總資產 (USD)', withdraw: '提幣', deposit: '充值', transfer: '轉賬', swapTitle: '閃電兌換',
                         executeSwap: '立即兌換', records: '交易記錄', date: '時間', type: '操作', amount: '數額', status: '狀態',
-                        inputAmount: '輸入數量 (10.56)', gasTip: 'Gas費用 (0.1 TON)，提交後十分鐘內處理', confirm: '確認操作',
+                        inputAmount: '輸入數量 (10.56)', gasTip: 'Gas費用 (0.0TON)，提交後十分鐘內處理', confirm: '確認操作',
                         targetAddr: '請輸入接收者錢包地址', success: '提交成功！', loginToView: '請先連接錢包查看記錄'
                     },
                     'ja': {
@@ -338,7 +335,7 @@
                         dailyOutput: '日次生産', lockedAmount: 'ロック量', mergeMiner: 'マイナー合成', transferMiner: 'マイナー譲渡',
                         totalAssets: '総資産 (USD)', withdraw: '出金', deposit: '入金', transfer: '送金', swapTitle: 'スワップ',
                         executeSwap: '交換する', records: '履歴', date: '日付', type: 'タイプ', amount: '数量', status: '状態',
-                        inputAmount: '数量 (例: 10.56)', gasTip: 'ガス代 (0.1 TON)、10分以内に完了', confirm: '確認送信',
+                        inputAmount: '数量 (例: 10.56)', gasTip: 'ガス代 (0.0TON)、10分以内に完了', confirm: '確認送信',
                         targetAddr: '受取人アドレス', success: '送信完了！', loginToView: '連携して記録を表示'
                     },
                     'ko': {
@@ -347,7 +344,7 @@
                         dailyOutput: '일일 생산량', lockedAmount: '잠긴 수량', mergeMiner: '채굴기 합성', transferMiner: '채굴기 양도',
                         totalAssets: '총 자산 (USD)', withdraw: '출금', deposit: '입금', transfer: '이체', swapTitle: '스왑',
                         executeSwap: '즉시 교환', records: '거래 기록', date: '날짜', type: '유형', amount: '금액', status: '상태',
-                        inputAmount: '수량 입력 (예: 10.56)', gasTip: '수수료 (0.1 TON), 10분 내 처리', confirm: '작업 확인',
+                        inputAmount: '수량 입력 (예: 10.56)', gasTip: '수수료 (0.0TON), 10분 내 처리', confirm: '작업 확인',
                         targetAddr: '수신자 지갑 주소', success: '제출 성공!', loginToView: '지갑 연결 후 기록 확인'
                     },
                     'ms': {
@@ -356,7 +353,7 @@
                         dailyOutput: 'Hasil Harian', lockedAmount: 'Jumlah Terkunci', mergeMiner: 'Gabung Pelombong', transferMiner: 'Pindah Pelombong',
                         totalAssets: 'Jumlah Aset', withdraw: 'Tarik', deposit: 'Deposit', transfer: 'Pindah', swapTitle: 'Tukar',
                         executeSwap: 'Tukar Sekarang', records: 'Rekod', date: 'Tarikh', type: 'Jenis', amount: 'Jumlah', status: 'Status',
-                        inputAmount: 'Masukkan jumlah', gasTip: 'Kos Gas (0.1 TON), dalam 10 min', confirm: 'Sahkan',
+                        inputAmount: 'Masukkan jumlah', gasTip: 'Kos Gas (0.0TON), dalam 10 min', confirm: 'Sahkan',
                         targetAddr: 'Alamat penerima', success: 'Berjaya!', loginToView: 'Sambung dompet untuk rekod'
                     },
                     'ru': {
@@ -365,7 +362,7 @@
                         dailyOutput: 'Доход в день', lockedAmount: 'Заблокировано', mergeMiner: 'Синтез узла', transferMiner: 'Передача майнера',
                         totalAssets: 'Общие активы', withdraw: 'Вывод', deposit: 'Депозит', transfer: 'Перевод', swapTitle: 'Обмен',
                         executeSwap: 'Обменять', records: 'История', date: 'Дата', type: 'Тип', amount: 'Кол-во', status: 'Статус',
-                        inputAmount: 'Введите кол-во', gasTip: 'Газ (0.1 TON), 10 мин', confirm: 'Подтвердить',
+                        inputAmount: 'Введите кол-во', gasTip: 'Газ (0.0TON), 10 мин', confirm: 'Подтвердить',
                         targetAddr: 'Адрес получателя', success: 'Успешно!', loginToView: 'Подключитесь для просмотра'
                     },
                     'fr': {
@@ -374,7 +371,7 @@
                         dailyOutput: 'Production/j', lockedAmount: 'Bloqué', mergeMiner: 'Fusionner', transferMiner: 'Transférer',
                         totalAssets: 'Total actifs', withdraw: 'Retirer', deposit: 'Dépôt', transfer: 'Transférer', swapTitle: 'Échange',
                         executeSwap: 'Échanger', records: 'Historique', date: 'Date', type: 'Type', amount: 'Montant', status: 'Statut',
-                        inputAmount: 'Entrer montant', gasTip: 'Frais (0.1 TON), 10 min', confirm: 'Confirmer',
+                        inputAmount: 'Entrer montant', gasTip: 'Frais (0.0TON), 10 min', confirm: 'Confirmer',
                         targetAddr: 'Adresse destinataire', success: 'Succès!', loginToView: 'Connectez-vous pour voir'
                     },
                     'de': {
@@ -383,7 +380,7 @@
                         dailyOutput: 'Ertrag/Tag', lockedAmount: 'Gesperrt', mergeMiner: 'Fusionieren', transferMiner: 'Übertragen',
                         totalAssets: 'Gesamtvermögen', withdraw: 'Auszahlen', deposit: 'Einzahlen', transfer: 'Senden', swapTitle: 'Tausch',
                         executeSwap: 'Tauschen', records: 'Verlauf', date: 'Datum', type: 'Typ', amount: 'Menge', status: 'Status',
-                        inputAmount: 'Menge (z.B. 10.56)', gasTip: 'Gas (0.1 TON), 10 Min', confirm: 'Bestätigen',
+                        inputAmount: 'Menge (z.B. 10.56)', gasTip: 'Gas (0.0TON), 10 Min', confirm: 'Bestätigen',
                         targetAddr: 'Empfängeradresse', success: 'Erfolg!', loginToView: 'Anmelden für Verlauf'
                     },
                     'es': {
@@ -392,12 +389,9 @@
                         dailyOutput: 'Producción', lockedAmount: 'Bloqueado', mergeMiner: 'Fusionar', transferMiner: 'Transferir',
                         totalAssets: 'Activos Totales', withdraw: 'Retirar', deposit: 'Depósito', transfer: 'Transferir', swapTitle: 'Swap',
                         executeSwap: 'Intercambiar', records: 'Registros', date: 'Fecha', type: 'Tipo', amount: 'Cantidad', status: 'Estado',
-                        inputAmount: 'Cantidad (ej: 10.56)', gasTip: 'Gas (0.1 TON), 10 min', confirm: 'Confirmar',
+                        inputAmount: 'Cantidad (ej: 10.56)', gasTip: 'Gas (0.0TON), 10 min', confirm: 'Confirmar',
                         targetAddr: 'Dirección receptor', success: '¡Éxito!', loginToView: 'Conectar para ver registros'
                     }
-                },
-
-                // ... 其他语言保持不变
             },
 
             // --- 3. 数据模型 ---
@@ -423,10 +417,8 @@
             ],
             logs: [],
 
-            // --- 4. 初始化 ---
+            // --- 4. 核心逻辑方法 ---
             init() {
-                this.initParticles();
-                this.detectLanguage();
                 const saved = localStorage.getItem('onchain_wallet_addr');
                 if(saved) {
                     this.walletAddress = saved;
@@ -434,13 +426,8 @@
                 }
             },
 
-            // --- 5. 核心方法 ---
-            t(key) { return (this.translations[this.lang] && this.translations[this.lang][key]) || this.translations['zh-CN'][key]; },
-            
-            detectLanguage() {
-                const nav = navigator.language.toLowerCase();
-                const map = {'tw':'zh-TW','hk':'zh-TW','zh':'zh-CN','ja':'ja','ko':'ko','ru':'ru','ms':'ms','fr':'fr','de':'de','es':'es'};
-                for(let key in map) { if(nav.includes(key)) { this.lang = map[key]; break; } }
+            t(key) { 
+                return (this.translations[this.lang] && this.translations[this.lang][key]) || this.translations['zh-CN'][key]; 
             },
 
             async login() {
@@ -458,13 +445,8 @@
                         this.userData.lockedAmount = data.user.locked || '0';
                         this.userData.miners = data.miners || [];
                         this.logs = data.logs || [];
-                        
-                        // 关键：绑定团队数据
-                        if(data.user.team) {
-                            this.userData.team = data.user.team;
-                        }
+                        if(data.user.team) this.userData.team = data.user.team;
 
-                        // 更新代币余额
                         this.coins.forEach(c => {
                             if(data.user.balances && data.user.balances[c.name] !== undefined) {
                                 c.balance = data.user.balances[c.name];
@@ -473,41 +455,19 @@
                         
                         this.isLoggedIn = true;
                         localStorage.setItem('onchain_wallet_addr', this.walletAddress);
-                    } else {
-                        alert("Address not found.");
                     }
                 } catch (e) {
                     console.error("Fetch Error:", e);
-                    alert("Connection failed.");
                 } finally {
                     this.loading = false;
                 }
             },
 
             logout() {
+                localStorage.removeItem('onchain_wallet_addr');
                 this.isLoggedIn = false;
                 this.walletAddress = '';
-                localStorage.removeItem('onchain_wallet_addr');
-                location.reload(); // 彻底重置状态
-            },
-
-            // --- 6. 弹窗控制 ---
-            openFuelModal() {
-                this.fuelModal.show = true;
-            },
-
-            async submitFuelRecharge() {
-                if(!this.fuelModal.ids) return alert("请输入矿机编号");
-                const payload = {
-                    user: this.walletAddress,
-                    action: 'FUEL_RECHARGE',
-                    duration: this.fuelModal.days,
-                    minerIds: this.fuelModal.ids
-                };
-                await this.postData(payload);
-                alert("提交成功！");
-                this.fuelModal.show = false;
-                this.login(); // 刷新记录
+                location.reload(); 
             },
 
             openModal(type) {
@@ -515,6 +475,21 @@
                 this.modal.type = type;
                 this.modal.title = this.t(type);
                 this.modal.show = true;
+            },
+
+            openFuelModal() { this.fuelModal.show = true; },
+
+            async submitFuelRecharge() {
+                if(!this.fuelModal.ids) return alert("请输入矿机编号");
+                await this.postData({
+                    user: this.walletAddress,
+                    action: 'FUEL_RECHARGE',
+                    duration: this.fuelModal.days,
+                    minerIds: this.fuelModal.ids
+                });
+                alert(this.t('success'));
+                this.fuelModal.show = false;
+                this.login(); 
             },
 
             async handleModalSubmit() {
@@ -532,7 +507,6 @@
             },
 
             async submitSwap() {
-                if(!this.isLoggedIn) return alert("Please connect wallet first");
                 if(!this.swap.amount) return alert("Enter amount");
                 await this.postData({
                     user: this.walletAddress,
@@ -555,48 +529,58 @@
                 } catch(e){ console.error(e); }
             },
 
-            shortenAddress(addr) { return addr.slice(0,6) + '...' + addr.slice(-4); },
-            
-            initParticles() {
-                tsParticles.load("tsparticles", {
-                    particles: {
-                        number: { value: 25 },
-                        color: { value: "#6366f1" },
-                        links: { enable: true, color: "#6366f1", opacity: 0.15 },
-                        move: { enable: true, speed: 0.8 }
-                    }
-                });
+            shortenAddress(addr) { 
+                return addr ? addr.slice(0,6) + '...' + addr.slice(-4) : ''; 
             }
         }
     }
 </script>
 
-    <div x-show="fuelModal.show" x-cloak class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-    <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl">
-        <h3 class="font-bold text-gray-800 mb-4">电费充值 (Fuel Token)</h3>
+<div 
+    x-show="fuelModal.show" 
+    x-cloak 
+    class="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0 scale-90"
+    x-transition:enter-end="opacity-100 scale-100"
+>
+    <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl" @click.away="fuelModal.show = false">
+        <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+            <span class="mr-2">电池</span> 电费充值 (Fuel Token)
+        </h3>
+        
         <div class="space-y-4">
             <div>
-                <label class="text-[10px] font-bold text-gray-400">选择周期</label>
-                <select x-model="fuelModal.days" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm">
+                <label class="text-[10px] font-bold text-gray-400 block mb-1">选择周期</label>
+                <select x-model="fuelModal.days" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm border border-gray-100 focus:border-orange-500 transition">
                     <option value="30">30天 (345 Fuel)</option>
                     <option value="90">90天 (1035 Fuel)</option>
                     <option value="180">180天 (2070 Fuel)</option>
                     <option value="360">360天 (4140 Fuel)</option>
                 </select>
             </div>
+            
             <div>
-                <label class="text-[10px] font-bold text-gray-400">矿机编号</label>
-                <input type="text" x-model="fuelModal.ids" placeholder="例如: 8801, 8802" class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm border border-gray-100">
+                <label class="text-[10px] font-bold text-gray-400 block mb-1">矿机编号</label>
+                <input 
+                    type="text" 
+                    x-model="fuelModal.ids" 
+                    placeholder="例如: A-00001, B-00001" 
+                    class="w-full p-3 bg-gray-50 rounded-xl outline-none text-sm border border-gray-100 focus:border-orange-500 transition"
+                >
             </div>
-            <button @click="submitFuelRecharge" class="w-full bg-orange-500 text-white py-3 rounded-xl font-bold">立即提交</button>
+
+            <button 
+                @click="submitFuelRecharge" 
+                class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition"
+            >
+                立即提交
+            </button>
+            
             <button @click="fuelModal.show = false" class="w-full text-gray-400 text-xs">取消</button>
         </div>
     </div>
 </div>
 
-
 </body>
-
 </html>
-
-
