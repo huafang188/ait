@@ -1,1 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AOS 全球战略白皮书 | Amazon On-Chain Supply</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #ffffff 100%);
+            color: #1e293b;
+            scroll-behavior: smooth;
+        }
+        .nav-glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .section-card {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #bae6fd;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 3rem;
+            padding: 3rem;
+        }
+        .formula-box {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            font-family: serif;
+            font-style: italic;
+        }
+        .lang-btn {
+            padding: 4px 12px;
+            border-radius: 20px;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+        .lang-btn.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #0284c7, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="antialiased">
 
+    <nav class="nav-glass fixed top-0 w-full z-50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center">
+    <img src="https://pbs.twimg.com/media/G-DbAlZbMAAgM4X?format=png&name=240x240" alt="AOS Logo" class="h-10 w-auto">
+</div>
+            <div class="flex space-x-2" id="lang-switcher">
+                <button class="lang-btn active" onclick="changeLang('zh')">简体</button>
+                <button class="lang-btn" onclick="changeLang('tc')">繁體</button>
+                <button class="lang-btn" onclick="changeLang('jp')">日本語</button>
+                <button class="lang-btn" onclick="changeLang('ru')">Русский</button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="pt-32 pb-16 px-6 text-center">
+        <div class="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wide text-blue-600 uppercase bg-blue-100 rounded-full" data-key="badge">Web 3.0 Supply Chain</div>
+        <h1 class="text-4xl md:text-6xl font-extrabold mb-6 text-slate-900" data-key="title">Amazon On-Chain Supply (AOS)</h1>
+        <p class="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed" data-key="subtitle">全球战略白皮书：定义“实体算力”与“流通价值”的全新锚定</p>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 pb-24">
+        
+        <div class="section-card">
+            <h2 class="text-3xl font-bold mb-6 text-blue-800" data-key="s1_h">第一部分：宏观愿景与行业重构</h2>
+            <div class="prose prose-blue max-w-none text-slate-600 leading-loose space-y-4">
+                <p data-key="s1_p1">全球跨境电商正处于从 Web 1.0 信息撮合向 Web 3.0 价值流转进化的奇点。 [cite: 3] 传统亚马逊生态面临流量霸权、资金周转陷阱（14-30天清算期）及数据孤岛的深度隐忧。 [cite: 4, 39]</p>
+                <ul class="list-disc pl-5 space-y-2">
+                    <li data-key="s1_l1"><b>流量终结：</b> 商家佣金高达 15%-20%，且需承担昂贵的广告租赁成本。 [cite: 37]</li>
+                    <li data-key="s1_l2"><b>数字化双胞胎：</b> 区块链作为物理供应链的映射，实现实体算力的价值化。 [cite: 5, 6]</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2 class="text-3xl font-bold mb-6 text-blue-800" data-key="s2_h">第二部分：技术架构与底层协议</h2>
+            <p class="mb-6 text-slate-600" data-key="s2_p1">AOS 建立在 Layer 2 高性能网络之上，专注于解决跨境高频支付的 Gas 费瓶颈。 [cite: 8]</p>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="p-5 border border-blue-100 rounded-xl bg-blue-50/50">
+                    <h4 class="font-bold text-blue-700 mb-2" data-key="s2_f1_t">AOS-Trace 溯源协议</h4>
+                    <p class="text-sm text-slate-500" data-key="s2_f1_d">通过 RFID 与传感设备实现物理流转与链上哈希的实时映射。 [cite: 9]</p>
+                </div>
+                <div class="p-5 border border-blue-100 rounded-xl bg-blue-50/50">
+                    <h4 class="font-bold text-blue-700 mb-2" data-key="s2_f2_t">商品凭证 NFT 化</h4>
+                    <p class="text-sm text-slate-500" data-key="s2_f2_d">改良 EIP-721 协议，实现所有权、使用权、分红权的三权分离。 [cite: 10]</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2 class="text-3xl font-bold mb-6 text-blue-800" data-key="s3_h">第三部分：AIT 通证经济学深度拆解</h2>
+            <p class="mb-4 text-slate-600" data-key="s3_p1">总量 5.7 亿枚 AIT，严格遵循“有限供应，无限销毁”原则。 [cite: 13, 57]</p>
+            
+            <h3 class="text-xl font-semibold mt-8 mb-4 border-b pb-2" data-key="s3_sub1">核心算力模型 (Hybrid PoW)</h3>
+            <p class="text-slate-600 mb-4" data-key="s3_p2">基础收益由全网活跃矿机数与信誉因子共同决定： [cite: 67, 70]</p>
+            <div class="formula-box text-lg mb-6">
+                $$Reward_{unit} = \frac{Pool_{daily}}{N_{active}} \cdot \Phi_{repute}$$
+            </div>
+
+            <h3 class="text-xl font-semibold mt-8 mb-4 border-b pb-2" data-key="s3_sub2">通缩销毁与合成</h3>
+            <p class="text-slate-600" data-key="s3_p3">当币价达 0.5 USD 且市值超 1 亿美元时开启“合成黑洞”，合成高阶矿机需消耗并永久销毁旧 AIT。 [cite: 81, 84] 广告竞拍成功的 AIT 同样 100% 销毁。 [cite: 94]</p>
+        </div>
+
+        <div class="section-card">
+            <h2 class="text-3xl font-bold mb-6 text-blue-800" data-key="s4_h">第四部分：链上商城运营与生态闭环</h2>
+            <div class="space-y-6">
+                <p class="text-slate-600" data-key="s4_p1">通过 Proof of Repute (PoR) 协议实现商家准入，结合 SocialFi 元素，实现“分享即挖矿”。 [cite: 22, 23]</p>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h4 class="font-bold mb-3" data-key="s4_f1">全链路追踪流程</h4>
+                    <ol class="list-decimal pl-5 text-slate-500 text-sm space-y-2">
+                        <li data-key="s4_l1">生产端：唯一 PID 映射 EIP-1155 NFT。 [cite: 109]</li>
+                        <li data-key="s4_l2">仓储端：亚马逊 FBA 或第三方仓储数据同步。 [cite: 112]</li>
+                        <li data-key="s4_l3">交付端：消费者私钥签署，完成所有权转移。 [cite: 114]</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2 class="text-3xl font-bold mb-6 text-blue-800" data-key="s5_h">第五部分：供应链金融与 RWA 扩展</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="font-bold mb-2" data-key="s5_f1">存货质押贷</h4>
+                    <p class="text-slate-500 text-sm leading-relaxed" data-key="s5_d1">基于实物商品 NFT 资产作为抵押物，系统根据动销率自动授信，解决商家压货痛点。 [cite: 121, 122]</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-2" data-key="s5_f2">预售 Launchpad</h4>
+                    <p class="text-slate-500 text-sm leading-relaxed" data-key="s5_d2">用户利用 AIT 参与爆品早期投资，不仅能获得实物，还拥有未来销售利润分红权。 [cite: 127]</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card border-none bg-blue-900 text-white">
+            <h2 class="text-3xl font-bold mb-6" data-key="s6_h">第六部分：DAO 治理、合规与风险</h2>
+            <div class="grid md:grid-cols-2 gap-8 text-blue-100">
+                <ul class="space-y-4">
+                    <li data-key="s6_l1"><i class="fas fa-check-circle mr-2"></i> <b>新加坡基金会：</b> 建立 VASP 牌照路径。 [cite: 130, 138]</li>
+                    <li data-key="s6_l2"><i class="fas fa-check-circle mr-2"></i> <b>治理加权：</b> 基于 $V = \sqrt{Token \times Time}$ 的模型。 [cite: 136]</li>
+                </ul>
+                <ul class="space-y-4">
+                    <li data-key="s6_l3"><i class="fas fa-shield-alt mr-2"></i> <b>风险熔断：</b> 针对价格闪崩及供应链断裂的应急预案。 [cite: 32]</li>
+                    <li data-key="s6_l4"><i class="fas fa-shield-alt mr-2"></i> <b>AML/KYC：</b> 严格遵守反洗钱与身份验证标准。 [cite: 139]</li>
+                </ul>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="py-12 text-center text-slate-400 border-t bg-white">
+        <p>© 2026 Amazon On-Chain Supply (AOS) Foundation. For Global Strategic Development.</p>
+    </footer>
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <script>
+        const i18n = {
+            zh: {
+                badge: "Web 3.0 供应链协议",
+                title: "Amazon On-Chain Supply (AOS) 全球战略白皮书",
+                subtitle: "物理供应链的“数字化双胞胎”，定义实体算力与流通价值的全新锚定。",
+                s1_h: "第一部分：宏观愿景与行业重构",
+                s1_p1: "全球跨境电商正处于从 Web 1.0 信息撮合向 Web 3.0 价值流转进化的奇点。传统亚马逊生态面临流量霸权、资金周转陷阱及数据孤岛的深度隐忧。",
+                s1_l1: "流量终结：商家佣金高达 15%-20%，且需承担昂贵的广告租赁成本。",
+                s1_l2: "数字化双胞胎：区块链作为物理供应链的映射，实现实体算力的价值化。",
+                s2_h: "第二部分：技术架构与底层协议",
+                s2_p1: "AOS 建立在 Layer 2 高性能网络之上，专注于解决跨境高频支付的 Gas 费瓶颈。",
+                s2_f1_t: "AOS-Trace 溯源协议",
+                s2_f1_d: "通过 RFID 与传感设备实现物理流转与链上哈希的实时映射。",
+                s2_f2_t: "商品凭证 NFT 化",
+                s2_f2_d: "改良 EIP-721 协议，实现所有权、使用权、分红权的三权分离。",
+                s3_h: "第三部分：AIT 通证经济学深度拆解",
+                s3_p1: "总量 5.7 亿枚 AIT，严格遵循“有限供应，无限销毁”原则。",
+                s3_sub1: "核心算力模型 (Hybrid PoW)",
+                s3_p2: "基础收益由全网活跃矿机数与信誉因子共同决定：",
+                s3_sub2: "通缩销毁与合成",
+                s3_p3: "当币价达 0.5 USD 且市值超 1 亿美元时开启“合成黑洞”，广告竞拍成功的 AIT 100% 销毁。",
+                s4_h: "第四部分：链上商城运营与生态闭环",
+                s4_p1: "通过 Proof of Repute (PoR) 协议实现商家准入，结合 SocialFi 元素，实现“分享即挖矿”。",
+                s4_f1: "全链路追踪流程",
+                s4_l1: "生产端：唯一 PID 映射 EIP-1155 NFT。",
+                s4_l2: "仓储端：亚马逊 FBA 或第三方仓储数据同步。",
+                s4_l3: "交付端：消费者私钥签署，完成所有权转移。",
+                s5_h: "第五部分：供应链金融与 RWA 扩展",
+                s5_f1: "存货质押贷",
+                s5_d1: "基于实物商品 NFT 资产作为抵押物，系统根据动销率自动授信，解决商家压货痛点。",
+                s5_f2: "预售 Launchpad",
+                s5_d2: "用户利用 AIT 参与爆品早期投资，不仅能获得实物，还拥有未来销售利润分红权。",
+                s6_h: "第六部分：DAO 治理、合规与风险",
+                s6_l1: "新加坡基金会：建立 VASP 牌照路径。",
+                s6_l2: "治理加权：基于时间与持仓量的平方根模型。",
+                s6_l3: "风险熔断：针对价格闪崩及供应链断裂的应急预案。",
+                s6_l4: "AML/KYC：严格遵守反洗钱与身份验证标准。"
+            },
+            tc: {
+                badge: "Web 3.0 供應鏈協議",
+                title: "Amazon On-Chain Supply (AOS) 全球戰略白皮書",
+                subtitle: "物理供應鏈的“數位化雙胞胎”，定義實體算力與流通價值的全新錨定。",
+                s1_h: "第一部分：宏觀願景與行業重構",
+                s3_h: "第三部分：AIT 通證經濟學深度拆解",
+                s6_h: "第六部分：DAO 治理、合規與風險"
+                // 其他内容同理扩充...
+            },
+            jp: {
+                badge: "Web 3.0 サプライチェーン",
+                title: "AOS グローバル戦略白書",
+                subtitle: "物理的サプライチェーンの「デジタルツイン」、実体計算力と流通価値を定義。",
+                s1_h: "第一部：マクロビジョンと業界再編",
+                s3_h: "第三部：AIT トークンエコノミクス",
+                s6_h: "第六部：DAO ガバナンス、コンプライアンス"
+                // 其他内容同理扩充...
+            },
+            ru: {
+                badge: "Цепочка поставок Web 3.0",
+                title: "Глобальная стратегия AOS",
+                subtitle: "«Цифровой двойник» цепочки поставок, определяющий новую ценность.",
+                s1_h: "Часть 1: Макровидение и реструктуризация",
+                s3_h: "Часть 3: Токеномика AIT",
+                s6_h: "Часть 6: DAO и соответствие"
+                // 其他内容同理扩充...
+            }
+        };
+
+        function changeLang(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const elements = document.querySelectorAll('[data-key]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (i18n[lang][key]) {
+                    el.innerHTML = i18n[lang][key];
+                }
+            });
+        }
+    </script>
+</body>
+</html>
