@@ -309,7 +309,6 @@
             // --- 2. 多语言字典 ---
             languages: {
                 'en': 'English','zh-CN': '简体中文', 'zh-TW': '繁體中文', 'ja': '日本語', 'ko': '한국어',
-                'ms': 'Melayu', 'ru': 'Русский', 'fr': 'Français', 'de': 'Deutsch', 'es': 'Español'
             },
 translations: {
     'en': {
@@ -468,6 +467,16 @@ translations: {
         loginToView: '기록을 보려면 연결하세요'
     }
     // 其他语言 (ms, ru, fr, de, es) 建议按此格式同步补全
+}
+            t(key) { 
+    // 逻辑：尝试查找当前语言 -> 尝试查找中文备用 -> 返回键名本身
+    if (this.translations[this.lang] && this.translations[this.lang][key]) {
+        return this.translations[this.lang][key];
+    }
+    if (this.translations['zh-CN'] && this.translations['zh-CN'][key]) {
+        return this.translations['zh-CN'][key];
+    }
+    return key; 
 }
 }
                 // ... 其他语言保持不变 (为了篇幅，此处省略，请保留你原有的 translations 内容)
@@ -680,6 +689,7 @@ translations: {
 
 </body>
 </html>
+
 
 
 
