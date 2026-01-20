@@ -79,7 +79,7 @@
             <template x-if="isLoggedIn">
                 <template x-for="m in userData.miners">
                     <div class="text-center p-2 bg-white rounded-xl border border-blue-50 shadow-sm">
-                        <div class="text-2xl mb-1">💎</div>
+                        <div class="text-2xl mb-1">💻</div>
                         <div class="text-[9px] text-gray-500 flex justify-center items-center">
                             <span x-text="m.id"></span>
                         </div>
@@ -103,7 +103,7 @@
 
                 <div class="bg-blue-50/50 p-3 rounded-xl">
                     <p class="text-[11px] text-blue-800 mb-2 leading-tight font-medium" x-text="t('rechargeTip')"></p>
-                    <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=35000000" 
+                    <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton" 
                        class="block w-full text-center bg-white text-blue-600 py-2.5 rounded-lg text-xs font-bold border border-blue-100 shadow-sm" x-text="t('rechargeBtn')"></a>
                 </div>
 
@@ -162,8 +162,8 @@
             </div>
         </div>
 <div class="mt-4 p-4 glass-card border-l-4 border-yellow-500 bg-yellow-50/30">
-    <p class="text-[10px] text-yellow-700 mb-2 font-bold">🔋 每30天激活资产包费用为 345 Fuel Tokens</p>
-    <button @click="openFuelModal()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition">使用 Fuel Token 激活资产包</button>
+    <p class="text-[10px] text-yellow-700 mb-2 font-bold">🔋 每30天电费为 345 Fuel Tokens</p>
+    <button @click="openFuelModal()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition">使用 Fuel Token 充值电费</button>
 </div>
         <div class="glass-card p-4 shadow-md bg-indigo-900 text-white">
             <h3 class="font-bold text-sm mb-4 flex items-center">
@@ -171,9 +171,14 @@
             </h3>
             <div class="space-y-3">
                 <select x-model="swap.pair" class="w-full p-3 border-none rounded-xl text-sm bg-indigo-800 text-white outline-none">
-                    <option value="AIT-***">AIT → ***</option>
-                    <option value="ACT-***">ACT → ***</option>
+                    <option value="AIT-USDT">AIT → USDT (TON)</option>
+                    <option value="ACT-USDT">ACT → USDT (TON)</option>
                     <option value="AIT-ACT">AIT → ACT</option>
+                    <option value="USDT-AIT">USDT → AIT</option>
+                    <option value="TON-AIT">TON → AIT</option>
+                    <option value="AIT-Fuel Token">AIT → Fuel Token</option>
+                    <option value="USDT-Fuel Token">USDT → Fuel Token</option>
+                    <option value="TON-Fuel Token">TON → Fuel Token</option>
                 </select>
                 <input type="number" x-model="swap.amount" :placeholder="t('inputAmount')" class="w-full p-3 rounded-xl text-sm bg-indigo-800 text-white placeholder-indigo-400 border-none outline-none">
                 <div class="text-[10px] text-indigo-300 px-1 font-medium" x-text="t('gasTip')"></div>
@@ -196,8 +201,8 @@
                 <p class="font-bold text-gray-700 mb-1" x-text="label"></p>
                 <div class="flex justify-between text-gray-500">
                     <span>人数: <b class="text-gray-800" x-text="isLoggedIn ? userData.team[key].count : '0'"></b></span>
-                    <span>矿机: <b class="text-gray-800" x-text="isLoggedIn ? userData.team[key].miners : '0'"></b></span>
-                    <span>运行中: <b class="text-green-500" x-text="isLoggedIn ? userData.team[key].running : '0'"></b></span>
+                    <span>资产包: <b class="text-gray-800" x-text="isLoggedIn ? userData.team[key].miners : '0'"></b></span>
+                    <span>生效中: <b class="text-green-500" x-text="isLoggedIn ? userData.team[key].running : '0'"></b></span>
                 </div>
             </div>
         </template>
@@ -303,183 +308,95 @@
             showMiners: false, 
             swap: { pair: 'AIT-USDT', amount: '' },
             fuelModal: { show: false, days: 30, ids: '' },
-            // 确保 modal 对象包含 target，用于接收地址
             modal: { show: false, type: '', title: '', amount: '', target: '', coin: 'AIT' },
             
-            // --- 2. 多语言字典 ---
+            // --- 2. 多语言字典 (补全了所有按钮文字) ---
             languages: {
-                'en': 'English','zh-CN': '简体中文', 'zh-TW': '繁體中文', 'ja': '日本語', 'ko': '한국어',
+                'zh-CN': '简体中文', 'zh-TW': '繁體中文', 'ja': '日本語', 'ko': '한국어',
+                'ms': 'Melayu', 'ru': 'Русский', 'fr': 'Français', 'de': 'Deutsch', 'es': 'Español'
             },
-translations: {
-    'en': {
-        title: 'On-chain Wallet', 
-        inputPlaceholder: 'Enter your wallet address', 
-        connectBtn: 'Connect Wallet', 
-        refreshData: 'Refresh', 
-        logout: 'Logout',
-        minerModule: 'Asset Packages', 
-        rechargeTip: 'Please note your package ID when activating', 
-        rechargeBtn: 'Activate Package',
-        dailyOutput: 'Daily Output', 
-        lockedAmount: 'Locked Amount', 
-        mergeMiner: 'Merge Packages', 
-        transferMiner: 'Package Transfer',
-        totalAssets: 'Total Assets (USD)', 
-        withdraw: 'Withdraw', 
-        deposit: 'Deposit', 
-        transfer: 'Transfer', 
-        swapTitle: 'Instant Swap',
-        executeSwap: 'Swap Now', 
-        records: 'Transaction History', 
-        date: 'Date', 
-        type: 'Action', 
-        amount: 'Amount', 
-        status: 'Status',
-        inputAmount: 'Enter Amount (e.g. 10.56)', 
-        gasTip: 'Gas Fee (0.0AIT), processed within 10 mins', 
-        confirm: 'Confirm Action',
-        targetAddr: 'Receiver Wallet Address', 
-        success: 'Submitted Successfully!', 
-        loginToView: 'Connect wallet to view history'
-    },
-    'zh-CN': {
-        title: '链上钱包', 
-        inputPlaceholder: '在此输入您的钱包地址', 
-        connectBtn: '连接钱包', 
-        refreshData: '更新数据', 
-        logout: '退出',
-        minerModule: '我的资产包', 
-        rechargeTip: '请激活时备注您的资产包编号', 
-        rechargeBtn: '激活资产包',
-        dailyOutput: '每日产币', 
-        lockedAmount: '锁仓数量', 
-        mergeMiner: '合成资产包', 
-        transferMiner: '资产包转让',
-        totalAssets: '钱包总资产 (USD)', 
-        withdraw: '提现', 
-        deposit: '充值', 
-        transfer: '转账', 
-        swapTitle: '闪电兑换',
-        executeSwap: '立即兑换', 
-        records: '交易记录', 
-        date: '时间', 
-        type: '操作', 
-        amount: '数额', 
-        status: '状态',
-        inputAmount: '输入数量 (10.56)', 
-        gasTip: 'Gas费用 (0.0AIT)，提交后十分钟内处理', 
-        confirm: '确认操作',
-        targetAddr: '请输入接收者钱包地址', 
-        success: '提交成功！', 
-        loginToView: '请先连接钱包查看记录'
-    },
-    'zh-TW': {
-        title: '鏈上錢包', 
-        inputPlaceholder: '在此輸入您的錢包地址', 
-        connectBtn: '連接錢包', 
-        refreshData: '更新數據', 
-        logout: '退出',
-        minerModule: '我的資產包', 
-        rechargeTip: '請激活時備註您的資產包編號', 
-        rechargeBtn: '激活資產包',
-        dailyOutput: '每日產幣', 
-        lockedAmount: '鎖倉數量', 
-        mergeMiner: '合成資產包', 
-        transferMiner: '資產包轉讓',
-        totalAssets: '錢包總資產 (USD)', 
-        withdraw: '提現', 
-        deposit: '充值', 
-        transfer: '轉賬', 
-        swapTitle: '閃電兌換',
-        executeSwap: '立即兌換', 
-        records: '交易記錄', 
-        date: '時間', 
-        type: '操作', 
-        amount: '數額', 
-        status: '狀態',
-        inputAmount: '輸入數量 (10.56)', 
-        gasTip: 'Gas費用 (0.0AIT)，提交後十分鐘內處理', 
-        confirm: '確認操作',
-        targetAddr: '請輸入接收者錢包地址', 
-        success: '提交成功！', 
-        loginToView: '請先連接錢包查看記錄'
-    },
-    'ja': {
-        title: 'オンチェーン財布', 
-        inputPlaceholder: 'ウォレットアドレスを入力', 
-        connectBtn: '連携', 
-        refreshData: '更新', 
-        logout: 'ログアウト',
-        minerModule: 'アセットパック', 
-        rechargeTip: '有効化時にパックIDを記入してください', 
-        rechargeBtn: 'パック有効化',
-        dailyOutput: '日次生産', 
-        lockedAmount: 'ロック量', 
-        mergeMiner: 'パック合成', 
-        transferMiner: 'パック譲渡',
-        totalAssets: '総資産 (USD)', 
-        withdraw: '出金', 
-        deposit: '入金', 
-        transfer: '送金', 
-        swapTitle: 'スワップ',
-        executeSwap: '交換する', 
-        records: '取引履歴', 
-        date: '日付', 
-        type: 'タイプ', 
-        amount: '数量', 
-        status: '状態',
-        inputAmount: '数量 (例: 10.56)', 
-        gasTip: 'ガス代 (0.0AIT)、10分以内に処理', 
-        confirm: '確定する',
-        targetAddr: '受取人アドレス', 
-        success: '送信完了！', 
-        loginToView: '記録を表示するには連携してください'
-    },
-    'ko': {
-        title: '온체인 지갑', 
-        inputPlaceholder: '지갑 주소를 입력하세요', 
-        connectBtn: '지갑 연결', 
-        refreshData: '갱신', 
-        logout: '로그아웃',
-        minerModule: '자산 패키지', 
-        rechargeTip: '활성화 시 패키지 번호를 기재하세요', 
-        rechargeBtn: '패키지 활성화',
-        dailyOutput: '일일 생산', 
-        lockedAmount: '잠긴 수량', 
-        mergeMiner: '패키지 합성', 
-        transferMiner: '자산 양도',
-        totalAssets: '총 자산 (USD)', 
-        withdraw: '출금', 
-        deposit: '입금', 
-        transfer: '이체', 
-        swapTitle: '스왑',
-        executeSwap: '즉시 교환', 
-        records: '거래 기록', 
-        date: '날짜', 
-        type: '유형', 
-        amount: '금액', 
-        status: '상태',
-        inputAmount: '수량 입력 (예: 10.56)', 
-        gasTip: '수수료 (0.0AIT), 10분 내 처리', 
-        confirm: '확인',
-        targetAddr: '수신자 주소', 
-        success: '제출 성공!', 
-        loginToView: '기록을 보려면 연결하세요'
-    }
-    // 其他语言 (ms, ru, fr, de, es) 建议按此格式同步补全
-}
-            t(key) { 
-    // 逻辑：尝试查找当前语言 -> 尝试查找中文备用 -> 返回键名本身
-    if (this.translations[this.lang] && this.translations[this.lang][key]) {
-        return this.translations[this.lang][key];
-    }
-    if (this.translations['zh-CN'] && this.translations['zh-CN'][key]) {
-        return this.translations['zh-CN'][key];
-    }
-    return key; 
-}
-}
-                // ... 其他语言保持不变 (为了篇幅，此处省略，请保留你原有的 translations 内容)
+            translations: {
+                'zh-CN': {
+                    title: '链上钱包', inputPlaceholder: '在此输入您的钱包地址', connectBtn: '连接钱包', refreshData: '更新数据', logout: '退出',
+                    minerModule: '我的数据包', rechargeTip: '充值您的链上资产', rechargeBtn: '钱包充值',
+                    dailyOutput: '每日产积分', lockedAmount: '锁仓数量', mergeMiner: '合成资产包', transferMiner: '资产包转让',
+                    totalAssets: '钱包总资产 (USD)', withdraw: '提现', deposit: '充值', transfer: '转账', swapTitle: '闪电兑换',
+                    executeSwap: '立即兑换', records: '交易记录', date: '时间', type: '操作', amount: '数额', status: '状态',
+                    inputAmount: '输入数量 (10.56)', gasTip: 'Gas费用 (0.0TON)，提交后十分钟内处理', confirm: '确认操作',
+                    targetAddr: '请输入接收者钱包地址', success: '提交成功！', loginToView: '请先连接钱包查看记录'
+                },
+                    'zh-TW': {
+                        title: '鏈上錢包', inputPlaceholder: '在此輸入您的錢包地址', connectBtn: '連接錢包', refreshData: '更新數據', logout: '退出',
+                        minerModule: '礦機工作臺', basicMiner: '原始礦機 (A-Type)', rechargeTip: '請充費時備註您的礦機編號', rechargeBtn: '電費充值',
+                        dailyOutput: '每日產幣', lockedAmount: '鎖倉數量', mergeMiner: '合成節點礦機', transferMiner: '節點礦機轉讓',
+                        totalAssets: '錢包總資產 (USD)', withdraw: '提幣', deposit: '充值', transfer: '轉賬', swapTitle: '閃電兌換',
+                        executeSwap: '立即兌換', records: '交易記錄', date: '時間', type: '操作', amount: '數額', status: '狀態',
+                        inputAmount: '輸入數量 (10.56)', gasTip: 'Gas費用 (0.0TON)，提交後十分鐘內處理', confirm: '確認操作',
+                        targetAddr: '請輸入接收者錢包地址', success: '提交成功！', loginToView: '請先連接錢包查看記錄'
+                    },
+                    'ja': {
+                        title: 'オンチェーン財布', inputPlaceholder: 'ウォレットアドレスを入力', connectBtn: '連携', refreshData: 'データ更新', logout: 'ログアウト',
+                        minerModule: 'マイナーパネル', basicMiner: '基本マイナー', rechargeTip: 'リチャージ時にマイナーIDを記入', rechargeBtn: '電気代リチャージ',
+                        dailyOutput: '日次生産', lockedAmount: 'ロック量', mergeMiner: 'マイナー合成', transferMiner: 'マイナー譲渡',
+                        totalAssets: '総資産 (USD)', withdraw: '出金', deposit: '入金', transfer: '送金', swapTitle: 'スワップ',
+                        executeSwap: '交換する', records: '履歴', date: '日付', type: 'タイプ', amount: '数量', status: '状態',
+                        inputAmount: '数量 (例: 10.56)', gasTip: 'ガス代 (0.0TON)、10分以内に完了', confirm: '確認送信',
+                        targetAddr: '受取人アドレス', success: '送信完了！', loginToView: '連携して記録を表示'
+                    },
+                    'ko': {
+                        title: '온체인 지갑', inputPlaceholder: '지갑 주소를 입력하세요', connectBtn: '지갑 연결', refreshData: '데이터 갱신', logout: '로그아웃',
+                        minerModule: '채굴기 대시보드', basicMiner: '기본 채굴기', rechargeTip: '충전 시 채굴기 번호를 메모하세요', rechargeBtn: '전기료 충전',
+                        dailyOutput: '일일 생산량', lockedAmount: '잠긴 수량', mergeMiner: '채굴기 합성', transferMiner: '채굴기 양도',
+                        totalAssets: '총 자산 (USD)', withdraw: '출금', deposit: '입금', transfer: '이체', swapTitle: '스왑',
+                        executeSwap: '즉시 교환', records: '거래 기록', date: '날짜', type: '유형', amount: '금액', status: '상태',
+                        inputAmount: '수량 입력 (예: 10.56)', gasTip: '수수료 (0.0TON), 10분 내 처리', confirm: '작업 확인',
+                        targetAddr: '수신자 지갑 주소', success: '제출 성공!', loginToView: '지갑 연결 후 기록 확인'
+                    },
+                    'ms': {
+                        title: 'Dompet On-chain', inputPlaceholder: 'Masukkan alamat dompet', connectBtn: 'Sambung', refreshData: 'Kemaskini', logout: 'Keluar',
+                        minerModule: 'Panel Pelombong', basicMiner: 'Pelombong Asal', rechargeTip: 'Nota nombor pelombong semasa mengecas', rechargeBtn: 'Tambah Nilai',
+                        dailyOutput: 'Hasil Harian', lockedAmount: 'Jumlah Terkunci', mergeMiner: 'Gabung Pelombong', transferMiner: 'Pindah Pelombong',
+                        totalAssets: 'Jumlah Aset', withdraw: 'Tarik', deposit: 'Deposit', transfer: 'Pindah', swapTitle: 'Tukar',
+                        executeSwap: 'Tukar Sekarang', records: 'Rekod', date: 'Tarikh', type: 'Jenis', amount: 'Jumlah', status: 'Status',
+                        inputAmount: 'Masukkan jumlah', gasTip: 'Kos Gas (0.0TON), dalam 10 min', confirm: 'Sahkan',
+                        targetAddr: 'Alamat penerima', success: 'Berjaya!', loginToView: 'Sambung dompet untuk rekod'
+                    },
+                    'ru': {
+                        title: 'On-chain Кошелек', inputPlaceholder: 'Введите адрес кошелька', connectBtn: 'Подключить', refreshData: 'Обновить', logout: 'Выйти',
+                        minerModule: 'Панель майнера', basicMiner: 'Базовый майнер', rechargeTip: 'Указывайте ID майнера при оплате', rechargeBtn: 'Оплата эл-энергии',
+                        dailyOutput: 'Доход в день', lockedAmount: 'Заблокировано', mergeMiner: 'Синтез узла', transferMiner: 'Передача майнера',
+                        totalAssets: 'Общие активы', withdraw: 'Вывод', deposit: 'Депозит', transfer: 'Перевод', swapTitle: 'Обмен',
+                        executeSwap: 'Обменять', records: 'История', date: 'Дата', type: 'Тип', amount: 'Кол-во', status: 'Статус',
+                        inputAmount: 'Введите кол-во', gasTip: 'Газ (0.0TON), 10 мин', confirm: 'Подтвердить',
+                        targetAddr: 'Адрес получателя', success: 'Успешно!', loginToView: 'Подключитесь для просмотра'
+                    },
+                    'fr': {
+                        title: 'Portefeuille On-chain', inputPlaceholder: 'Entrez l\'adresse', connectBtn: 'Connecter', refreshData: 'Actualiser', logout: 'Quitter',
+                        minerModule: 'Tableau de bord', basicMiner: 'Mineur de base', rechargeTip: 'Notez le numéro du mineur', rechargeBtn: 'Recharger',
+                        dailyOutput: 'Production/j', lockedAmount: 'Bloqué', mergeMiner: 'Fusionner', transferMiner: 'Transférer',
+                        totalAssets: 'Total actifs', withdraw: 'Retirer', deposit: 'Dépôt', transfer: 'Transférer', swapTitle: 'Échange',
+                        executeSwap: 'Échanger', records: 'Historique', date: 'Date', type: 'Type', amount: 'Montant', status: 'Statut',
+                        inputAmount: 'Entrer montant', gasTip: 'Frais (0.0TON), 10 min', confirm: 'Confirmer',
+                        targetAddr: 'Adresse destinataire', success: 'Succès!', loginToView: 'Connectez-vous pour voir'
+                    },
+                    'de': {
+                        title: 'On-chain Wallet', inputPlaceholder: 'Adresse eingeben', connectBtn: 'Verbinden', refreshData: 'Aktualisieren', logout: 'Logout',
+                        minerModule: 'Miner-Panel', basicMiner: 'Basis-Miner', rechargeTip: 'Miner-ID bei Zahlung angeben', rechargeBtn: 'Aufladen',
+                        dailyOutput: 'Ertrag/Tag', lockedAmount: 'Gesperrt', mergeMiner: 'Fusionieren', transferMiner: 'Übertragen',
+                        totalAssets: 'Gesamtvermögen', withdraw: 'Auszahlen', deposit: 'Einzahlen', transfer: 'Senden', swapTitle: 'Tausch',
+                        executeSwap: 'Tauschen', records: 'Verlauf', date: 'Datum', type: 'Typ', amount: 'Menge', status: 'Status',
+                        inputAmount: 'Menge (z.B. 10.56)', gasTip: 'Gas (0.0TON), 10 Min', confirm: 'Bestätigen',
+                        targetAddr: 'Empfängeradresse', success: 'Erfolg!', loginToView: 'Anmelden für Verlauf'
+                    },
+                    'es': {
+                        title: 'Billetera On-chain', inputPlaceholder: 'Dirección de billetera', connectBtn: 'Conectar', refreshData: 'Actualizar', logout: 'Salir',
+                        minerModule: 'Panel Minería', basicMiner: 'Minero Base', rechargeTip: 'Indique ID del minero', rechargeBtn: 'Recargar',
+                        dailyOutput: 'Producción', lockedAmount: 'Bloqueado', mergeMiner: 'Fusionar', transferMiner: 'Transferir',
+                        totalAssets: 'Activos Totales', withdraw: 'Retirar', deposit: 'Depósito', transfer: 'Transferir', swapTitle: 'Swap',
+                        executeSwap: 'Intercambiar', records: 'Registros', date: 'Fecha', type: 'Tipo', amount: 'Cantidad', status: 'Estado',
+                        inputAmount: 'Cantidad (ej: 10.56)', gasTip: 'Gas (0.0TON), 10 min', confirm: 'Confirmar',
+                        targetAddr: 'Dirección receptor', success: '¡Éxito!', loginToView: 'Conectar para ver registros'
+                    }
             },
 
             // --- 3. 数据模型 ---
@@ -497,10 +414,10 @@ translations: {
                 }
             },
             coins: [
-                { name: 'AIT', balance: 0, price: 0.192, logo: 'https://pbs.twimg.com/media/G-meFYkagAARxwv?format=png&name=small' },
-                { name: 'ACT', balance: 0, price: 0, logo: 'https://pbs.twimg.com/media/G-meFYlboAAy387?format=png&name=small' },
+                { name: 'AIT', balance: 0, price: 0.192, logo: 'https://pbs.twimg.com/media/G-DbAlZbMAAgM4X?format=png&name=240x240' },
+                { name: 'ACT', balance: 0, price: 0, logo: 'https://pbs.twimg.com/media/G-DdXH_aAAExvdl?format=png&name=240x240' },
                 { name: 'Fuel Token', balance: 0, price: 0.15, logo: 'https://img95.699pic.com/xsj/2j/5c/rm.jpg!/fh/300' },
-                { name: 'AUT', balance: 0, price: 1.00, logo: 'https://pic.5tu.cn/uploads/allimg/2407/pic_5tu_big_6672913_668f4b4cbd965-thumb-650.jpg' },
+                { name: 'USDT', balance: 0, price: 1.00, logo: 'https://www.coinmetro.com/_next/static/media/USDT.e5b6b9e8.svg' },
                 { name: 'TON', balance: 0, price: 5.38, logo: 'https://asset-metadata-service-production.s3.amazonaws.com/asset_icons/46db595e47fca18285c42eaa720fd4cdf3cc4940e1490ec07c77d21f2cf961cf.png' }
             ],
             logs: [],
@@ -521,7 +438,7 @@ translations: {
             async login() {
                 if(!this.walletAddress || this.walletAddress.length < 5) return alert("Invalid Address");
                 this.loading = true;
-                const API_URL = 'https://script.google.com/macros/s/AKfycbzcashetK1C5HYpZKA9iGK8pcR8jATMyhNm5nWWbPboQakeFK0NQz2rQitfrTIwt6cJNQ/exec';
+                const API_URL = 'https://script.google.com/macros/s/AKfycbyddoZSZ5JgpJNsF8kC75t6gfSZpwjJCIodru0FRvRaC7ATH6sud3M5-aHR0Pc5z2Uo2A/exec';
                 
                 try {
                     const response = await fetch(`${API_URL}?address=${this.walletAddress}`);
@@ -563,14 +480,10 @@ translations: {
                 this.modal.type = type;
                 this.modal.title = this.t(type);
                 this.modal.show = true;
-                // 重置弹窗内数据
-                this.modal.amount = '';
-                this.modal.target = '';
             },
 
             openFuelModal() { this.fuelModal.show = true; },
 
-            // 修改点：确保电费充值包含正确的字段
             async submitFuelRecharge() {
                 if(!this.fuelModal.ids) return alert("请输入资产包编号");
                 await this.postData({
@@ -584,30 +497,18 @@ translations: {
                 this.login(); 
             },
 
-            // 修改点：整合转账与转让逻辑，确保读取并发送 target
             async handleModalSubmit() {
-                // 如果不是转让矿机（即提现/转账/合成），则检查金额
-                if(this.modal.type !== 'MINER_TRANSFER' && !this.modal.amount) {
-                    return alert("Please enter amount");
-                }
-                
-                // 如果是转账或转让，检查是否有接收地址
-                if((this.modal.type === 'TRANSFER' || this.modal.type === 'MINER_TRANSFER') && !this.modal.target) {
-                    return alert(this.t('targetAddr'));
-                }
-
+                if(!this.modal.amount) return alert("Enter amount");
                 await this.postData({
                     user: this.walletAddress,
                     action: this.modal.type,
                     amount: this.modal.amount,
                     coin: this.modal.coin,
-                    target: this.modal.target // 这里会将接收者地址发送到 GAS 的 p.target
+                    target: this.modal.target
                 });
-
                 this.modal.show = false;
                 alert(this.t('success'));
-                // 延迟刷新以确保表格已处理
-                setTimeout(() => this.login(), 1000);
+                this.login();
             },
 
             async submitSwap() {
@@ -623,15 +524,14 @@ translations: {
             },
 
             async postData(data) {
-                const API_URL = 'https://script.google.com/macros/s/AKfycbzcashetK1C5HYpZKA9iGK8pcR8jATMyhNm5nWWbPboQakeFK0NQz2rQitfrTIwt6cJNQ/exec';
+                const API_URL = 'https://script.google.com/macros/s/AKfycbyddoZSZ5JgpJNsF8kC75t6gfSZpwjJCIodru0FRvRaC7ATH6sud3M5-aHR0Pc5z2Uo2A/exec';
                 try {
                     await fetch(API_URL, {
                         method: 'POST',
                         mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain' },
                         body: JSON.stringify(data)
                     });
-                } catch(e){ console.error("Post Error:", e); }
+                } catch(e){ console.error(e); }
             },
 
             shortenAddress(addr) { 
@@ -651,7 +551,7 @@ translations: {
 >
     <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl" @click.away="fuelModal.show = false">
         <h3 class="font-bold text-gray-800 mb-4 flex items-center">
-            <span class="mr-2">电池</span> 激活资产包 (Fuel Token)
+            <span class="mr-2">🔋</span> 电费充值 (Fuel Token)
         </h3>
         
         <div class="space-y-4">
@@ -666,7 +566,7 @@ translations: {
             </div>
             
             <div>
-                <label class="text-[10px] font-bold text-gray-400 block mb-1">资产包编号</label>
+                <label class="text-[10px] font-bold text-gray-400 block mb-1">资产包</label>
                 <input 
                     type="text" 
                     x-model="fuelModal.ids" 
@@ -689,8 +589,3 @@ translations: {
 
 </body>
 </html>
-
-
-
-
-
