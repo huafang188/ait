@@ -56,7 +56,59 @@
             
             <div class="flex gap-2">
                 <button @click="login" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition flex items-center justify-center" :disabled="loading">
-                    <span x-show="loading" class="mr-2 animate-spin">🌀</span>
+                    <span x-show="loading" class="mr-2 animate-spin">🌀feng'che    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles-confetti@2.12.0/tsparticles.confetti.bundle.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+        body { background: linear-gradient(180deg, #e0f2fe 0%, #ffffff 100%); min-height: 100vh; overflow-x: hidden; }
+        .tech-title {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, #60a5fa, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
+        }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 1.25rem; }
+        #tsparticles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .blur-text { filter: blur(5px); user-select: none; }
+        [x-cloak] { display: none !important; }
+        select { appearance: none; }
+    </style>
+</head>
+<body x-data="walletApp()" x-init="init()">
+    <div id="tsparticles"></div>
+
+    <header class="flex justify-between items-center p-4 sticky top-0 z-50 glass-card mx-2 mt-2 shadow-sm">
+        <div class="flex items-center space-x-2 truncate">
+            <img src="https://s1.aigei.com/src/img/gif/8f/8fda5df49f554ae3ac99bad6c3cc5255.gif?imageMogr2/auto-orient/thumbnail/!282x282r/gravity/Center/crop/282x282/quality/85/%7CimageView2/2/w/282&e=2051020800&token=P7S2Xpzfz11vAkASLTkfHN7Fw-oOZBecqeJaxypL:aI_i43nsou7i8gH_zi1AuXfPCNU=" class="w-9 h-9 rounded-full shadow-inner" alt="logo">
+            <h1 class="tech-title text-base sm:text-lg font-bold italic" x-text="t('title')"></h1>
+        </div>
+        <select x-model="lang" @change="changeLang" class="bg-blue-600 text-yellow-300 text-xs font-bold rounded-full px-4 py-2 outline-none border-none shadow-lg cursor-pointer">
+            <template x-for="(name, code) in languages" :key="code">
+                <option :value="code" x-text="name" class="bg-white text-blue-900"></option>
+            </template>
+        </select>
+    </header>
+
+    <main class="p-3 max-w-md mx-auto space-y-5">
+        
+        <div class="glass-card p-5 space-y-4 shadow-xl border-b-2 border-indigo-200">
+            <template x-if="!isLoggedIn">
+                <input type="text" x-model="walletAddress" :placeholder="t('inputPlaceholder')" 
+                       class="w-full p-3 rounded-xl border border-blue-100 bg-white focus:ring-2 focus:ring-blue-400 outline-none text-sm transition-all">
+            </template>
+            <template x-if="isLoggedIn">
+                <div class="flex items-center justify-between bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                    <span class="text-xs font-mono text-indigo-600 font-bold" x-text="shortenAddress(walletAddress)"></span>
+                    <span class="text-[10px] bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">Online</span>
+                </div>
+            </template>
+            
+            <div class="flex gap-2">
+                <button @click="login" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition flex items-center justify-center" :disabled="loading">
+                    <span x-show="loading" class="mr-2 animate-spin">⚽</span>
                     <span x-text="isLoggedIn ? t('refreshData') : t('connectBtn')"></span>
                 </button>
                 <button x-show="isLoggedIn" @click="logout" class="px-4 bg-red-50 text-red-500 rounded-xl font-bold border border-red-100" x-text="t('logout')"></button>
@@ -79,7 +131,7 @@
             <template x-if="isLoggedIn">
                 <template x-for="m in userData.miners">
                     <div class="text-center p-2 bg-white rounded-xl border border-blue-50 shadow-sm">
-                        <div class="text-2xl mb-1">💻</div>
+                        <div class="text-2xl mb-1">💎</div>
                         <div class="text-[9px] text-gray-500 flex justify-center items-center">
                             <span x-text="m.id"></span>
                         </div>
@@ -318,7 +370,7 @@
             translations: {
                 'zh-CN': {
                     title: '链上钱包', inputPlaceholder: '在此输入您的钱包地址', connectBtn: '连接钱包', refreshData: '更新数据', logout: '退出',
-                    minerModule: '我的数据包', rechargeTip: '充值您的链上资产', rechargeBtn: '钱包充值',
+                    minerModule: '我的资产包', rechargeTip: '充值您的链上资产', rechargeBtn: '钱包充值',
                     dailyOutput: '每日产积分', lockedAmount: '锁仓数量', mergeMiner: '合成资产包', transferMiner: '资产包转让',
                     totalAssets: '钱包总资产 (USD)', withdraw: '提现', deposit: '充值', transfer: '转账', swapTitle: '闪电兑换',
                     executeSwap: '立即兑换', records: '交易记录', date: '时间', type: '操作', amount: '数额', status: '状态',
@@ -589,3 +641,4 @@
 
 </body>
 </html>
+
