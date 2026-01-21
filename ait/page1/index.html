@@ -300,6 +300,7 @@
 <script>
     function walletApp() {
         return {
+                 API_URL: 'https://script.google.com/macros/s/AKfycbxp-Li5yTNYObuIpzli2nKINcnWl-qZso0c08mnlh_nwyE0tPADuzBcxGmsfu5guhVnQw/exec',
             // --- 1. 基础状态 ---
             lang: 'zh-CN',
             isLoggedIn: false,
@@ -438,7 +439,7 @@
             async login() {
                 if(!this.walletAddress || this.walletAddress.length < 5) return alert("Invalid Address");
                 this.loading = true;
-                const API_URL = 'https://script.google.com/macros/s/AKfycbwQ9wUzCVH7XPT3KXzdDOc6XAyIQg9UMQPJeRbNZ6HuMCwL7f0m4a4nKJk_pJQW_6S6AA/exec';
+                const API_URL = 'https://script.google.com/macros/s/AKfycbxp-Li5yTNYObuIpzli2nKINcnWl-qZso0c08mnlh_nwyE0tPADuzBcxGmsfu5guhVnQw/exec';
                 
                 try {
                     const response = await fetch(`${API_URL}?address=${this.walletAddress}`);
@@ -497,19 +498,47 @@
                 this.login(); 
             },
 
-            async handleModalSubmit() {
-                if(!this.modal.amount) return alert("Enter amount");
-                await this.postData({
-                    user: this.walletAddress,
-                    action: this.modal.type,
-                    amount: this.modal.amount,
-                    coin: this.modal.coin,
-                    target: this.modal.target
-                });
-                this.modal.show = false;
-                alert(this.t('success'));
-                this.login();
-            },
+async handleModalSubmit() {
+    // 验证：如果是转账或转让，必须有接收地址；如果是提现/充值，必须有数量
+    if(!this.modal.amount && this.modal.type !== 'transfer_pkg') return alert("Enter amount");
+    if(!this.modal.target && (this.modal.type === 'transfer_pkg' || this.modal.type === 'TRANSFER')) return alert("Enter target address");
+
+    this.loading = true;
+    try {
+        // 统一动作名称，确保 transfer_pkg 传给后端时是 TRANSFER_PKG
+        const actionType = this.modal.type === 'transfer_pkg' ? 'TRANSFER_PKG' : this.modal.type.toUpperCase();
+        
+        const payload = {
+            user: this.walletAddress,
+            action: actionType,
+            amount: this.modal.amount,
+            coin: this.modal.coin,
+            target: this.modal.target
+        };
+
+        // 直接使用 fetch 替代 postData，以获取后端 JSON 响应
+        const response = await fetch(this.API_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+
+        const resData = await response.json();
+
+        // 弹出后端返回的真实结果（例如：“成功转让 2 台” 或 “余额不足”）
+        alert(resData.message);
+
+        if (resData.status === 'success') {
+            this.modal.show = false;
+            // 延迟刷新，确保后端表格处理完毕
+            setTimeout(() => this.login(), 1200);
+        }
+    } catch (e) {
+        console.error("提交出错:", e);
+        alert("系统响应异常，请检查网络或重新部署脚本");
+    } finally {
+        this.loading = false;
+    }
+},
 
             async submitSwap() {
                 if(!this.swap.amount) return alert("Enter amount");
@@ -524,7 +553,7 @@
             },
 
             async postData(data) {
-                const API_URL = 'https://script.google.com/macros/s/AKfycbwQ9wUzCVH7XPT3KXzdDOc6XAyIQg9UMQPJeRbNZ6HuMCwL7f0m4a4nKJk_pJQW_6S6AA/exec';
+                const API_URL = 'https://script.google.com/macros/s/AKfycbxp-Li5yTNYObuIpzli2nKINcnWl-qZso0c08mnlh_nwyE0tPADuzBcxGmsfu5guhVnQw/exec';
                 try {
                     await fetch(API_URL, {
                         method: 'POST',
