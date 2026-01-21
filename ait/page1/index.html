@@ -438,7 +438,7 @@
             async login() {
                 if(!this.walletAddress || this.walletAddress.length < 5) return alert("Invalid Address");
                 this.loading = true;
-                const API_URL = 'https://script.google.com/macros/s/AKfycbyddoZSZ5JgpJNsF8kC75t6gfSZpwjJCIodru0FRvRaC7ATH6sud3M5-aHR0Pc5z2Uo2A/exec';
+                const API_URL = 'https://script.google.com/macros/s/AKfycbwQ9wUzCVH7XPT3KXzdDOc6XAyIQg9UMQPJeRbNZ6HuMCwL7f0m4a4nKJk_pJQW_6S6AA/exec';
                 
                 try {
                     const response = await fetch(`${API_URL}?address=${this.walletAddress}`);
@@ -524,7 +524,7 @@
             },
 
             async postData(data) {
-                const API_URL = 'https://script.google.com/macros/s/AKfycbyddoZSZ5JgpJNsF8kC75t6gfSZpwjJCIodru0FRvRaC7ATH6sud3M5-aHR0Pc5z2Uo2A/exec';
+                const API_URL = 'https://script.google.com/macros/s/AKfycbwQ9wUzCVH7XPT3KXzdDOc6XAyIQg9UMQPJeRbNZ6HuMCwL7f0m4a4nKJk_pJQW_6S6AA/exec';
                 try {
                     await fetch(API_URL, {
                         method: 'POST',
@@ -589,3 +589,4 @@
 
 </body>
 </html>
+
