@@ -300,7 +300,7 @@
 <script>
     function walletApp() {
         return {
-                 API_URL: 'https://script.google.com/macros/s/AKfycbxp-Li5yTNYObuIpzli2nKINcnWl-qZso0c08mnlh_nwyE0tPADuzBcxGmsfu5guhVnQw/exec',
+                 API_URL: 'https://script.google.com/macros/s/AKfycbxXQ8B2WDwBdyIUlVvQR2-AY27FfOsvRDe5x_arY93qaImpHDp5JD1VLsVOnWvZzncuag/exec',
             // --- 1. 基础状态 ---
             lang: 'zh-CN',
             isLoggedIn: false,
@@ -439,7 +439,7 @@
             async login() {
                 if(!this.walletAddress || this.walletAddress.length < 5) return alert("Invalid Address");
                 this.loading = true;
-                const API_URL = 'https://script.google.com/macros/s/AKfycbxp-Li5yTNYObuIpzli2nKINcnWl-qZso0c08mnlh_nwyE0tPADuzBcxGmsfu5guhVnQw/exec';
+                const API_URL = 'https://script.google.com/macros/s/AKfycbxXQ8B2WDwBdyIUlVvQR2-AY27FfOsvRDe5x_arY93qaImpHDp5JD1VLsVOnWvZzncuag/exec';
                 
                 try {
                     const response = await fetch(`${API_URL}?address=${this.walletAddress}`);
@@ -553,7 +553,7 @@ async handleModalSubmit() {
             },
 
             async postData(data) {
-                const API_URL = 'https://script.google.com/macros/s/AKfycbxp-Li5yTNYObuIpzli2nKINcnWl-qZso0c08mnlh_nwyE0tPADuzBcxGmsfu5guhVnQw/exec';
+                const API_URL = 'https://script.google.com/macros/s/AKfycbxXQ8B2WDwBdyIUlVvQR2-AY27FfOsvRDe5x_arY93qaImpHDp5JD1VLsVOnWvZzncuag/exec';
                 try {
                     await fetch(API_URL, {
                         method: 'POST',
@@ -618,3 +618,4 @@ async handleModalSubmit() {
 
 </body>
 </html>
+
