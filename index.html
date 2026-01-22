@@ -433,7 +433,7 @@ function drawChart() {
         `https://docs.google.com/spreadsheets/d/${ssId}/gviz/tq?tqx=out:json`
     );
 
-    // 3. 发送请求并绘制
+// 3. 发送请求并绘制
     query.send(function(response) {
         if (response.isError()) {
             console.error('Error: ' + response.getMessage());
@@ -442,14 +442,25 @@ function drawChart() {
         
         const data = response.getDataTable();
         const options = {
-            curveType: 'function',
-            legend: { position: 'none' },
-            backgroundColor: '#FFFFFF',
-            colors: ['#f7a33b'], // 保持你的科技紫
-            chartArea: { width: '80%', height: '80%' },
-            // 优化移动端坐标轴文字
-            hAxis: { textStyle: { color: '#888', fontSize: 10 } },
-            vAxis: { textStyle: { color: '#888', fontSize: 10 } }
+            curveType: 'function',     // 平滑曲線
+            legend: { position: 'none' }, // 隱藏圖例
+            backgroundColor: '#F8FCFF',  // 背景設為白色
+            colors: ['#f7a33b'],       // 線條顏色（暖橘色）
+            chartArea: { width: '100%', height: '100%' }, // 最大化繪圖區域，減少留白
+            
+            // 橫座標軸設定
+            hAxis: { 
+                textPosition: 'none',      // 隱藏橫軸文字
+                baselineColor: 'none',     // 隱藏底部基準線
+                gridlines: { color: 'transparent' } // 隱藏水平網格線
+            },
+            
+            // 縱座標軸設定
+            vAxis: { 
+                textPosition: 'none',      // 隱藏縱軸文字
+                baselineColor: 'none',     // 隱藏側邊基準線
+                gridlines: { color: 'transparent' } // 隱藏垂直網格線
+            }
         };
 
         const chart = new google.visualization.LineChart(document.getElementById('chart_div'));
@@ -569,6 +580,7 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
 </script>
 </body>
 </html>
+
 
 
 
