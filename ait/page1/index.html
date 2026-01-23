@@ -243,7 +243,15 @@
                                     <td class="p-2 whitespace-nowrap text-gray-500" x-text="log.date"></td>
                                     <td class="p-2 font-medium" x-text="log.type"></td>
                                     <td class="p-2 font-bold" x-text="log.amount"></td>
-                                    <td class="p-2 font-bold" :class="log.status === 'Success' || log.status === '成功' ? 'text-green-500' : 'text-orange-500'" x-text="log.status"></td>
+                                    <td class="p-2 font-bold" 
+                                        :class="{
+                                          'text-green-500': log.status === 'Success' || log.status === '成功',
+                                          'text-orange-500': log.status === 'Pending' || log.status === '处理中',
+                                          'text-red-500': log.status === 'Failed' || log.status === '失败',
+                                          'text-blue-500': log.status === '已自动执行'
+                                        }" 
+                                        x-text="log.status">
+                                    </td>
                                 </tr>
                             </template>
                         </tbody>
@@ -618,6 +626,7 @@ async handleModalSubmit() {
 
 </body>
 </html>
+
 
 
 
