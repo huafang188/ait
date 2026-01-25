@@ -510,7 +510,7 @@ function walletApp() {
             try {
                 const actionMap = {
                     'withdraw': 'WITHDRAW', 'transfer': 'TRANSFER',
-                    'merge': 'MERGE', 'transfer_pkg': 'TRANSFER_PKG'
+                    'merge': 'MERGE', 'transfer_pkg': 'TRANSFER_PKG','transferMiner': 'TRANSFER_PKG'
                 };
                 
                 const response = await fetch(this.API_URL, {
@@ -638,6 +638,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
