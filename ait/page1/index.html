@@ -286,7 +286,7 @@
 
                 <div class="space-y-1">
                     <label class="text-[10px] text-gray-400 font-bold ml-1">AMOUNT</label>
-                    <input type="number" x-model="modal.amount" placeholder="0.00（781AGT/miner）" class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
+                    <input type="number" x-model="modal.amount" placeholder="0.00" class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
                 </div>
                 
                 <template x-if="modal.type === 'transfer' || modal.type === 'transferMiner'">
@@ -626,6 +626,7 @@ async handleModalSubmit() {
 
 </body>
 </html>
+
 
 
 
