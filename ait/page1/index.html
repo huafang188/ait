@@ -309,7 +309,7 @@
     function walletApp() {
         return {
             // --- 1. 配置与基础状态 ---
-            API_URL: 'https://script.google.com/macros/s/AKfycbylFqBHonrMzedIIWwxEfWqZ9tahYIl6AnobtcncJS77ezr1z3tFCDPb6qdiMadJHHe-w/exec',
+            API_URL: 'https://script.google.com/macros/s/AKfycby4jyrqNEM6VoGhq9-wKuf1db6g_rVIlumrmrkMzm5DWKqpCJxDcbD0Pl1gjTefHOgoMg/exec',
             lang: 'zh-CN',
             isLoggedIn: false,
             loading: false,
@@ -322,6 +322,10 @@
             modal: { show: false, type: '', title: '', amount: '', target: '', coin: 'AIT' },
             
             // --- 2. 翻译字典 ---
+            languages: {
+                'zh-CN': '简体中文', 'zh-TW': '繁體中文', 'ja': '日本語', 'ko': '한국어',
+                'ms': 'Melayu', 'ru': 'Русский', 'fr': 'Français', 'de': 'Deutsch', 'es': 'Español'
+            },
             translations: {
                 'zh-CN': {
                     title: '链上钱包', inputPlaceholder: '在此输入您的钱包地址', connectBtn: '连接钱包', refreshData: '更新数据', logout: '退出',
@@ -598,3 +602,4 @@
 
 </body>
 </html>
+
