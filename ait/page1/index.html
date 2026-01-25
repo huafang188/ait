@@ -306,31 +306,47 @@
     </div>
 
 <script>
-    function walletApp() {
-        return {
-            // --- 1. 配置与基础状态 ---
-            API_URL: 'https://script.google.com/macros/s/AKfycbwRIrysX2031j2M7c_lz4FfIJKSXOrqQmxIy4f8Ez0jt8B2pe-ndYDbVc3Xs-A6X_zY/exec',
-            lang: 'zh-CN',
-            isLoggedIn: false,
-            loading: false,
-            walletAddress: '',
-            showMiners: false, 
-            // 在 walletApp 的 return 对象中添加：
-            openFuelModal() {
-    // 1. 检查是否登录
-    if (!this.isLoggedIn) {
-        alert(this.t('loginToView'));
-        return;
-    }
-    // 2. 初始化数据并打开弹窗
-    this.fuelModal.ids = ''; 
-    this.fuelModal.show = true;
-},
-            
-            // 各模块表单模型
-            swap: { pair: 'AIT-USDT', amount: '' },
-            fuelModal: { show: false, days: '30', ids: '' }, // days即周期
-            modal: { show: false, type: '', title: '', amount: '', target: '', coin: 'AIT' },
+function walletApp() {
+    return {
+        // --- 基础状态属性 ---
+        isLoggedIn: false,
+        loading: false,
+        walletAddress: '',
+        lang: localStorage.getItem('lang') || 'zh-CN',
+        showMiners: true,
+        // 请确保此 URL 为你 Google Apps Script 部署的最新的“网页应用”链接
+        API_URL: 'https://script.google.com/macros/s/AKfycbzLzV5Y777o3_HnQ5XyQ3N3q7-4A/exec', 
+
+        // --- 用户及团队数据结构 ---
+        userData: {
+            totalValue: '0.00',
+            dailyOutput: '0',
+            lockedAmount: '0',
+            miners: [],
+            team: {
+                v1: { count: 0, miners: 0, running: 0, reward: 0 },
+                v2: { count: 0, miners: 0, running: 0, reward: 0 },
+                v3: { count: 0, miners: 0, running: 0, reward: 0 },
+                v4_17: { count: 0, miners: 0, running: 0, reward: 0 },
+                v18_20: { count: 0, miners: 0, running: 0, reward: 0 }
+            }
+        },
+
+        // --- 弹窗与交互逻辑状态 ---
+        fuelModal: { show: false, days: '30', ids: '' },
+        modal: { show: false, type: '', amount: '', target: '', coin: 'USDT' },
+        swap: { pair: 'AIT-ACT', amount: '' },
+        languages: { 'zh-CN': '简体中文', 'en': 'English' },
+
+        // --- 初始化函数 ---
+        init() {
+            const savedAddr = localStorage.getItem('walletAddress');
+            if (savedAddr) {
+                this.walletAddress = savedAddr;
+                this.login();
+            }
+        },
+
             
             // --- 2. 翻译字典 ---
             languages: {
@@ -422,161 +438,94 @@
             },
 
 
-            // --- 3. 数据模型 ---
-            userData: { 
-                miners: [], totalValue: '0.00', dailyOutput: '0', lockedAmount: '0',
-                team: { v1: {count:0}, v2: {count:0}, v3: {count:0}, v4_17: {count:0}, v18_20: {count:0} }
-            },
-            coins: [
-                { name: 'AIT', balance: 0, logo: 'https://pbs.twimg.com/media/G-DbAlZbMAAgM4X?format=png&name=240x240' },
-                { name: 'ACT', balance: 0, logo: 'https://pbs.twimg.com/media/G-DdXH_aAAExvdl?format=png&name=240x240' },
-                { name: 'Fuel Token', balance: 0, logo: 'https://img95.699pic.com/xsj/2j/5c/rm.jpg!/fh/300' },
-                { name: 'USDT', balance: 0, logo: 'https://www.coinmetro.com/_next/static/media/USDT.e5b6b9e8.svg' },
-                { name: 'TON', balance: 0, logo: 'https://asset-metadata-service-production.s3.amazonaws.com/asset_icons/46db595e47fca18285c42eaa720fd4cdf3cc4940e1490ec07c77d21f2cf961cf.png' }
-            ],
-            logs: [],
+        // --- 核心方法 ---
 
-            // --- 4. 核心逻辑 ---
-            init() {
-                const saved = localStorage.getItem('onchain_wallet_addr');
-                if(saved) {
-                    this.walletAddress = saved;
-                    this.login();
-                }
-            },
-
-            t(key) { 
-                return (this.translations[this.lang] && this.translations[this.lang][key]) || this.translations['zh-CN'][key]; 
-            },
-
-            // 统一的POST请求处理器 (替代原来的 postData)
-            async requestPost(payload) {
-                this.loading = true;
-                try {
-                    const response = await fetch(this.API_URL, {
-                        method: 'POST',
-                        body: JSON.stringify(payload)
-                    });
-                    const res = await response.json();
-                    alert(res.message); // 显示后端的成功或错误提示
-                    if (res.status === 'success') {
-                        setTimeout(() => this.login(), 1000); // 成功后自动刷新
-                        return true;
-                    }
-                } catch (e) {
-                    console.error("Post Error:", e);
-                    alert("网络异常，请稍后再试");
-                } finally {
-                    this.loading = false;
-                }
-                return false;
-            },
-
-            async login() {
-                if(!this.walletAddress || this.walletAddress.length < 5) return;
-                // 后端返回值示例
-var result = {
-  user: {
-    total: "100.00",
-    team: {
-      v1: { count: 5, miners: 10, running: 8, reward: 50 }, // 确保这里有数据
-      v2: { count: 2, miners: 4, running: 4, reward: 20 },
-      // ...
-    },
-    balances: { ... }
-  },
-  miners: [...],
-  logs: [...]
-};
-                this.loading = true;
-                try {
-                    const response = await fetch(`${this.API_URL}?address=${this.walletAddress}`);
-                    const data = await response.json();
-                    if(data.user) {
-                        this.userData.totalValue = data.user.total || '0.00';
-                        this.userData.dailyOutput = data.user.daily || '0';
-                        this.userData.lockedAmount = data.user.locked || '0';
-                        this.userData.miners = data.miners || [];
-                        this.userData.team = data.user.team || this.userData.team;
-                        this.logs = data.logs || [];
-                        this.coins.forEach(c => {
-                            if(data.user.balances) c.balance = data.user.balances[c.name] || 0;
-                        });
-                        this.isLoggedIn = true;
-                        localStorage.setItem('onchain_wallet_addr', this.walletAddress);
-                    }
-                } catch (e) { console.error("Login Error:", e); }
-                finally { this.loading = false; }
-            },
-
-            // 1. 转账、提现、合成、转让的入口
-            async handleModalSubmit() {
-                const type = this.modal.type;
-                const payload = {
-                    user: this.walletAddress,
-                    amount: this.modal.amount,
-                    coin: this.modal.coin,
-                    target: this.modal.target,
-                    action: ''
-                };
-
-                // 根据类型匹配后端 Action
-                if (type === 'transfer_pkg') payload.action = 'TRANSFER_PKG';
-                else if (type === 'TRANSFER') payload.action = 'TRANSFER';
-                else if (type === 'WITHDRAW') payload.action = 'WITHDRAW';
-                else if (type === 'MINER_MERGE') payload.action = 'MINER_MERGE';
-
-                if (await this.requestPost(payload)) {
-                    this.modal.show = false;
-                    this.modal.amount = '';
-                    this.modal.target = '';
-                }
-            },
-
-            // 2. 兑换逻辑
-            async submitSwap() {
-                if (!this.swap.amount) return alert("Enter amount");
-                const payload = {
-                    user: this.walletAddress,
-                    action: 'SWAP',
-                    pair: this.swap.pair,
-                    amount: this.swap.amount
-                };
-                if (await this.requestPost(payload)) {
-                    this.swap.amount = '';
-                }
-            },
-
-            // 3. 电费充值逻辑
-            async submitFuelRecharge() {
-                if(!this.fuelModal.ids) return alert("请输入矿机编号");
-                const payload = {
-                    user: this.walletAddress,
-                    action: 'FUEL_RECHARGE',
-                    duration: this.fuelModal.days,
-                    minerIds: this.fuelModal.ids
-                };
-                if (await this.requestPost(payload)) {
-                    this.fuelModal.show = false;
-                }
-            },
-
-            // --- 辅助 UI 方法 ---
-            openModal(type) {
-                if(!this.isLoggedIn) return alert("Please connect wallet");
-                this.modal.type = type;
-                this.modal.title = this.t(type);
-                this.modal.show = true;
-            },
-            logout() {
-                localStorage.removeItem('onchain_wallet_addr');
-                location.reload(); 
-            },
-            shortenAddress(addr) { 
-                return addr ? addr.slice(0,6) + '...' + addr.slice(-4) : ''; 
+        // 1. 打开电费充值弹窗
+        openFuelModal() {
+            if (!this.isLoggedIn) {
+                alert(this.t('connectBtn'));
+                return;
             }
+            this.fuelModal.ids = '';
+            this.fuelModal.show = true;
+        },
+
+        // 2. 登录/刷新逻辑
+        async login() {
+            if (!this.walletAddress) return;
+            this.loading = true;
+            try {
+                const response = await fetch(`${this.API_URL}?address=${encodeURIComponent(this.walletAddress)}`);
+                const data = await response.json();
+                
+                if (data.status === 'success' && data.user) {
+                    // 更新资产
+                    this.userData.totalValue = data.user.total || '0.00';
+                    this.userData.dailyOutput = data.user.daily || '0';
+                    this.userData.lockedAmount = data.user.locked || '0';
+                    this.userData.miners = data.miners || [];
+                    
+                    // 更新团队数据（确保后端返回了 team 对象）
+                    if (data.user.team) {
+                        this.userData.team = data.user.team;
+                    }
+                    
+                    this.isLoggedIn = true;
+                    localStorage.setItem('walletAddress', this.walletAddress);
+                } else {
+                    alert('User not found');
+                }
+            } catch (e) {
+                console.error("Login Error:", e);
+                alert("API Connection Failed");
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        // 3. 提交电费充值
+        async submitFuelRecharge() {
+            if(!this.fuelModal.ids) return alert("请输入资产包ID");
+            this.loading = true;
+            try {
+                const response = await fetch(this.API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({
+                        action: 'fuelRecharge',
+                        address: this.walletAddress,
+                        days: this.fuelModal.days,
+                        ids: this.fuelModal.ids
+                    })
+                });
+                alert("提交成功，请等待系统核验");
+                this.fuelModal.show = false;
+            } catch (e) {
+                alert("提交失败");
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        // 4. 语言切换
+        changeLang() {
+            localStorage.setItem('lang', this.lang);
+        },
+
+        // 5. 退出登录
+        logout() {
+            this.isLoggedIn = false;
+            this.walletAddress = '';
+            localStorage.removeItem('walletAddress');
+        },
+
+        // 6. 通用弹窗控制
+        openModal(type) {
+            this.modal.type = type;
+            this.modal.show = true;
         }
-    }
+    };
+}
 </script>
 
 <div 
@@ -627,6 +576,7 @@ var result = {
 
 </body>
 </html>
+
 
 
 
