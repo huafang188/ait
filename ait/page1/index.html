@@ -315,6 +315,17 @@
             loading: false,
             walletAddress: '',
             showMiners: false, 
+            // 在 walletApp 的 return 对象中添加：
+            openFuelModal() {
+    // 1. 检查是否登录
+    if (!this.isLoggedIn) {
+        alert(this.t('loginToView'));
+        return;
+    }
+    // 2. 初始化数据并打开弹窗
+    this.fuelModal.ids = ''; 
+    this.fuelModal.show = true;
+},
             
             // 各模块表单模型
             swap: { pair: 'AIT-USDT', amount: '' },
@@ -463,6 +474,20 @@
 
             async login() {
                 if(!this.walletAddress || this.walletAddress.length < 5) return;
+                // 后端返回值示例
+var result = {
+  user: {
+    total: "100.00",
+    team: {
+      v1: { count: 5, miners: 10, running: 8, reward: 50 }, // 确保这里有数据
+      v2: { count: 2, miners: 4, running: 4, reward: 20 },
+      // ...
+    },
+    balances: { ... }
+  },
+  miners: [...],
+  logs: [...]
+};
                 this.loading = true;
                 try {
                     const response = await fetch(`${this.API_URL}?address=${this.walletAddress}`);
@@ -602,5 +627,6 @@
 
 </body>
 </html>
+
 
 
