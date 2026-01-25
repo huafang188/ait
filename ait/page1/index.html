@@ -416,6 +416,9 @@ function walletApp() {
             totalValue: '0.00',
             dailyOutput: '0',
             lockedAmount: '0',
+            fuelModal: { show: false, days: '30', ids: '' },
+            modal: { show: false, type: '', title: '', amount: '', target: '', coin: 'AIT' },
+            swap: { pair: 'AIT-USDT', amount: '' },
             team: {
                 v1: {count:0, miners:0, running:0, reward:0},
                 v2: {count:0, miners:0, running:0, reward:0},
@@ -442,6 +445,15 @@ function walletApp() {
             }
         },
 
+        openModal(type) {
+            if(!this.isLoggedIn) return alert("请先连接钱包");
+                this.modal.type = type;
+                this.modal.title = this.t(type); // 确保你的 t(key) 性能正常
+                this.modal.show = true; // 关键：这是打开弹窗的开关
+        },
+        openFuelModal() { 
+                this.fuelModal.show = true; 
+        },
         t(key) {
             return (this.translations[this.lang] && this.translations[this.lang][key]) || (this.translations['zh-CN'] && this.translations['zh-CN'][key]) || key;
         },
@@ -610,6 +622,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
