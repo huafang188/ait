@@ -306,51 +306,53 @@
     </div>
 
 <script>
-function walletApp() {
-    return {
-        // --- 1. 基础状态 ---
-        isLoggedIn: false,
-        loading: false,
-        walletAddress: '',
-        lang: localStorage.getItem('lang') || 'zh-CN',
-        showMiners: true,
-        API_URL: 'https://script.google.com/macros/s/AKfycbzLzV5Y777o3_HnQ5XyQ3N3q7-4A/exec',
+    // 1. 定义核心函数
+    function walletApp() {
+        console.log("WalletApp Function Loading...");
+        return {
+            // --- 状态数据 ---
+            isLoggedIn: false,
+            loading: false,
+            walletAddress: '',
+            lang: localStorage.getItem('lang') || 'zh-CN',
+            showMiners: true,
+            // 确保这是你最新的 Google 脚本 Web App URL
+            API_URL: 'https://script.google.com/macros/s/AKfycbzLzV5Y777o3_HnQ5XyQ3N3q7-4A/exec',
 
-        // --- 2. 核心数据对象 ---
-        userData: {
-            totalValue: '0.00',
-            dailyOutput: '0',
-            lockedAmount: '0',
-            balances: { "AIT": 0, "ACT": 0, "FUEL TOKEN": 0, "USDT": 0, "TON": 0 },
-            miners: [],
-            team: {
-                v1: { count: 0, miners: 0, running: 0, reward: 0 },
-                v2: { count: 0, miners: 0, running: 0, reward: 0 },
-                v3: { count: 0, miners: 0, running: 0, reward: 0 },
-                v4_17: { count: 0, miners: 0, running: 0, reward: 0 },
-                v18_20: { count: 0, miners: 0, running: 0, reward: 0 }
-            }
-        },
+            // --- 核心对象 ---
+            userData: {
+                totalValue: '0.00',
+                dailyOutput: '0',
+                lockedAmount: '0',
+                balances: { "AIT": 0, "ACT": 0, "FUEL TOKEN": 0, "USDT": 0, "TON": 0 },
+                miners: [],
+                team: {
+                    v1: { count: 0, miners: 0, running: 0, reward: 0 },
+                    v2: { count: 0, miners: 0, running: 0, reward: 0 },
+                    v3: { count: 0, miners: 0, running: 0, reward: 0 },
+                    v4_17: { count: 0, miners: 0, running: 0, reward: 0 },
+                    v18_20: { count: 0, miners: 0, running: 0, reward: 0 }
+                }
+            },
 
-        // --- 3. 交互逻辑对象 ---
-        fuelModal: { show: false, days: '30', ids: '' },
-        modal: { show: false, type: '', amount: '', target: '', coin: 'USDT' },
-        swap: { pair: 'AIT-ACT', amount: '' },
-        // 补全 HTML 中 x-for 遍历需要的数组
-        coins: [
-            { name: 'AIT', icon: '💎' },
-            { name: 'ACT', icon: '🔥' },
-            { name: 'FUEL TOKEN', icon: '🔋' },
-            { name: 'USDT', icon: '💵' },
-            { name: 'TON', icon: '💎' }
-        ],
-        languages: { 'zh-CN': '简体中文', 'en': 'English' , 'zh-TW': '繁體中文', 'ja': '日本語', 'ko': '한국어',
-                'ms': 'Melayu', 'ru': 'Русский', 'fr': 'Français', 'de': 'Deutsch', 'es': 'Español'},
+            // --- UI 控制 ---
+            fuelModal: { show: false, days: '30', ids: '' },
+            modal: { show: false, type: '', amount: '', target: '', coin: 'USDT' },
+            swap: { pair: 'AIT-ACT', amount: '' },
+            coins: [
+                { name: 'AIT', icon: '💎' },
+                { name: 'ACT', icon: '🔥' },
+                { name: 'FUEL TOKEN', icon: '🔋' },
+                { name: 'USDT', icon: '💵' },
+                { name: 'TON', icon: '💎' }
+            ],
+            languages: { 'zh-CN': '简体中文', 'en': 'English' , 'zh-TW': '繁體中文', 'ja': '日本語', 'ko': '한국어',
+                'ms': 'Melayu', 'ru': 'Русский', 'fr': 'Français', 'de': 'Deutsch', 'es': 'Español' },
 
-        // --- 4. 翻译字典 ---
-        t(key) {
-            const translations = {
-                'zh-CN': {
+            // --- 翻译函数 (修复 t is not defined) ---
+            t(key) {
+                const dict = {
+'zh-CN': {
                     title: 'AI Chain Wallet',
                     totalAssets: '总资产价值',
                     dailyOutput: '预计日产出',
@@ -476,109 +478,80 @@ function walletApp() {
                     inputAmount: 'Cantidad (ej: 10.56)', gasTip: 'Gas (0.0TON), 10 min', confirm: 'Confirmar',
                     targetAddr: 'Dirección receptor', success: '¡Éxito!', loginToView: 'Conectar para ver registros'
                 }
-            };
-            const langTable = translations[this.lang] || translations['zh-CN'];
-            return langTable[key] || key;
-        },
+                };
+                const res = dict[this.lang] || dict['zh-CN'];
+                return res[key] || key;
+            },
 
-        // --- 5. 初始化逻辑 ---
-        init() {
-            const savedAddr = localStorage.getItem('walletAddress');
-            if (savedAddr) {
-                this.walletAddress = savedAddr;
-                this.login();
-            }
-        },
-
-        // --- 6. 业务方法 ---
-
-        // 登录及数据同步
-        async login() {
-            if (!this.walletAddress) return;
-            this.loading = true;
-            try {
-                const response = await fetch(`${this.API_URL}?address=${encodeURIComponent(this.walletAddress)}`);
-                const data = await response.json();
-                if (data.status === 'success' && data.user) {
-                    this.userData.totalValue = data.user.total || '0.00';
-                    this.userData.dailyOutput = data.user.daily || '0';
-                    this.userData.lockedAmount = data.user.locked || '0';
-                    this.userData.balances = data.user.balances || this.userData.balances;
-                    this.userData.miners = data.miners || [];
-                    if (data.user.team) this.userData.team = data.user.team;
-                    
-                    this.isLoggedIn = true;
-                    localStorage.setItem('walletAddress', this.walletAddress);
+            // --- 方法逻辑 ---
+            init() {
+                console.log("Alpine Initialized");
+                const saved = localStorage.getItem('walletAddress');
+                if (saved) {
+                    this.walletAddress = saved;
+                    this.login();
                 }
-            } catch (e) {
-                console.error("Login fail:", e);
-                alert("Network error");
-            } finally {
-                this.loading = false;
+            },
+
+            async login() {
+                if (!this.walletAddress) return;
+                this.loading = true;
+                try {
+                    const res = await fetch(`${this.API_URL}?address=${encodeURIComponent(this.walletAddress)}`);
+                    const data = await res.json();
+                    if (data.status === 'success' && data.user) {
+                        this.userData.totalValue = data.user.total || '0.00';
+                        this.userData.dailyOutput = data.user.daily || '0';
+                        this.userData.lockedAmount = data.user.locked || '0';
+                        this.userData.balances = data.user.balances || this.userData.balances;
+                        this.userData.miners = data.miners || [];
+                        if (data.user.team) this.userData.team = data.user.team;
+                        this.isLoggedIn = true;
+                        localStorage.setItem('walletAddress', this.walletAddress);
+                    }
+                } catch (e) {
+                    console.error("Fetch Error:", e);
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            openFuelModal() { this.fuelModal.show = true; },
+            
+            openModal(type) {
+                this.modal.type = type;
+                this.modal.show = true;
+            },
+
+            async submitFuelRecharge() {
+                if(!this.fuelModal.ids) return alert("IDs required");
+                this.loading = true;
+                try {
+                    await fetch(this.API_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify({
+                            action: 'fuelRecharge',
+                            address: this.walletAddress,
+                            ids: this.fuelModal.ids,
+                            days: this.fuelModal.days
+                        })
+                    });
+                    alert("Success! Verifying...");
+                    this.fuelModal.show = false;
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            changeLang() { localStorage.setItem('lang', this.lang); },
+
+            logout() {
+                localStorage.removeItem('walletAddress');
+                location.reload();
             }
-        },
-
-        // 弹窗控制
-        openFuelModal() {
-            if(!this.isLoggedIn) return alert(this.t('loginToView'));
-            this.fuelModal.show = true;
-        },
-
-        openModal(type) {
-            if(!this.isLoggedIn) return alert(this.t('loginToView'));
-            this.modal.type = type;
-            this.modal.show = true;
-        },
-
-        // 电费提交
-        async submitFuelRecharge() {
-            if(!this.fuelModal.ids) return alert("Please enter IDs");
-            this.loading = true;
-            try {
-                // 使用 POST 提交到 Google Sheets
-                await fetch(this.API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({
-                        action: 'fuelRecharge',
-                        address: this.walletAddress,
-                        ids: this.fuelModal.ids,
-                        days: this.fuelModal.days
-                    })
-                });
-                alert("Submitted! Waiting for verification.");
-                this.fuelModal.show = false;
-            } catch (e) {
-                alert("Submit failed");
-            } finally {
-                this.loading = false;
-            }
-        },
-
-        // 闪电兑换提交
-        async submitSwap() {
-            if(!this.swap.amount) return alert("Enter amount");
-            alert(`Swapping ${this.swap.amount} ${this.swap.pair}...`);
-            // 此处添加实际兑换 API 调用
-        },
-
-        // 通用业务提交（提现、划转等）
-        async handleModalSubmit() {
-            alert(`Action: ${this.modal.type}, Amount: ${this.modal.amount}`);
-            this.modal.show = false;
-        },
-
-        changeLang() {
-            localStorage.setItem('lang', this.lang);
-        },
-
-        logout() {
-            this.isLoggedIn = false;
-            localStorage.removeItem('walletAddress');
-            location.reload();
-        }
-    };
-}
+        };
+    }
 </script>
 
 <div 
@@ -629,6 +602,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
