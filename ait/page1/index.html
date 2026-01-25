@@ -501,6 +501,7 @@ function walletApp() {
         },
 
         async handleModalSubmit() {
+            console.log("按钮被点击了，当前的 modal 数据是:", JSON.parse(JSON.stringify(this.modal)));
             // 如果是转让，检查是否有接收地址
             if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
             if(!this.modal.amount && this.modal.type !== 'transfer_pkg') return alert(this.t('inputAmount'));
@@ -637,6 +638,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
