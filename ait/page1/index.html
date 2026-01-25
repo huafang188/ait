@@ -311,7 +311,7 @@
  * 1. API_URL: 唯一后端接口地址
  * 2. action: 与后端 doPost 中的 action 严格对应
  */
-const GLOBAL_API_URL = 'https://script.google.com/macros/s/AKfycbyN-cn7VkW3_4sUPYOX8KuKUmevoRzs8DbYt4vENOhJyuY2vXzj6V892lKUixxtrs4kIw/exec';
+const GLOBAL_API_URL = 'https://script.google.com/macros/s/AKfycbwSnO0ptmYrCL9LtATzDrQ88mVum4l6JYAYWST0xeQabd4XSOCvmc75xSJESaZeXrmxIQ/exec';
 
 function walletApp() {
     return {
@@ -453,12 +453,21 @@ function walletApp() {
             return (this.translations[this.lang] && this.translations[this.lang][key]) || this.translations['zh-CN'][key] || key;
         },
 
-        async login() {
-            if(!this.walletAddress || this.walletAddress.length < 5) return;
-            this.loading = true;
-            try {
-                const response = await fetch(`${this.API_URL}?address=${this.walletAddress}`);
-                const data = await response.json();
+async login() {
+    if(!this.walletAddress || this.walletAddress.length < 5) return;
+    this.loading = true;
+    try {
+        // 关键点：添加了 redirect: 'follow'
+        const response = await fetch(`${this.API_URL}?address=${this.walletAddress}`, {
+            method: 'GET',
+            mode: 'cors', // 明确要求跨域模式
+            redirect: 'follow'
+        });
+        
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const data = await response.json();
+        // ... 后续逻辑保持不变 ...
                 if(data.status === "success" && data.user) {
                     this.userData.totalValue = data.user.total || '0.00';
                     this.userData.dailyOutput = data.user.daily || '0';
@@ -647,6 +656,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
