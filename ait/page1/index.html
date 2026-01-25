@@ -551,6 +551,12 @@ function walletApp() {
         logout() {
             localStorage.removeItem('onchain_wallet_addr');
             location.reload();
+        }, // <--- 确保这里有逗号
+
+        // 补上这个函数
+        shortenAddress(addr) {
+            if (!addr) return '';
+            return addr.slice(0, 6) + '...' + addr.slice(-4);
         }
     };
 }
@@ -604,6 +610,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
