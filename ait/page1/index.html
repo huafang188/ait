@@ -311,7 +311,7 @@
  * 1. API_URL: 唯一后端接口地址
  * 2. action: 与后端 doPost 中的 action 严格对应
  */
-const GLOBAL_API_URL = 'https://script.google.com/macros/s/AKfycbwSnO0ptmYrCL9LtATzDrQ88mVum4l6JYAYWST0xeQabd4XSOCvmc75xSJESaZeXrmxIQ/exec';
+const GLOBAL_API_URL = 'https://script.google.com/macros/s/AKfycby0E2mGZn_-b1X7H9ZE7uNQgiU4-gB9vOO3kOlhdNuMYySy3TvVmGjQnfGSIGOYEENCcg/exec';
 
 function walletApp() {
     return {
@@ -457,42 +457,41 @@ async login() {
     if(!this.walletAddress || this.walletAddress.length < 5) return;
     this.loading = true;
     try {
-        // 关键点：添加了 redirect: 'follow'
-        const response = await fetch(`${this.API_URL}?address=${this.walletAddress}`, {
-            method: 'GET',
-            mode: 'cors', // 明确要求跨域模式
-            redirect: 'follow'
+        // 使用 POST 请求发送 LOGIN 动作
+        const response = await fetch(this.API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'LOGIN',
+                address: this.walletAddress
+            })
         });
-        
-        if (!response.ok) throw new Error('Network response was not ok');
-        
+
         const data = await response.json();
-        // ... 后续逻辑保持不变 ...
-                if(data.status === "success" && data.user) {
-                    this.userData.totalValue = data.user.total || '0.00';
-                    this.userData.dailyOutput = data.user.daily || '0';
-                    this.userData.lockedAmount = data.user.locked || '0';
-                    this.userData.miners = data.miners || [];
-                    this.logs = data.logs || [];
-                    if(data.user.team) this.userData.team = data.user.team;
 
-                    this.coins.forEach(c => {
-                        if(data.user.balances && data.user.balances[c.name] !== undefined) {
-                            c.balance = data.user.balances[c.name];
-                        }
-                    });
-                    this.isLoggedIn = true;
-                    localStorage.setItem('onchain_wallet_addr', this.walletAddress);
-                } else {
-                    alert(data.message || "User not found");
+        if(data.status === "success" && data.user) {
+            this.userData.totalValue = data.user.total || '0.00';
+            this.userData.dailyOutput = data.user.daily || '0';
+            this.userData.lockedAmount = data.user.locked || '0';
+            this.userData.miners = data.miners || [];
+            if(data.user.team) this.userData.team = data.user.team;
+
+            this.coins.forEach(c => {
+                if(data.user.balances && data.user.balances[c.name] !== undefined) {
+                    c.balance = data.user.balances[c.name];
                 }
-            } catch (e) {
-                console.error("Login Error:", e);
-            } finally {
-                this.loading = false;
-            }
-        },
-
+            });
+            this.isLoggedIn = true;
+            localStorage.setItem('onchain_wallet_addr', this.walletAddress);
+        } else {
+            alert(data.message || "地址不存在或连接失败");
+        }
+    } catch (e) {
+        console.error("Login Error:", e);
+        alert("网络请求失败，请检查脚本部署地址是否正确");
+    } finally {
+        this.loading = false;
+    }
+}
         openModal(type) {
             if(!this.isLoggedIn) return alert(this.t('loginToView'));
             this.modal.type = type;
@@ -656,6 +655,7 @@ async login() {
 
 </body>
 </html>
+
 
 
 
