@@ -289,12 +289,15 @@
                     <input type="number" x-model="modal.amount" placeholder="0.00" class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
                 </div>
                 
-                <template x-if="modal.type === 'transfer' || modal.type === 'transfer_pkg'">
-                    <div class="space-y-1">
-                        <label class="text-[10px] text-gray-400 font-bold ml-1">RECIPIENT ADDRESS</label>
-                        <input type="text" x-model="modal.target" :placeholder="t('targetAddr')" class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
-                </div>
-            </template>
+        <template x-if="modal.type && modal.type.toLowerCase().includes('transfer')">
+            <div class="space-y-1">
+                <label class="text-[10px] text-gray-400 font-bold ml-1">RECIPIENT ADDRESS</label>
+                <input type="text" 
+                       x-model="modal.target" 
+                       :placeholder="t('targetAddr')" 
+                       class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
+            </div>
+        </template>
 
                 <div class="p-3 bg-blue-50 rounded-xl border border-blue-100">
                     <p class="text-[10px] text-blue-600 font-medium leading-relaxed" x-text="t('gasTip')"></p>
@@ -633,6 +636,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
