@@ -472,6 +472,10 @@ function walletApp() {
                     this.userData.dailyOutput = data.user.daily || '0';
                     this.userData.lockedAmount = data.user.locked || '0';
                     this.userData.miners = data.miners || [];
+                    
+                    // --- 核心修复：接收并存储日志 ---
+                    this.logs = data.logs || []; 
+                    
                     if(data.user.team) this.userData.team = data.user.team;
 
                     this.coins.forEach(c => {
@@ -486,20 +490,24 @@ function walletApp() {
                 }
             } catch (e) {
                 console.error("Login Error:", e);
-                alert("Connect failed. Check your API URL.");
+                alert("Connect failed.");
             } finally {
                 this.loading = false;
             }
         },
 
         async handleModalSubmit() {
+            // 如果是转让，检查是否有接收地址
+            if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
             if(!this.modal.amount && this.modal.type !== 'transfer_pkg') return alert(this.t('inputAmount'));
+            
             this.loading = true;
             try {
                 const actionMap = {
                     'withdraw': 'WITHDRAW', 'transfer': 'TRANSFER',
                     'merge': 'MERGE', 'transfer_pkg': 'TRANSFER_PKG'
                 };
+                
                 const response = await fetch(this.API_URL, {
                     method: 'POST',
                     body: JSON.stringify({
@@ -507,13 +515,16 @@ function walletApp() {
                         action: actionMap[this.modal.type],
                         amount: this.modal.amount,
                         coin: this.modal.coin,
-                        target: this.modal.target
+                        target: this.modal.target // 这里没问题，重点是确认 HTML 里有 x-model="modal.target"
                     })
                 });
                 const resData = await response.json();
                 alert(resData.message);
                 if (resData.status === 'success') { 
                     this.modal.show = false; 
+                    // 成功后清除数据，防止下次打开弹窗还有残留
+                    this.modal.target = '';
+                    this.modal.amount = '';
                     setTimeout(() => this.login(), 1200); 
                 }
             } catch (e) { alert("Error"); }
@@ -622,6 +633,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
