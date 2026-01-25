@@ -265,48 +265,49 @@
         </footer>
     </main>
 
-    <div x-show="modal.show" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl relative">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="font-extrabold text-gray-800" x-text="modal.title"></h3>
-                <button @click="modal.show = false" class="bg-gray-100 p-1 rounded-full text-gray-400 hover:text-red-500">✕</button>
+<div x-show="modal.show" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl relative">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="font-extrabold text-gray-800" x-text="modal.title"></h3>
+            <button @click="modal.show = false" class="bg-gray-100 p-1 rounded-full text-gray-400 hover:text-red-500">✕</button>
+        </div>
+        
+        <div class="space-y-4">
+            <div x-show="['withdraw', 'transfer'].includes(modal.type)" class="space-y-1">
+                <label class="text-[10px] text-gray-400 font-bold ml-1">SELECT TOKEN</label>
+                <select x-model="modal.coin" class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
+                    <template x-for="coin in coins">
+                        <option :value="coin.name" x-text="coin.name"></option>
+                    </template>
+                </select>
+            </div>
+
+            <div class="space-y-1">
+                <label class="text-[10px] text-gray-400 font-bold ml-1">AMOUNT</label>
+                <input type="number" x-model="modal.amount" placeholder="0.00" class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
             </div>
             
-            <div class="space-y-4">
-                <template x-if="['withdraw', 'transfer'].includes(modal.type)">
-                    <div class="space-y-1">
-                        <label class="text-[10px] text-gray-400 font-bold ml-1">SELECT TOKEN</label>
-                        <select x-model="modal.coin" class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
-                            <template x-for="coin in coins">
-                                <option :value="coin.name" x-text="coin.name"></option>
-                            </template>
-                        </select>
-                    </div>
-                </template>
-
-                <div class="space-y-1">
-                    <label class="text-[10px] text-gray-400 font-bold ml-1">AMOUNT</label>
-                    <input type="number" x-model="modal.amount" placeholder="0.00" class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
-                </div>
-                
-        <template x-if="modal.type && modal.type.toLowerCase().includes('transfer')">
-            <div class="space-y-1">
+            <div x-show="modal.type && modal.type.toLowerCase().includes('transfer')" class="space-y-1">
                 <label class="text-[10px] text-gray-400 font-bold ml-1">RECIPIENT ADDRESS</label>
                 <input type="text" 
                        x-model="modal.target" 
                        :placeholder="t('targetAddr')" 
                        class="w-full p-3 bg-gray-50 border-none rounded-xl text-sm outline-none ring-1 ring-gray-100 focus:ring-2 focus:ring-blue-500">
             </div>
-        </template>
 
-                <div class="p-3 bg-blue-50 rounded-xl border border-blue-100">
-                    <p class="text-[10px] text-blue-600 font-medium leading-relaxed" x-text="t('gasTip')"></p>
-                </div>
-
-                <button @click="handleModalSubmit" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 transition active:scale-95" x-text="t('confirm')"></button>
+            <div class="p-3 bg-blue-50 rounded-xl border border-blue-100">
+                <p class="text-[10px] text-blue-600 font-medium leading-relaxed" x-text="t('gasTip')"></p>
             </div>
+
+            <button @click="handleModalSubmit" 
+                    class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 transition active:scale-95 flex items-center justify-center"
+                    :disabled="loading">
+                <span x-show="!loading" x-text="t('confirm')"></span>
+                <span x-show="loading" class="animate-spin text-xl">◌</span>
+            </button>
         </div>
     </div>
+</div>
 
 <script>
 // 1. 唯一后端接口地址（请务必确保这是最新部署的 /exec 链接）
@@ -636,6 +637,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
