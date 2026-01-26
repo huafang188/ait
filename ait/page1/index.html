@@ -311,7 +311,7 @@
 
 <script>
 // 1. 唯一后端接口地址（请务必确保这是最新部署的 /exec 链接）
-const GLOBAL_API_URL = 'https://script.google.com/macros/s/AKfycbwOAP0tGitOiTCSySbvLxJdPT1CEMUUuxVNaErC6szwNWAUe4tlLlT3sLppXtimUx2zeA/exec';
+const GLOBAL_API_URL = 'https://script.google.com/macros/s/AKfycbx1FC84PPL_pV4uvbKJjXhsfaucqK-IriAznadAy1zVoRqiPslUl3xc4_Gwa7_9ih-i/exec';
 
 function walletApp() {
     return {
@@ -501,7 +501,6 @@ function walletApp() {
         },
 
         async handleModalSubmit() {
-            console.log("按钮被点击了，当前的 modal 数据是:", JSON.parse(JSON.stringify(this.modal)));
             // 如果是转让，检查是否有接收地址
             if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
             if(!this.modal.amount && this.modal.type !== 'transfer_pkg') return alert(this.t('inputAmount'));
@@ -638,6 +637,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
