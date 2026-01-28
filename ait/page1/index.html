@@ -1,16 +1,21 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>链上钱包 | On-chain Wallet</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-confetti@2.12.0/tsparticles.confetti.bundle.min.js"></script>
+    
+    <link href="https://lib.baomitu.com/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script defer src="https://lib.baomitu.com/alpinejs/3.12.0/cdn.min.js"></script>
+    <script src="https://lib.baomitu.com/tsparticles-confetti/2.12.0/tsparticles.confetti.bundle.min.js"></script>
 
     <style>
-        @import url('https://fonts.coolrunning.com.cn/css2?family=Orbitron:wght@500;700&display=swap');;
-        body { background: linear-gradient(180deg, #e0f2fe 0%, #ffffff 100%); min-height: 100vh; overflow-x: hidden; }
+        /* 字体镜像 */
+        @import url('https://fonts.loli.net/css2?family=Orbitron:wght@500;700&display=swap');
+
+        body { 
+            background: linear-gradient(180deg, #e0f2fe 0%, #ffffff 100%); 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
         .tech-title {
             font-family: 'Orbitron', sans-serif;
             background: linear-gradient(90deg, #60a5fa, #a855f7, #ec4899);
@@ -18,7 +23,12 @@
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
         }
-        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 1.25rem; }
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.5); 
+            border-radius: 1.25rem; 
+        }
         #tsparticles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
         .blur-text { filter: blur(5px); user-select: none; }
         [x-cloak] { display: none !important; }
@@ -637,6 +647,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
