@@ -644,19 +644,27 @@ function walletApp() {
             </div>
 
             <button 
-                @click="submitFuelRecharge" 
-                class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition"
+               @click="submitFuelRecharge" 
+               class="w-full text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition"
+               style="background: linear-gradient(to right, #f97316, #dc2626) !important; display: block;"
             >
                 立即提交
             </button>
             
-            <button @click="fuelModal.show = false" class="w-full text-gray-400 text-xs">取消</button>
+            <button 
+               @click="fuelModal.show = false" 
+               class="w-full text-xs py-2"
+               style="color: #6b7280 !important;"
+            >
+                 取消
+            </button>
         </div>
     </div>
 </div>
 
 </body>
 </html>
+
 
 
 
