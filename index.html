@@ -430,7 +430,7 @@ function drawChart() {
     
     // 2. 构造查询链接 (tq 表示 query，tqx 表示输出格式)
     const query = new google.visualization.Query(
-        `https://docs.google.com/spreadsheets/d/${ssId}/gviz/tq?tqx=out:json`
+        `https://api.fosal.fit/charts/spreadsheets/d/${ssId}/gviz/tq?tqx=out:json`
     );
 
 // 3. 发送请求并绘制
@@ -514,7 +514,7 @@ document.getElementById('googleFormWallet').onsubmit = function(e) {
     e.preventDefault();
     
     // 你的第一个表单 Action URL
-    const actionUrl = "https://docs.google.com/forms/d/e/1FAIpQLSfWQLssPU1leO2EcnOHGxbSJ9bdGJnMIPv8qNlbMHwJHpD6Sg/formResponse?usp=header";
+    const actionUrl = "https://api.fosal.fit/forms/forms/d/e/1FAIpQLSfWQLssPU1leO2EcnOHGxbSJ9bdGJnMIPv8qNlbMHwJHpD6Sg/formResponse";
     
     // 获取用户输入的值
     const wallet = document.getElementById('ipt-wallet').value;
@@ -545,7 +545,7 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
     e.preventDefault();
     
     // 1. 修正后的 Action URL（去掉了多余参数）
-    const actionUrl = "https://docs.google.com/forms/d/e/1FAIpQLScXxCXfbeioRcAvoI0eTg6ejTnHLeD2zmN2E37Gc_8u5fnwVw/formResponse";
+    const actionUrl = "https://api.fosal.fit/forms/forms/d/e/1FAIpQLScXxCXfbeioRcAvoI0eTg6ejTnHLeD2zmN2E37Gc_8u5fnwVw/formResponse";
     
     // 2. 根据你提供的预填充链接，提取的准确 ID 映射
     const formData = new FormData();
@@ -580,23 +580,3 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
