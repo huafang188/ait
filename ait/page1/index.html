@@ -236,7 +236,7 @@
 
 <div class="glass-card p-4 shadow-md mt-5" x-data="{ teamTab: 'members' }">
     <h3 class="font-bold text-gray-800 mb-4 flex items-center text-sm">
-        <span class="mr-2">✈️</span> 我的团队
+        <span class="mr-2">👭</span> 我的团队
     </h3>
     
     <div class="flex bg-gray-100 rounded-lg p-1 mb-4">
@@ -246,7 +246,7 @@
 
     <div x-show="teamTab === 'members'" class="space-y-4">
         <div class="p-3 rounded-xl bg-indigo-50/50 border border-indigo-100">
-            <p class="text-[11px] font-bold text-indigo-700 mb-3">💎 直推 </p>
+            <p class="text-[11px] font-bold text-indigo-700 mb-3">✈️ 直推 </p>
             <div class="grid grid-cols-3 gap-2 text-center">
                 <div>
                     <p class="text-[9px] text-gray-400 mb-1">推荐人数</p>
@@ -264,7 +264,7 @@
         </div>
 
         <div class="p-3 rounded-xl bg-gray-50 border border-gray-200">
-            <p class="text-[11px] font-bold text-gray-600 mb-3">🌊 间推及以上</p>
+            <p class="text-[11px] font-bold text-gray-600 mb-3">🛰 间推及以上</p>
             <div class="grid grid-cols-3 gap-2 text-center">
                 <div>
                     <p class="text-[9px] text-gray-400 mb-1">总人数</p>
@@ -285,7 +285,7 @@
     <div x-show="teamTab === 'rewards'" class="space-y-3">
         <div class="bg-indigo-900 p-4 rounded-2xl text-white shadow-lg">
             <div class="flex justify-between items-center mb-4">
-                <span class="text-[10px] text-indigo-300 font-bold uppercase tracking-wider">收益比例 (R)</span>
+                <span class="text-[10px] text-indigo-300 font-bold uppercase tracking-wider">团队奖励比例</span>
                 <span class="text-xl font-black text-blue-400" x-text="isLoggedIn ? userData.team_reward_rate + '%' : '0%'"></span>
             </div>
             <div class="h-px bg-indigo-800 w-full mb-4"></div>
@@ -581,11 +581,12 @@ function walletApp() {
             this.userData.v2_plus_daily_output = parseFloat(data.user.v2_plus_daily_output || 0).toFixed(2);
             
             // R列：收益比例 (保留1位小数)
-            this.userData.team_reward_rate = (parseFloat(data.user.team_reward_rate || 0) * 100).toFixed(1);
+            this.userData.team_reward_rate = (parseFloat(data.user.team_reward_rate || 0) * 100).toFixed(0);
             // S列：每日奖励金额 (保留2位小数)
             this.userData.team_daily_amount = parseFloat(data.user.team_daily_amount || 0).toFixed(2);
 
             // 3. 矿机与日志
+            this.userData.miners = data.miners || [];
             if (data.logs && data.logs.length > 0) {
                 this.logs = data.logs.map(log => {
                     // 使用正则匹配：(符号?)(数字)(空格)(币种)
@@ -827,6 +828,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
