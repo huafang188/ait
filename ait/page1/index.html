@@ -233,35 +233,77 @@
             </div>
         </div>
 
+
 <div class="glass-card p-4 shadow-md mt-5" x-data="{ teamTab: 'members' }">
-    <h3 class="font-bold text-gray-800 mb-4 flex items-center">
-        <span class="mr-2">🧑‍🤝‍🧑</span> 我的团队
+    <h3 class="font-bold text-gray-800 mb-4 flex items-center text-sm">
+        <span class="mr-2">✈️</span> 我的团队 (L-S)
     </h3>
+    
     <div class="flex bg-gray-100 rounded-lg p-1 mb-4">
-        <button @click="teamTab = 'members'" :class="teamTab === 'members' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">团队</button>
-        <button @click="teamTab = 'rewards'" :class="teamTab === 'rewards' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">收益</button>
+        <button @click="teamTab = 'members'" :class="teamTab === 'members' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">团队规模</button>
+        <button @click="teamTab = 'rewards'" :class="teamTab === 'rewards' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">奖励结算</button>
     </div>
 
-    <div x-show="teamTab === 'members'" class="space-y-3">
-        <template x-for="(label, key) in {v1:'一代', v2:'二代', v3:'三代', v4_17:'四到十七代', v18_20:'十八到二十代'}">
-            <div class="border-b border-gray-50 pb-2 text-[11px]">
-                <p class="font-bold text-gray-700 mb-1" x-text="label"></p>
-                <div class="flex justify-between text-gray-500">
-                    <span>人数: <b class="text-gray-800" x-text="isLoggedIn ? userData.team[key].count : '0'"></b></span>
-                    <span>资产包: <b class="text-gray-800" x-text="isLoggedIn ? userData.team[key].miners : '0'"></b></span>
-                    <span>生效中: <b class="text-green-500" x-text="isLoggedIn ? userData.team[key].running : '0'"></b></span>
+    <div x-show="teamTab === 'members'" class="space-y-4">
+        <div class="p-3 rounded-xl bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100">
+            <p class="text-[11px] font-bold text-indigo-700 mb-3 flex justify-between">
+                <span>Direct (1代)</span>
+                <span class="opacity-50 text-[9px]">COL L,M,N</span>
+            </p>
+            <div class="grid grid-cols-3 gap-2">
+                <div class="text-center">
+                    <p class="text-[9px] text-gray-400 mb-1">推荐人数</p>
+                    <p class="text-sm font-bold text-gray-800" x-text="isLoggedIn ? userData.v1_count : '0'"></p>
+                </div>
+                <div class="text-center">
+                    <p class="text-[9px] text-gray-400 mb-1">矿机总数</p>
+                    <p class="text-sm font-bold text-gray-800" x-text="isLoggedIn ? userData.v1_miners : '0'"></p>
+                </div>
+                <div class="text-center border-l border-indigo-100">
+                    <p class="text-[9px] text-gray-400 mb-1">日产币量</p>
+                    <p class="text-sm font-black text-indigo-600" x-text="isLoggedIn ? userData.v1_daily_output : '0.00'"></p>
                 </div>
             </div>
-        </template>
+        </div>
+
+        <div class="p-3 rounded-xl bg-gray-50 border border-gray-200">
+            <p class="text-[11px] font-bold text-gray-600 mb-3 flex justify-between">
+                <span>Indirect (2代+)</span>
+                <span class="opacity-50 text-[9px]">COL O,P,Q</span>
+            </p>
+            <div class="grid grid-cols-3 gap-2">
+                <div class="text-center">
+                    <p class="text-[9px] text-gray-400 mb-1">总人数</p>
+                    <p class="text-sm font-bold text-gray-800" x-text="isLoggedIn ? userData.v2_plus_count : '0'"></p>
+                </div>
+                <div class="text-center">
+                    <p class="text-[9px] text-gray-400 mb-1">矿机总数</p>
+                    <p class="text-sm font-bold text-gray-800" x-text="isLoggedIn ? userData.v2_plus_miners : '0'"></p>
+                </div>
+                <div class="text-center border-l border-gray-200">
+                    <p class="text-[9px] text-gray-400 mb-1">日产币量</p>
+                    <p class="text-sm font-black text-gray-700" x-text="isLoggedIn ? userData.v2_plus_daily_output : '0.00'"></p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div x-show="teamTab === 'rewards'" class="space-y-2">
-        <template x-for="(label, key) in {v1:'一代奖励5%', v2:'二代奖励3%', v3:'三代奖励2%', v4_17:'四到十七代奖励1%', v18_20:'十八到二十代奖励2%'}">
-            <div class="flex justify-between items-center bg-blue-50/50 p-2 rounded-lg text-[11px]">
-                <span class="text-gray-600 font-medium" x-text="label"></span>
-                <span class="font-bold text-blue-600" x-text="isLoggedIn ? userData.team[key].reward + ' AIT/天' : '0.00'"></span>
+    <div x-show="teamTab === 'rewards'" class="space-y-3">
+        <div class="relative overflow-hidden bg-gray-900 p-4 rounded-2xl text-white">
+            <div class="absolute -right-2 -top-2 w-16 h-16 bg-blue-600 rounded-full blur-2xl opacity-40"></div>
+            
+            <div class="relative z-10 flex justify-between items-end">
+                <div>
+                    <p class="text-[10px] text-gray-400 font-bold mb-1 uppercase tracking-tighter">团队收益比例 (R)</p>
+                    <p class="text-2xl font-black text-blue-400" x-text="isLoggedIn ? userData.team_reward_rate + '%' : '0%'"></p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] text-gray-400 font-bold mb-1 uppercase tracking-tighter">每日团队奖励 (S)</p>
+                    <p class="text-2xl font-black text-green-400" x-text="isLoggedIn ? userData.team_daily_amount : '0.00'"></p>
+                </div>
             </div>
-        </template>
+        </div>
+        <p class="text-[9px] text-center text-gray-400">结算周期：每 24 小时发放一次奖励</p>
     </div>
 </div>
 
@@ -754,6 +796,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
