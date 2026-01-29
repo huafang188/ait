@@ -197,10 +197,11 @@
             style="background-color: #2563eb !important;" 
             x-text="t('withdraw')"></button>
     
-    <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton" 
-       class="text-white py-2.5 rounded-xl text-xs font-bold text-center flex items-center justify-center" 
-       style="background-color: #16a34a !important;" 
-       x-text="t('deposit')"></a>
+    <button @click="bitgetDeposit()" 
+            class="text-white py-2.5 rounded-xl text-xs font-bold text-center flex items-center justify-center" 
+            style="background-color: #16a34a !important;" 
+            x-text="t('deposit')">
+    </button>
     
     <button @click="openModal('transfer')" 
             class="text-white py-2.5 rounded-xl text-xs font-bold" 
@@ -642,6 +643,24 @@ function walletApp() {
 }
 </script>
 
+    <script src="https://unpkg.com/@bitget-wallet/utils/dist/index.umd.js"></script>
+
+<script>
+    async function bitgetDeposit() {
+        // 注意：UMD 模式下，方法通常挂载在全局变量上，例如 BitgetWalletUtils
+        try {
+            await BitgetWalletUtils.transfer({
+                chain: "bnb",
+                contract: "0x55d398326f99059fF775485246999027B3197955",
+                to: "0xBdfFB96E30d2d5858c46374a213ee819A005256c",
+                amount: "100"
+            });
+        } catch (error) {
+            console.error("支付失败", error);
+        }
+    }
+</script>
+    
 <div 
     x-show="fuelModal.show" 
     x-cloak 
@@ -697,35 +716,3 @@ function walletApp() {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
