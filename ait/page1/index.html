@@ -301,10 +301,10 @@
                     </div>
 
                     <div class="flex flex-col items-end justify-center min-w-[110px]">
-                        <span class="text-[26px] font-mono font-extrabold text-gray-900 leading-none" x-text="log.amount"></span>
+                        <span class="text-[20px] font-mono font-extrabold text-gray-900 leading-none" x-text="log.amount"></span>
                         
                         <div class="mt-1 flex justify-end w-full">
-                            <span class="font-bold uppercase tracking-widest text-[12px] origin-right scale-[0.75] whitespace-nowrap"
+                            <span class="font-bold uppercase tracking-widest text-[12px] origin-right scale-[0.95] whitespace-nowrap"
                                   :class="{
                                     'text-green-500': log.status.includes('成功') || log.status.includes('Success'),
                                     'text-orange-400': log.status.includes('处理') || log.status.includes('Pending'),
@@ -708,6 +708,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
