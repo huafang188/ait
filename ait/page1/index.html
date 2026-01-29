@@ -511,12 +511,15 @@ function walletApp() {
             modal: { show: false, type: '', title: '', amount: '', target: '', coin: 'AIT' },
             swap: { pair: 'AIT-USDT', amount: '' },
             team: {
-                v1: {count:0, miners:0, running:0, reward:0},
-                v2: {count:0, miners:0, running:0, reward:0},
-                v3: {count:0, miners:0, running:0, reward:0},
-                v4_17: {count:0, miners:0, running:0, reward:0},
-                v18_20: {count:0, miners:0, running:0, reward:0}
-            }
+            // --- 团队数据 (对应 L-S 列键名) ---
+            v1_count: 0,                // L列
+            v1_miners: 0,               // M列
+            v1_daily_output: '0.00',    // N列
+            v2_plus_count: 0,           // O列
+            v2_plus_miners: 0,          // P列
+            v2_plus_daily_output: '0.00',// Q列
+            team_reward_rate: 0,        // R列
+            team_daily_amount: '0.00',  // S列
         },
         coins: [
             { name: 'AIT', balance: 0, price: 0.2, logo: 'logo1.png' },
@@ -787,6 +790,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
