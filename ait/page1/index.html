@@ -236,7 +236,7 @@
 
 <div class="glass-card p-4 shadow-md mt-5" x-data="{ teamTab: 'members' }">
     <h3 class="font-bold text-gray-800 mb-4 flex items-center text-sm">
-        <span class="mr-2">✈️</span> 我的团队 (L-S)
+        <span class="mr-2">✈️</span> 我的团队
     </h3>
     
     <div class="flex bg-gray-100 rounded-lg p-1 mb-4">
@@ -245,43 +245,37 @@
     </div>
 
     <div x-show="teamTab === 'members'" class="space-y-4">
-        <div class="p-3 rounded-xl bg-gradient-to-br from-indigo-50 to-blue-50 border border-indigo-100">
-            <p class="text-[11px] font-bold text-indigo-700 mb-3 flex justify-between">
-                <span>Direct (1代)</span>
-                <span class="opacity-50 text-[9px]">COL L,M,N</span>
-            </p>
-            <div class="grid grid-cols-3 gap-2">
-                <div class="text-center">
+        <div class="p-3 rounded-xl bg-indigo-50/50 border border-indigo-100">
+            <p class="text-[11px] font-bold text-indigo-700 mb-3">💎 直推 </p>
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div>
                     <p class="text-[9px] text-gray-400 mb-1">推荐人数</p>
                     <p class="text-sm font-bold text-gray-800" x-text="isLoggedIn ? userData.v1_count : '0'"></p>
                 </div>
-                <div class="text-center">
-                    <p class="text-[9px] text-gray-400 mb-1">矿机总数</p>
+                <div>
+                    <p class="text-[9px] text-gray-400 mb-1">资产包总数</p>
                     <p class="text-sm font-bold text-gray-800" x-text="isLoggedIn ? userData.v1_miners : '0'"></p>
                 </div>
-                <div class="text-center border-l border-indigo-100">
-                    <p class="text-[9px] text-gray-400 mb-1">日产币量</p>
-                    <p class="text-sm font-black text-indigo-600" x-text="isLoggedIn ? userData.v1_daily_output : '0.00'"></p>
+                <div>
+                    <p class="text-[9px] text-gray-400 mb-1">日总产积分</p>
+                    <p class="text-sm font-black text-green-600" x-text="isLoggedIn ? userData.v1_daily_output : '0.00'"></p>
                 </div>
             </div>
         </div>
 
         <div class="p-3 rounded-xl bg-gray-50 border border-gray-200">
-            <p class="text-[11px] font-bold text-gray-600 mb-3 flex justify-between">
-                <span>Indirect (2代+)</span>
-                <span class="opacity-50 text-[9px]">COL O,P,Q</span>
-            </p>
-            <div class="grid grid-cols-3 gap-2">
-                <div class="text-center">
+            <p class="text-[11px] font-bold text-gray-600 mb-3">🌊 间推及以上</p>
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div>
                     <p class="text-[9px] text-gray-400 mb-1">总人数</p>
                     <p class="text-sm font-bold text-gray-800" x-text="isLoggedIn ? userData.v2_plus_count : '0'"></p>
                 </div>
-                <div class="text-center">
-                    <p class="text-[9px] text-gray-400 mb-1">矿机总数</p>
+                <div>
+                    <p class="text-[9px] text-gray-400 mb-1">资产包总数</p>
                     <p class="text-sm font-bold text-gray-800" x-text="isLoggedIn ? userData.v2_plus_miners : '0'"></p>
                 </div>
-                <div class="text-center border-l border-gray-200">
-                    <p class="text-[9px] text-gray-400 mb-1">日产币量</p>
+                <div>
+                    <p class="text-[9px] text-gray-400 mb-1">日总产积分</p>
                     <p class="text-sm font-black text-gray-700" x-text="isLoggedIn ? userData.v2_plus_daily_output : '0.00'"></p>
                 </div>
             </div>
@@ -289,21 +283,18 @@
     </div>
 
     <div x-show="teamTab === 'rewards'" class="space-y-3">
-        <div class="relative overflow-hidden bg-gray-900 p-4 rounded-2xl text-white">
-            <div class="absolute -right-2 -top-2 w-16 h-16 bg-blue-600 rounded-full blur-2xl opacity-40"></div>
-            
-            <div class="relative z-10 flex justify-between items-end">
-                <div>
-                    <p class="text-[10px] text-gray-400 font-bold mb-1 uppercase tracking-tighter">团队收益比例 (R)</p>
-                    <p class="text-2xl font-black text-blue-400" x-text="isLoggedIn ? userData.team_reward_rate + '%' : '0%'"></p>
-                </div>
-                <div class="text-right">
-                    <p class="text-[10px] text-gray-400 font-bold mb-1 uppercase tracking-tighter">每日团队奖励 (S)</p>
-                    <p class="text-2xl font-black text-green-400" x-text="isLoggedIn ? userData.team_daily_amount : '0.00'"></p>
-                </div>
+        <div class="bg-indigo-900 p-4 rounded-2xl text-white shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-[10px] text-indigo-300 font-bold uppercase tracking-wider">收益比例 (R)</span>
+                <span class="text-xl font-black text-blue-400" x-text="isLoggedIn ? userData.team_reward_rate + '%' : '0%'"></span>
+            </div>
+            <div class="h-px bg-indigo-800 w-full mb-4"></div>
+            <div class="flex justify-between items-center">
+                <span class="text-[10px] text-indigo-300 font-bold uppercase tracking-wider">每日奖励金额 (AIT)</span>
+                <span class="text-2xl font-black text-green-400" x-text="isLoggedIn ? userData.team_daily_amount : '0.00'"></span>
             </div>
         </div>
-        <p class="text-[9px] text-center text-gray-400">结算周期：每 24 小时发放一次奖励</p>
+        <p class="text-[9px] text-center text-gray-400 italic">数据根据团队活跃度实时更新</p>
     </div>
 </div>
 
@@ -796,6 +787,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
