@@ -87,23 +87,46 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         }
 
-        /* 立体渐变按钮 */
-        .btn {
-            background: var(--btn-gradient);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            margin: 8px 0;
-            width: 100%;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(142, 45, 226, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn:active { transform: scale(0.95); }
+/* 全局按钮样式修改 */
+.btn {
+    /* 1. 排列逻辑：垂直堆叠 */
+    display: block;           /* 确保作为块级元素换行 */
+    width: 100%;             /* 宽度撑满容器 */
+    box-sizing: border-box;  /* 包含边距在内的宽度计算 */
+    margin: 12px 0;          /* 增加按钮之间的上下间距 */
+    
+    /* 2. 配色方案：淡蓝背景 + 深蓝文字 */
+    background: #e0f2fe;     /* 极淡的科技蓝色 */
+    color: #0369a1;          /* 深蓝色文字，保证可读性 */
+    
+    /* 3. 字体美化：清晰度优先 */
+    font-size: 15px;         /* 标准清晰字号 */
+    font-weight: 600;        /* 加粗字体增强辨识度 */
+    text-align: center;
+    text-decoration: none;
+    
+    /* 4. 细节与质感 */
+    padding: 14px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(186, 230, 253, 0.5); /* 淡淡的边框增加精致感 */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    /* 5. 阴影：柔和淡蓝色阴影 */
+    box-shadow: 0 4px 12px rgba(0, 162, 255, 0.1);
+}
+
+/* 交互效果 */
+.btn:hover {
+    background: #bae6fd;     /* 悬停时颜色略微加深 */
+    color: #075985;          /* 文字同步加深 */
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(0, 162, 255, 0.15);
+}
+
+.btn:active {
+    transform: scale(0.98);  /* 点击按下缩放 */
+}
 
 
         /* 弹窗样式 */
@@ -534,3 +557,4 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
 </script>
 </body>
 </html>
+
