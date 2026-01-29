@@ -127,7 +127,7 @@
                 <template x-for="m in userData.miners">
                     <div class="text-center p-2 bg-white rounded-xl border border-blue-50 shadow-sm">
                         <div class="flex justify-center mb-1">
-                            <img src="kuangji.png" 
+                            <img src="/kuangji.png" 
                                 alt="Miner" 
                                 class="w-7 h-7 object-cover rounded-md drop-shadow-sm border border-gray-100">
                         </div>
@@ -280,16 +280,14 @@
 </div>
 
             
-<div class="glass-card p-4 shadow-md mt-6">
-    <h3 class="text-[10px] font-bold mb-6 text-gray-400 uppercase tracking-[0.2em] text-center" x-text="t('records')"></h3>
+<div class="mt-8 px-2"> <h3 class="text-[11px] font-bold mb-4 text-gray-500 uppercase tracking-[0.2em] text-center" x-text="t('records')"></h3>
     
-    <div class="space-y-0">
-        <template x-if="isLoggedIn && logs.length > 0">
+    <div class="space-y-2"> <template x-if="isLoggedIn && logs.length > 0">
             <template x-for="log in logs">
-                <div class="flex justify-between items-center py-5 border-b border-gray-100/60 last:border-0">
+                <div class="flex justify-between items-center py-4 px-4 bg-white/40 backdrop-blur-sm rounded-2xl">
                     
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-lg shadow-sm border border-gray-100/50">
+                        <div class="w-10 h-10 rounded-full bg-white/80 flex items-center justify-center text-lg shadow-sm border border-white/50">
                             <span x-show="log.type.includes('提现') || log.type.includes('Withdraw')">📤</span>
                             <span x-show="log.type.includes('充值') || log.type.includes('Deposit')">📥</span>
                             <span x-show="log.type.includes('奖励') || log.type.includes('Reward')">🎁</span>   
@@ -299,20 +297,20 @@
                             <span x-show="log.type.includes('代币兑换') || log.type.includes('Swap')">↔️</span>
                         </div>
                         <div class="flex flex-col gap-0.5">
-                            <span class="text-[14px] font-semibold text-gray-700" x-text="log.type"></span>
-                            <span class="text-[10px] text-gray-400 font-medium" x-text="log.date"></span>
+                            <span class="text-[14px] font-bold text-gray-800" x-text="log.type"></span>
+                            <span class="text-[10px] text-gray-500 font-medium" x-text="log.date"></span>
                         </div>
                     </div>
 
                     <div class="flex flex-col items-end justify-center min-w-[110px]">
-                        <span class="text-[18px] font-mono font-bold text-gray-700 leading-none" x-text="log.amount"></span>
+                        <span class="text-[14px] font-mono font-bold text-gray-800 leading-none" x-text="log.amount"></span>
                         
                         <div class="mt-1 flex justify-end w-full">
-                            <span class="font-bold uppercase tracking-widest text-[12px] origin-right scale-[0.99] whitespace-nowrap"
+                            <span class="font-bold uppercase tracking-widest text-[10px] origin-right scale-[0.85] whitespace-nowrap"
                                   :class="{
-                                    'text-green-500': log.status.includes('成功') || log.status.includes('Success'),
-                                    'text-orange-400': log.status.includes('处理') || log.status.includes('Pending'),
-                                    'text-red-400': log.status.includes('失败') || log.status.includes('Failed')
+                                    'text-green-600': log.status.includes('成功') || log.status.includes('Success'),
+                                    'text-orange-500': log.status.includes('处理中') || log.status.includes('Pending'),
+                                    'text-red-500': log.status.includes('失败') || log.status.includes('Failed')
                                   }" 
                                   x-text="log.status">
                             </span>
@@ -323,12 +321,14 @@
         </template>
 
         <template x-if="!isLoggedIn || logs.length === 0">
-            <div class="py-10 text-center text-gray-300 text-xs italic">
+            <div class="py-12 text-center text-gray-400 text-xs italic">
                 No transactions found
             </div>
         </template>
     </div>
 </div>
+
+            
         <footer class="text-center text-[10px] text-gray-400 py-8 border-t border-gray-100">
             <p>© 2026 AI Chain Wallet Technology. All Rights Reserved.</p>
         </footer>
@@ -712,6 +712,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
