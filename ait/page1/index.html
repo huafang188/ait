@@ -647,28 +647,31 @@ function walletApp() {
 
 <script>
     async function bitgetDeposit() {
-        // 尝试获取工具库对象
-        // UMD 包通常挂载在 window['@bitget-wallet/utils'] 或 BitgetWalletUtils
-        const utils = window['@bitget-wallet/utils'] || window.BitgetWalletUtils;
+        // 1. 获取 SDK 对象。Bitget 的 UMD 导出通常在 window.BitgetWalletUtils 
+        // 或者 window['@bitget-wallet/utils']
+        const utils = window.BitgetWalletUtils || window['@bitget-wallet/utils'];
 
+        // 2. 检查 SDK 是否加载
         if (!utils) {
-            console.error("SDK 未加载成功，请检查网络或 CDN 链接");
-            alert("支付组件加载失败，请刷新页面重试");
+            console.error("Bitget SDK 未找到");
+            alert("支付组件加载中，请稍后重试。如果多次失败，请检查网络或更换浏览器。");
             return;
         }
 
         try {
-            // 调用 transfer 方法
+            // 3. 执行转账逻辑
+            // 注意：SDK 内部会处理深链接唤起
             await utils.transfer({
-                chain: "bnb", // 币安智能链
-                contract: "0x55d398326f99059fF775485246999027B3197955", // BSC-USDT 合约
-                to: "0xBdfFB96E30d2d5858c46374a213ee819A005256c", // !!! 务必替换为你的真实地址
-                amount: "100" // 转账数量
+                chain: "bnb", 
+                contract: "0x55d398326f99059fF775485246999027B3197955", // BSC-USDT
+                to: "0xBdfFB96E30d2d5858c46374a213ee819A005256c", // ！！！这里一定要填入你的真实钱包地址
+                amount: "100" // 充值金额
             });
+            console.log("已尝试唤起 Bitget Wallet");
         } catch (error) {
-            console.error("支付失败:", error);
-            // 如果报错是关于 APP 未启动，通常是因为手机没装 Bitget Wallet
-            alert("请确保已安装并打开 Bitget Wallet APP");
+            console.error("调用支付失败:", error);
+            // 常见的失败原因：手机未安装 App
+            alert("唤起失败：请确保您的手机已安装 Bitget Wallet App。");
         }
     }
 </script>
@@ -728,4 +731,5 @@ function walletApp() {
 
 </body>
 </html>
+
 
