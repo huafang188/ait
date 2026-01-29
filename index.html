@@ -87,47 +87,66 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         }
 
-/* 全局按钮样式修改 */
+/* 1. 强制重置父容器，防止最后三个按钮排列混乱 */
+.nav-grid, .glass-card {
+    display: flex !important;
+    flex-direction: column !important; /* 强制垂直排列 */
+    align-items: center !important;
+    width: 100% !important;
+}
+
+/* 2. 全局按钮样式修改 - 科技感升级版 */
 .btn {
-    /* 1. 排列逻辑：垂直堆叠 */
-    display: block;           /* 确保作为块级元素换行 */
-    width: 100%;             /* 宽度撑满容器 */
-    box-sizing: border-box;  /* 包含边距在内的宽度计算 */
-    margin: 12px 0;          /* 增加按钮之间的上下间距 */
+    /* 物理布局：彻底垂直堆叠 */
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    margin: 12px 0 !important; /* 增加上下间距 */
+    float: none !important;    /* 防止浮动干扰 */
+
+    /* 科技感配色：深色内发光 + 荧光蓝文字 */
+    /* 使用半透明背景营造玻璃感，而不是实色 */
+    background: rgba(0, 162, 255, 0.1); 
+    color: #00f2ff; /* 极清荧光蓝 */
     
-    /* 2. 配色方案：淡蓝背景 + 深蓝文字 */
-    background: #e0f2fe;     /* 极淡的科技蓝色 */
-    color: #0369a1;          /* 深蓝色文字，保证可读性 */
+    /* 边框：这是科技感的来源 */
+    border: 1px solid rgba(0, 242, 255, 0.4);
     
-    /* 3. 字体美化：清晰度优先 */
-    font-size: 15px;         /* 标准清晰字号 */
-    font-weight: 600;        /* 加粗字体增强辨识度 */
+    /* 字体：确保极其清晰 */
+    font-size: 15px;
+    font-weight: 700; /* 加粗 */
+    letter-spacing: 1px; /* 字母间距增加高级感 */
     text-align: center;
     text-decoration: none;
-    
-    /* 4. 细节与质感 */
-    padding: 14px 20px;
+    line-height: 1;
+
+    /* 细节处理 */
+    padding: 16px 20px;
     border-radius: 12px;
-    border: 1px solid rgba(186, 230, 253, 0.5); /* 淡淡的边框增加精致感 */
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
     
-    /* 5. 阴影：柔和淡蓝色阴影 */
-    box-shadow: 0 4px 12px rgba(0, 162, 255, 0.1);
+    /* 外发光阴影 */
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.1), 
+                inset 0 0 10px rgba(0, 242, 255, 0.05);
 }
 
-/* 交互效果 */
+/* 3. 悬停效果：更有能量感 */
 .btn:hover {
-    background: #bae6fd;     /* 悬停时颜色略微加深 */
-    color: #075985;          /* 文字同步加深 */
-    transform: translateY(-1px);
-    box-shadow: 0 6px 15px rgba(0, 162, 255, 0.15);
+    background: rgba(0, 242, 255, 0.2);
+    color: #ffffff; /* 悬停时文字变白，增强对比 */
+    border-color: #00f2ff;
+    box-shadow: 0 0 25px rgba(0, 242, 255, 0.4), 
+                inset 0 0 15px rgba(0, 242, 255, 0.2);
+    transform: translateY(-2px);
 }
 
+/* 4. 点击反馈 */
 .btn:active {
-    transform: scale(0.98);  /* 点击按下缩放 */
+    transform: scale(0.97);
+    filter: brightness(0.8);
 }
-
 
         /* 弹窗样式 */
         .modal {
@@ -557,4 +576,5 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
 </script>
 </body>
 </html>
+
 
