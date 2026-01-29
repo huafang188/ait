@@ -564,29 +564,35 @@ function walletApp() {
         const data = await response.json();
         
         if(data.status === "success" && data.user) {
-            // 1. 基础资产数据 (后端键名: totalValue, dailyOutput, lockedAmount)
-            this.userData.totalValue = data.user.totalValue || '0.00';
-            this.userData.dailyOutput = data.user.dailyOutput || '0';
-            this.userData.lockedAmount = data.user.lockedAmount || '0';
+            // 1. 基础资产数据 (保留2位小数)
+            this.userData.totalValue = parseFloat(data.user.totalValue || 0).toFixed(2);
+            this.userData.dailyOutput = parseFloat(data.user.dailyOutput || 0).toFixed(2);
+            this.userData.lockedAmount = parseFloat(data.user.lockedAmount || 0).toFixed(2);
             
-            // 2. 核心修复：平铺接收团队 L-S 列数据
+            // 2. 团队 L-S 列数据
             this.userData.v1_count = data.user.v1_count || 0;
             this.userData.v1_miners = data.user.v1_miners || 0;
-            this.userData.v1_daily_output = data.user.v1_daily_output || '0.00';
+            // N列：1代每日总产币 (保留2位小数)
+            this.userData.v1_daily_output = parseFloat(data.user.v1_daily_output || 0).toFixed(2);
+            
             this.userData.v2_plus_count = data.user.v2_plus_count || 0;
             this.userData.v2_plus_miners = data.user.v2_plus_miners || 0;
-            this.userData.v2_plus_daily_output = data.user.v2_plus_daily_output || '0.00';
-            this.userData.team_reward_rate = data.user.team_reward_rate || 0;
-            this.userData.team_daily_amount = data.user.team_daily_amount || '0.00';
+            // Q列：2代及以上每日总产币 (保留2位小数)
+            this.userData.v2_plus_daily_output = parseFloat(data.user.v2_plus_daily_output || 0).toFixed(2);
+            
+            // R列：收益比例 (保留1位小数)
+            this.userData.team_reward_rate = (parseFloat(data.user.team_reward_rate || 0) * 100).toFixed(1);
+            // S列：每日奖励金额 (保留2位小数)
+            this.userData.team_daily_amount = parseFloat(data.user.team_daily_amount || 0).toFixed(2);
 
             // 3. 矿机与日志
             this.userData.miners = data.miners || [];
             this.logs = data.logs || []; 
             
-            // 4. 余额更新
+            // 4. 余额更新 (同样保留2位或根据需要)
             this.coins.forEach(c => {
                 if(data.user.balances && data.user.balances[c.name] !== undefined) {
-                    c.balance = data.user.balances[c.name];
+                    c.balance = parseFloat(data.user.balances[c.name] || 0).toFixed(2);
                 }
             });
 
@@ -802,6 +808,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
