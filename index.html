@@ -255,14 +255,105 @@
         <a href="https://ypt.huikangyike.com/wsy_pub/web/index.php?m=app_index&a=index&customer_id=czo0OiI5NTc4Ijs" class="btn" id="t-shop-btn">在线商城</a>
     </div>
 
-    <div class="glass-card">
-        <img src="https://cdn-icons-png.freepik.com/512/12114/12114208.png" class="icon-circle">
-        <div class="nav-grid" style="flex-wrap: wrap; width: 100%; margin: 0;">
-            <a href="http://www.fosal.fit/ait/page2" class="btn" style="width: 48%;" id="t-whitepaper">白皮书</a>
-            <a href="https://web3.bitget.com/" class="btn" style="width: 48%;">Bitget Wallet</a>
-            <a href="https://bscscan.com/" class="btn" style="width: 48%;" id="t-explorer">区块链浏览器</a>
-        </div>
+<div id="unique-glass-card-2024" class="glass-card-container">
+    <img src="https://cdn-icons-png.freepik.com/512/12114/12114208.png" class="icon-circle">
+    <div class="nav-grid">
+        <a href="http://www.fosal.fit/ait/page2" class="btn" id="t-whitepaper">白皮书</a>
+        <a href="https://web3.bitget.com/" class="btn">Bitget Wallet</a>
+        <a href="https://bscscan.com/" class="btn" id="t-explorer">区块链浏览器</a>
     </div>
+</div>
+
+<style>
+    /* 1. 容器基础样式 - 增加隔离 ID 前缀 */
+    #unique-glass-card-2024 {
+        position: relative;
+        width: 380px; /* 可根据需要修改宽度 */
+        min-height: 400px;
+        padding: 40px 20px;
+        border-radius: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden; /* 必须：裁剪内部旋转的背景 */
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        margin: 20px auto; /* 居中显示 */
+        z-index: 1;
+    }
+
+    /* 2. 动态炫酷背景 - 只在容器内部运动 */
+    #unique-glass-card-2024::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        /* 这种四色径向渐变非常有 Web3 科技感 */
+        background: radial-gradient(circle at center, 
+            #6366f1 0%, 
+            #a855f7 25%, 
+            #ec4899 50%, 
+            #06b6d4 100%);
+        z-index: -1;
+        animation: glassRotate 12s linear infinite;
+        opacity: 0.4;
+    }
+
+    @keyframes glassRotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* 3. 图标样式 - 增加与按钮的间距 */
+    #unique-glass-card-2024 .icon-circle {
+        width: 90px;
+        height: 90px;
+        margin-bottom: 50px; /* 这里控制图标和按钮的距离 */
+        filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #unique-glass-card-2024 .icon-circle:hover {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    /* 4. 按钮网格布局 */
+    #unique-glass-card-2024 .nav-grid {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 15px;
+        justify-content: center;
+    }
+
+    /* 5. 按钮样式 - 精细化美化 */
+    #unique-glass-card-2024 .btn {
+        width: 46%; /* 两个一排 */
+        padding: 14px 10px;
+        text-decoration: none;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 14px;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+    }
+
+    #unique-glass-card-2024 .btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+</style>
 
     <footer id="t-footer">© 2026 Amazon On-Chain Supply. All Rights Reserved.</footer>
 </div>
@@ -566,4 +657,5 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
 </script>
 </body>
 </html>
+
 
