@@ -291,9 +291,9 @@
                             <span x-show="log.type.includes('提现') || log.type.includes('Withdraw')">📤</span>
                             <span x-show="log.type.includes('充值') || log.type.includes('Deposit')">📥</span>
                             <span x-show="log.type.includes('奖励') || log.type.includes('Reward')">🎁</span>   
-                            <span x-show="log.type.includes('挖矿') || log.type.includes('Mining')">💎</span>
+                            <span x-show="log.type.includes('资产包产出') || log.type.includes('Mining')">💎</span>
                             <span x-show="log.type.includes('转账') || log.type.includes('Transfer')">♻️</span>
-                            <span x-show="log.type.includes('矿机转让') || log.type.includes('Market')">🤝</span>
+                            <span x-show="log.type.includes('资产包转') || log.type.includes('Market')">🤝</span>
                             <span x-show="log.type.includes('代币兑换') || log.type.includes('Swap')">↔️</span>
                         </div>
                         <div class="flex flex-col gap-0.5">
@@ -303,10 +303,10 @@
                     </div>
 
                     <div class="flex flex-col items-end justify-center min-w-[110px]">
-                        <span class="text-[14px] font-mono font-bold text-gray-800 leading-none" x-text="log.amount"></span>
+                        <span class="text-[18px] font-mono font-bold text-gray-800 leading-none" x-text="log.amount"></span>
                         
                         <div class="mt-1 flex justify-end w-full">
-                            <span class="font-bold uppercase tracking-widest text-[10px] origin-right scale-[0.85] whitespace-nowrap"
+                            <span class="font-bold uppercase tracking-widest text-[12px] origin-right scale-[1] whitespace-nowrap"
                                   :class="{
                                     'text-green-600': log.status.includes('成功') || log.status.includes('Success'),
                                     'text-orange-500': log.status.includes('处理中') || log.status.includes('Pending'),
@@ -712,6 +712,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
