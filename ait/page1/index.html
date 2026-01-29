@@ -289,10 +289,14 @@
                 <div class="flex justify-between items-center py-5 border-b border-gray-100/60 last:border-0">
                     
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-lg">
+                        <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-lg shadow-sm border border-gray-100/50">
                             <span x-show="log.type.includes('提现') || log.type.includes('Withdraw')">📤</span>
                             <span x-show="log.type.includes('充值') || log.type.includes('Deposit')">📥</span>
-                            <span x-show="log.type.includes('奖励') || log.type.includes('Reward')">🎁</span>
+                            <span x-show="log.type.includes('奖励') || log.type.includes('Reward')">🎁</span>   
+                            <span x-show="log.type.includes('挖矿') || log.type.includes('Mining')">💎</span>
+                            <span x-show="log.type.includes('转账') || log.type.includes('Transfer')">♻️</span>
+                            <span x-show="log.type.includes('矿机转让') || log.type.includes('Market')">🤝</span>
+                            <span x-show="log.type.includes('代币兑换') || log.type.includes('Swap')">↔️</span>
                         </div>
                         <div class="flex flex-col gap-0.5">
                             <span class="text-[14px] font-semibold text-gray-700" x-text="log.type"></span>
@@ -301,10 +305,10 @@
                     </div>
 
                     <div class="flex flex-col items-end justify-center min-w-[110px]">
-                        <span class="text-[20px] font-mono font-extrabold text-gray-900 leading-none" x-text="log.amount"></span>
+                        <span class="text-[18px] font-mono font-bold text-gray-700 leading-none" x-text="log.amount"></span>
                         
                         <div class="mt-1 flex justify-end w-full">
-                            <span class="font-bold uppercase tracking-widest text-[12px] origin-right scale-[0.95] whitespace-nowrap"
+                            <span class="font-bold uppercase tracking-widest text-[12px] origin-right scale-[0.99] whitespace-nowrap"
                                   :class="{
                                     'text-green-500': log.status.includes('成功') || log.status.includes('Success'),
                                     'text-orange-400': log.status.includes('处理') || log.status.includes('Pending'),
@@ -708,6 +712,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
