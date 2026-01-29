@@ -322,7 +322,7 @@
                     </div>
 
                     <div class="flex flex-col items-end justify-center min-w-[110px]">
-                        <span class="text-[18px] font-mono font-bold text-gray-800 leading-none" x-text="log.amount"></span>
+                        <span class="text-[12px] font-mono font-bold text-gray-800 leading-none" x-text="log.amount"></span>
                         
                         <div class="mt-1 flex justify-end w-full">
                             <span class="font-bold uppercase tracking-widest text-[12px] origin-right scale-[1] whitespace-nowrap"
@@ -586,9 +586,28 @@ function walletApp() {
             this.userData.team_daily_amount = parseFloat(data.user.team_daily_amount || 0).toFixed(2);
 
             // 3. 矿机与日志
-            this.userData.miners = data.miners || [];
-            this.logs = data.logs || []; 
+            if (data.logs && data.logs.length > 0) {
+                this.logs = data.logs.map(log => {
+                    // 使用正则匹配：(符号?)(数字)(空格)(币种)
+                    // 例如："-10.5 AIT" -> ["-10.5 AIT", "-", "10.5", " AIT"]
+                    const match = String(log.amount).match(/^([+-]?)([\d\.]+)(.*)$/);
+        
+                    if (match) {
+                        const symbol = match[1];      // 符号 (+ 或 -)
+                        const value = parseFloat(match[2]); // 数值 (10.5)
+                        const suffix = match[3];      // 后缀 ( AIT)
             
+                        return {
+                            ...log,
+                            // 重新拼接：符号 + 两位小数 + 后缀
+                            amount: `${symbol}${value.toFixed(2)}${suffix}`
+                        };
+                    }
+                    return log; // 如果匹配失败，返回原样
+                });
+            } else {
+                this.logs = [];
+            }
             // 4. 余额更新 (同样保留2位或根据需要)
             this.coins.forEach(c => {
                 if(data.user.balances && data.user.balances[c.name] !== undefined) {
@@ -808,6 +827,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
