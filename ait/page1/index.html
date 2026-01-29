@@ -553,44 +553,55 @@ function walletApp() {
             return (this.translations[this.lang] && this.translations[this.lang][key]) || (this.translations['zh-CN'] && this.translations['zh-CN'][key]) || key;
         },
 
-        async login() {
-            if(!this.walletAddress || this.walletAddress.length < 5) return;
-            this.loading = true;
-            try {
-                const response = await fetch(this.API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'LOGIN', address: this.walletAddress })
-                });
-                const data = await response.json();
-                if(data.status === "success" && data.user) {
-                    this.userData.totalValue = data.user.total || '0.00';
-                    this.userData.dailyOutput = data.user.daily || '0';
-                    this.userData.lockedAmount = data.user.locked || '0';
-                    this.userData.miners = data.miners || [];
-                    
-                    // --- 核心修复：接收并存储日志 ---
-                    this.logs = data.logs || []; 
-                    
-                    if(data.user.team) this.userData.team = data.user.team;
+ async login() {
+    if(!this.walletAddress || this.walletAddress.length < 5) return;
+    this.loading = true;
+    try {
+        const response = await fetch(this.API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'LOGIN', address: this.walletAddress })
+        });
+        const data = await response.json();
+        
+        if(data.status === "success" && data.user) {
+            // 1. 基础资产数据 (后端键名: totalValue, dailyOutput, lockedAmount)
+            this.userData.totalValue = data.user.totalValue || '0.00';
+            this.userData.dailyOutput = data.user.dailyOutput || '0';
+            this.userData.lockedAmount = data.user.lockedAmount || '0';
+            
+            // 2. 核心修复：平铺接收团队 L-S 列数据
+            this.userData.v1_count = data.user.v1_count || 0;
+            this.userData.v1_miners = data.user.v1_miners || 0;
+            this.userData.v1_daily_output = data.user.v1_daily_output || '0.00';
+            this.userData.v2_plus_count = data.user.v2_plus_count || 0;
+            this.userData.v2_plus_miners = data.user.v2_plus_miners || 0;
+            this.userData.v2_plus_daily_output = data.user.v2_plus_daily_output || '0.00';
+            this.userData.team_reward_rate = data.user.team_reward_rate || 0;
+            this.userData.team_daily_amount = data.user.team_daily_amount || '0.00';
 
-                    this.coins.forEach(c => {
-                        if(data.user.balances && data.user.balances[c.name] !== undefined) {
-                            c.balance = data.user.balances[c.name];
-                        }
-                    });
-                    this.isLoggedIn = true;
-                    localStorage.setItem('onchain_wallet_addr', this.walletAddress);
-                } else {
-                    alert(data.message || "Address not found");
+            // 3. 矿机与日志
+            this.userData.miners = data.miners || [];
+            this.logs = data.logs || []; 
+            
+            // 4. 余额更新
+            this.coins.forEach(c => {
+                if(data.user.balances && data.user.balances[c.name] !== undefined) {
+                    c.balance = data.user.balances[c.name];
                 }
-            } catch (e) {
-                console.error("Login Error:", e);
-                alert("Connect failed.");
-            } finally {
-                this.loading = false;
-            }
-        },
+            });
 
+            this.isLoggedIn = true;
+            localStorage.setItem('onchain_wallet_addr', this.walletAddress);
+        } else {
+            alert(data.message || "Address not found");
+        }
+    } catch (e) {
+        console.error("Login Error:", e);
+        alert("Connect failed: " + e.message);
+    } finally {
+        this.loading = false;
+    }
+},
         async handleModalSubmit() {
             // 如果是转让，检查是否有接收地址
             if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
@@ -791,6 +802,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
