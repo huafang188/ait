@@ -139,24 +139,9 @@
                 </template>
             </template>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-            <div class="bg-indigo-50/50 p-3 rounded-xl">
-                <p class="text-[10px] text-gray-400 mb-1" x-text="t('dailyOutput')"></p>
-                <p class="font-bold text-sm text-indigo-700" x-text="isLoggedIn ? userData.dailyOutput + ' AIT' : '****'"></p>
-            </div>
-            <div class="bg-purple-50/50 p-3 rounded-xl">
-                <p class="text-[10px] text-gray-400 mb-1" x-text="t('lockedAmount')"></p>
-                <p class="font-bold text-sm text-purple-700" x-text="isLoggedIn ? userData.lockedAmount + ' AIT' : '****'"></p>
-            </div>
-        </div>
     </div>
 </div>
 
-                <div class="bg-blue-50/50 p-3 rounded-xl">
-                    <p class="text-[11px] text-blue-800 mb-2 leading-tight font-medium" x-text="t('rechargeTip')"></p>
-                    <a href="https://app.tonkeeper.com/transfer/aigoodtalk.ton" 
-                       class="block w-full text-center bg-white text-blue-600 py-2.5 rounded-lg text-xs font-bold border border-blue-100 shadow-sm" x-text="t('rechargeBtn')"></a>
-                </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-indigo-50/50 p-3 rounded-xl border border-indigo-100">
@@ -712,6 +697,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
