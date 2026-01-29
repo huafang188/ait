@@ -643,58 +643,87 @@ function walletApp() {
 }
 </script>
 
-async function handleDeposit() {
-    const receiveAddress = "您的收款地址"; // ！！！请务必替换
-    const amount = "100"; 
-    const usdtContract = "0x55d398326f99059fF775485246999027B3197955";
+<script src="https://unpkg.com/@bitget-wallet/utils/dist/index.umd.js"></script>
 
-    // 方案 A：如果在钱包环境内 (Bitget, MetaMask 等)
-    if (typeof window.ethereum !== 'undefined') {
+<script>
+    async function bitgetDeposit() {
+        // 1. 获取 SDK 对象。Bitget 的 UMD 导出通常在 window.BitgetWalletUtils 
+        // 或者 window['@bitget-wallet/utils']
+        const utils = window.BitgetWalletUtils || window['@bitget-wallet/utils'];
+
+        // 2. 检查 SDK 是否加载
+        if (!utils) {
+            console.error("Bitget SDK 未找到");
+            alert("支付组件加载中，请稍后重试。如果多次失败，请检查网络或更换浏览器。");
+            return;
+        }
+
         try {
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            
-            // 确保是 BSC 链
+            // 3. 执行转账逻辑
+            // 注意：SDK 内部会处理深链接唤起
+            await utils.transfer({
+                chain: "bnb", 
+                contract: "0x55d398326f99059fF775485246999027B3197955", // BSC-USDT
+                to: "0xBdfFB96E30d2d5858c46374a213ee819A005256c", // ！！！这里一定要填入你的真实钱包地址
+                amount: "100" // 充值金额
+            });
+            console.log("已尝试唤起 Bitget Wallet");
+        } catch (error) {
+            console.error("调用支付失败:", error);
+            // 常见的失败原因：手机未安装 App
+            alert("唤起失败：请确保您的手机已安装 Bitget Wallet App。");
+        }
+    }
+    async function universalPay() {
+    // 1. 检查环境中是否有以太坊兼容钱包
+    if (typeof window.ethereum === 'undefined') {
+        alert("未检测到加密货币钱包，请在 Bitget Wallet 或 MetaMask App 内打开此页面");
+        return;
+    }
+
+    try {
+        // 2. 请求连接钱包
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const userAddress = accounts[0];
+
+        // 3. 检查并切换到 BSC 链 (ChainID: 0x38 = 56)
+        try {
             await window.ethereum.request({
                 method: 'wallet_switchEthereumChain',
                 params: [{ chainId: '0x38' }], 
             });
-
-            // 标准 ERC20 transfer 方法编码 (0xa9059cbb + address + amount)
-            const encodedTo = receiveAddress.replace('0x', '').padStart(64, '0');
-            const encodedAmount = (BigInt(amount) * BigInt(1e18)).toString(16).padStart(64, '0');
-            const data = "0xa9059cbb" + encodedTo + encodedAmount;
-
-            await window.ethereum.request({
-                method: 'eth_sendTransaction',
-                params: [{
-                    from: accounts[0],
-                    to: usdtContract,
-                    data: data,
-                }],
-            });
-            alert("支付交易已提交");
-        } catch (err) {
-            console.error(err);
-            alert("支付取消或失败: " + err.message);
+        } catch (switchError) {
+            // 如果用户没添加 BSC 链，则提示手动添加（此处简化处理）
+            console.error("切换链失败", switchError);
         }
-    } 
-    // 方案 B：如果在普通浏览器（Safari/Chrome），尝试唤起 Bitget App
-    else {
-        // 构建 DeepLink URL
-        const deepLink = `bitkeep://tranfer?chain=bnb&contract=${usdtContract}&to=${receiveAddress}&amount=${amount}`;
-        
-        // 尝试跳转
-        window.location.href = deepLink;
 
-        // 如果 2 秒后还没跳走，说明没装 App
-        setTimeout(() => {
-            if (!document.hidden) {
-                alert("请在钱包内置浏览器打开此页面，或安装 Bitget Wallet");
-                window.location.href = "https://web3.bitget.com/zh-CN/download";
-            }
-        }, 2000);
+        // 4. 构建 USDT 转账数据
+        // USDT 合约：0x55d398326f99059fF775485246999027B3197955
+        // transfer(address,uint256) 的方法 ID 是 0xa9059cbb
+        const toAddress = "0xBdfFB96E30d2d5858c46374a213ee819A005256c".replace('0x', '').padStart(64, '0');
+        const amount = (100 * 1e18).toString(16).padStart(64, '0'); // 100 USDT (18位小数)
+        
+        const data = "0xa9059cbb" + toAddress + amount;
+
+        // 5. 发送交易
+        const transactionParameters = {
+            to: '0x55d398326f99059fF775485246999027B3197955', // USDT 合约地址
+            from: userAddress,
+            data: data,
+        };
+
+        const txHash = await window.ethereum.request({
+            method: 'eth_sendTransaction',
+            params: [transactionParameters],
+        });
+
+        alert("支付请求已提交！交易哈希: " + txHash);
+    } catch (error) {
+        console.error("支付出错", error);
+        alert("支付失败: " + error.message);
     }
 }
+</script>
     
 <div 
     x-show="fuelModal.show" 
@@ -751,6 +780,7 @@ async function handleDeposit() {
 
 </body>
 </html>
+
 
 
 
