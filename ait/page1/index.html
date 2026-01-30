@@ -210,7 +210,7 @@
 </div>
 <div class="mt-4 p-4 glass-card border-l-4 border-yellow-500 bg-yellow-50/30">
     <p class="text-[10px] text-yellow-700 mb-2 font-bold">🔋 每30天费用为 345 FT</p>
-    <button @click="openFuelModal()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition">使用 Fuel Token 激活</button>
+    <button @click="openFuelModal()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition">使用FT激活</button>
 </div>
         <div class="glass-card p-4 shadow-md bg-indigo-900 text-white">
             <h3 class="font-bold text-sm mb-4 flex items-center">
@@ -525,7 +525,7 @@ function walletApp() {
         coins: [
             { name: 'AIT', balance: 0, price: 0.2, logo: 'logo1.png' },
             { name: 'ACT', balance: 0, price: 0, logo: 'logo2.png' },
-            { name: 'Fuel Token', balance: 0, price: 0.15, logo: 'https://img95.699pic.com/xsj/2j/5c/rm.jpg!/fh/300' },
+            { name: 'FT', balance: 0, price: 0.15, logo: 'https://img95.699pic.com/xsj/2j/5c/rm.jpg!/fh/300' },
             { name: 'USDT', balance: 0, price: 1.00, logo: 'usdt.png' },
             { name: 'TON', balance: 0, price: 1.53, logo: 'https://asset-metadata-service-production.s3.amazonaws.com/asset_icons/46db595e47fca18285c42eaa720fd4cdf3cc4940e1490ec07c77d21f2cf961cf.png' }
         ],
@@ -828,6 +828,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
