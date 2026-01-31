@@ -386,63 +386,6 @@
         document.querySelectorAll('[id^="t-warn"]').forEach(el => el.innerText = d.warn);
     }
 
-window.handleTonPackageDeposit = function() {
-    const packages = [
-        { name: "1个资产包 (150 USDT)", amount: "150" },
-        { name: "5个资产包 (750 USDT)", amount: "750" },
-        { name: "10个资产包 (1500 USDT)", amount: "1500" },
-        { name: "20个资产包 (3000 USDT)", amount: "3000" },
-        { name: "50个资产包 (7500 USDT)", amount: "7500" },
-        { name: "100个资产包 (15000 USDT)", amount: "15000" }
-    ];
-
-    let menuText = "请选择要购买的资产包数量：\n";
-    packages.forEach((p, index) => { menuText += `${index + 1}. ${p.name}\n`; });
-    
-    const choice = prompt(menuText, "1");
-    if (!choice) return;
-
-    const selectedPkg = packages[parseInt(choice) - 1];
-    if (!selectedPkg) { alert("无效的选择"); return; }
-
-    // --- 关键修正点 ---
-    const receiveAddress = "UQAO9Ae6eaMy00ZOP-TJApCTy7x4i04OGefpHsPFU3f9S-sP"; 
-    // 注意：TON 链 USDT 的官方 Master 地址是 EQCxE6m_hRE99LpYMj77idm2S787z9PE0L282mhymVL5Vcr0
-    // 你代码中的地址可能带有连字符，建议使用官方标准地址。
-    const usdtMasterAddress = "EQCxE6m_hRE99LpYMj77idm2S787z9PE0L282mhymVL5Vcr0"; 
-
-    // 1. Bitget Wallet 专用协议 (参数名修正：transfer 拼写)
-    // 注意：Bitget 的 DeepLink 协议头是 bitkeep://transfer (之前代码少了一个 's' 或者拼写为 tranfer 需要根据版本核对)
-    // 官方文档通常使用 transfer
-    const bitgetLink = `bitkeep://transfer?chain=ton&contract=${usdtMasterAddress}&to=${receiveAddress}&amount=${selectedPkg.amount}`;
-
-    // 2. 通用 TON 协议 (Tonkeeper / MyTonWallet 等)
-    // 真正的 Jetton(USDT) 转账在通用协议中比较复杂，标准 ton://transfer 只能转原生 TON。
-    // 这里保持作为降级方案，提示用户手动转账。
-    const standardTonLink = `ton://transfer/${receiveAddress}?text=Purchase_${selectedPkg.amount}_USDT`;
-
-    console.log(`正在唤起 TON 支付: ${selectedPkg.amount} USDT`);
-
-    // 优先尝试 Bitget 协议
-    window.location.href = bitgetLink;
-
-    // 容错处理：如果 2 秒后页面未隐藏（说明未成功跳出 App）
-    setTimeout(() => {
-        if (!document.hidden) {
-            // 尝试通用协议
-            window.location.href = standardTonLink;
-            
-            // 如果连通用协议都没反应，给出下载建议
-            setTimeout(() => {
-                if (!document.hidden) {
-                    if(confirm("未检测到兼容的 TON 钱包，是否前往下载 Bitget Wallet？")) {
-                        window.location.href = "https://web3.bitget.com/zh-CN/download";
-                    }
-                }
-            }, 1500);
-        }
-    }, 2000);
-};
     // --- 3. 自动检测语言 ---
     window.onload = function() {
         const userLang = navigator.language || navigator.userLanguage;
@@ -642,17 +585,3 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
