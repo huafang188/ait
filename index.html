@@ -256,27 +256,46 @@
         <a href="https://ypt.huikangyike.com/wsy_pub/web/index.php?m=app_index&a=index&customer_id=czo0OiI5NTc4Ijs" class="btn" id="t-shop-btn">在线商城</a>
     </div>
 
-<div class="glass-card">
-    <img src="https://thumbs.dreamstime.com/b/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9B%BE%E6%A0%87%E5%8A%A0%E5%AF%86%E8%B4%A7%E5%B8%81%E7%9F%A2%E9%87%8F%E6%95%B0%E5%AD%97%E5%BE%BD%E6%A0%87-201091629.jpg" class="icon-circle">
+<div class="glass-card" style="display: flex; flex-direction: column; align-items: center;">
+    <img src="https://thumbs.dreamstime.com/b/..." class="icon-circle">
 
-    <div class="w-full my-4 overflow-hidden rounded-xl border border-white/20 shadow-inner bg-black/10">
+    <div class="my-4 overflow-hidden rounded-xl border border-white/20 shadow-inner bg-black/10" 
+         style="width: 92%; max-width: 320px; margin-left: auto; margin-right: auto;">
         <video 
             class="w-full h-auto block"
+            style="width: 100%; display: block;"
             autoplay 
             loop 
             muted 
             playsinline>
             <source src="https://web3.bitget.com/web_static/videos/download_app_pc_light.mp4" type="video/mp4">
-            您的浏览器不支持 HTML5 视频。
         </video>
     </div>
 
-    <div class="nav-grid" style="flex-wrap: wrap; width: 100%; margin: 0;">
+    <div class="nav-grid" style="flex-wrap: wrap; width: 100%; margin: 0; display: flex; justify-content: space-between;">
         <a href="http://www.fosal.fit/ait/page2" class="btn" style="width: 48%;" id="t-whitepaper">白皮书</a>
         <a href="https://web3.bitget.com/" class="btn" style="width: 48%;">Bitget Wallet</a>
-        <a href="https://web3.bitget.com/zh-CN/dapp" class="btn" style="width: 48%;" id="t-explorer">区块链浏览器</a>
+        <a href="https://bscscan.com/" class="btn" style="width: 48%;" id="t-explorer">区块链浏览器</a>
     </div>
 </div>
+
+    <!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <div class="tradingview-widget-copyright"><a href="https://cn.tradingview.com/news/top-providers/tradingview/" rel="noopener nofollow" target="_blank"><span class="blue-text">Track all markets on TradingView</span></a></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+  {
+  "displayMode": "adaptive",
+  "feedMode": "all_symbols",
+  "colorTheme": "light",
+  "isTransparent": true,
+  "locale": "zh_CN",
+  "width": "100%",
+  "height": "100%"
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
 
     <footer id="t-footer">© 2026 Amazon On-Chain Supply. All Rights Reserved.</footer>
 </div>
@@ -579,6 +598,7 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
 </script>
 </body>
 </html>
+
 
 
 
