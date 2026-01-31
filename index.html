@@ -247,16 +247,16 @@
         <button class="btn" onclick="openModal('walletModal')" id="t-bind-wallet">绑定钱包</button>
         <a href="http://www.fosal.fit/ait/page1" class="btn" id="t-chain-wallet">链上钱包</a>
     </div>
-<div class="mt-4 p-4 rounded-2xl shadow-inner" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
-    <p class="text-white text-xs opacity-70 mb-3 text-center">选择 TON 网络资产包</p>
+    <div class="mt-4 p-4 rounded-2xl shadow-inner" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+        <p class="text-white text-xs opacity-70 mb-3 text-center">用 USDT By TON 购买资产包</p>
     
-    <button @click="window.handleTonPackageDeposit()" 
-            class="w-full text-white py-3 rounded-xl text-sm font-bold text-center flex items-center justify-center shadow-lg transition-transform active:scale-95" 
-            style="background-color: #46dde8 !important; border: 1px solid rgba(255,255,255,0.2); color: #000 !important;">
-        <img src="https://ton.org/download/ton_symbol.png" class="w-5 h-5 mr-2">
-        用 USDT By TON 购买资产包
-    </button>
-</div>
+        <button @click="window.handleTonPackageDeposit()" 
+                class="w-full text-white py-3 rounded-xl text-sm font-bold text-center flex items-center justify-center shadow-lg transition-transform active:scale-95" 
+                style="background-color: #46dde8 !important; border: 1px solid rgba(255,255,255,0.2); color: #000 !important;">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKF8rhPhOUDRD4pbUgHJebIMzaKJ__DzWwJw&s" class="w-5 h-5 mr-2">
+            用 USDT By TON 购买资产包
+        </button>
+    </div>
 
     
     <div class="glass-card">
@@ -640,6 +640,7 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
 </script>
 </body>
 </html>
+
 
 
 
