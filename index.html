@@ -256,14 +256,27 @@
         <a href="https://ypt.huikangyike.com/wsy_pub/web/index.php?m=app_index&a=index&customer_id=czo0OiI5NTc4Ijs" class="btn" id="t-shop-btn">在线商城</a>
     </div>
 
-    <div class="glass-card">
-        <img src="https://cdn-icons-png.freepik.com/512/12114/12114208.png" class="icon-circle">
-        <div class="nav-grid" style="flex-wrap: wrap; width: 100%; margin: 0;">
-            <a href="http://www.fosal.fit/ait/page2" class="btn" style="width: 48%;" id="t-whitepaper">白皮书</a>
-            <a href="https://web3.bitget.com/" class="btn" style="width: 48%;">Bitget Wallet</a>
-            <a href="https://bscscan.com/" class="btn" style="width: 48%;" id="t-explorer">区块链浏览器</a>
-        </div>
+<div class="glass-card">
+    <img src="https://thumbs.dreamstime.com/b/%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9B%BE%E6%A0%87%E5%8A%A0%E5%AF%86%E8%B4%A7%E5%B8%81%E7%9F%A2%E9%87%8F%E6%95%B0%E5%AD%97%E5%BE%BD%E6%A0%87-201091629.jpg" class="icon-circle">
+
+    <div class="w-full my-4 overflow-hidden rounded-xl border border-white/20 shadow-inner bg-black/10">
+        <video 
+            class="w-full h-auto block"
+            autoplay 
+            loop 
+            muted 
+            playsinline>
+            <source src="https://web3.bitget.com/web_static/videos/download_app_pc_light.mp4" type="video/mp4">
+            您的浏览器不支持 HTML5 视频。
+        </video>
     </div>
+
+    <div class="nav-grid" style="flex-wrap: wrap; width: 100%; margin: 0;">
+        <a href="http://www.fosal.fit/ait/page2" class="btn" style="width: 48%;" id="t-whitepaper">白皮书</a>
+        <a href="https://web3.bitget.com/" class="btn" style="width: 48%;">Bitget Wallet</a>
+        <a href="https://web3.bitget.com/zh-CN/dapp" class="btn" style="width: 48%;" id="t-explorer">区块链浏览器</a>
+    </div>
+</div>
 
     <footer id="t-footer">© 2026 Amazon On-Chain Supply. All Rights Reserved.</footer>
 </div>
@@ -272,8 +285,8 @@
     <div class="glass-card modal-content" onclick="event.stopPropagation()">
         <h3 id="t-wallet-modal-title">绑定钱包</h3>
         <form id="googleFormWallet">
-            <input type="text" id="ipt-wallet" placeholder="请在此输入您的BNB钱包地址" required>
-            <input type="text" id="ipt-ref" placeholder="请在此输入您的推荐人的BNB地址" required>
+            <input type="text" id="ipt-wallet" placeholder="请在此输入您的钱包地址" required>
+            <input type="text" id="ipt-ref" placeholder="请在此输入您的推荐人的钱包地址" required>
             <button type="submit" class="btn" id="t-submit-1">提交</button>
             <p style="font-size: 0.7rem;" id="t-warn-1">请勿重复提交此表单</p>
         </form>
@@ -566,6 +579,7 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
 </script>
 </body>
 </html>
+
 
 
 
