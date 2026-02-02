@@ -248,7 +248,7 @@
 
         </div>
 
-        <button class="btn" onclick="openModal('walletModal')" id="t-bind-wallet">绑定钱包</button>
+        <button class="btn" onclick="openModal('walletModal')" id="t-bind-wallet">绑定关系</button>
 
         <a href="http://www.fosal.fit/ait/page1" class="btn" id="t-chain-wallet">链上钱包</a>
 
@@ -289,10 +289,10 @@
 
 <div id="walletModal" class="modal" onclick="closeModal(event, 'walletModal')">
     <div class="glass-card modal-content" onclick="event.stopPropagation()">
-        <h3 id="t-wallet-modal-title">绑定钱包</h3>
+        <h3 id="t-wallet-modal-title">绑定关系</h3>
         <form id="googleFormWallet">
-            <input type="text" id="ipt-wallet" placeholder="请在此输入您的钱包地址" required>
-            <input type="text" id="ipt-ref" placeholder="请在此输入您的推荐人的钱包地址" required>
+            <input type="text" id="ipt-wallet" placeholder="请在此输入您的数字身份DID" required>
+            <input type="text" id="ipt-ref" placeholder="请在此输入您的推荐人 数字身份DID" required>
             <button type="submit" class="btn" id="t-submit-1">提交</button>
             <p style="font-size: 0.7rem;" id="t-warn-1">请勿重复提交此表单</p>
         </form>
@@ -309,7 +309,7 @@
             <input type="text" placeholder="证件号码" id="ipt-id" required>
             <input type="text" placeholder="国家或地区" id="ipt-country" required>
             <input type="text" placeholder="详细地址" id="ipt-detail" required>
-            <input type="text" placeholder="bnb地址" id="ipt-ton" required>
+            <input type="text" placeholder="数字身份DID" id="ipt-ton" required>
             <button type="submit" class="btn" id="t-submit-2">提交</button>
             <p style="font-size: 0.7rem;" id="t-warn-2">请勿重复提交此表单</p>
         </form>
@@ -335,9 +335,9 @@
             m1_title: "资产包详情", m1_p1: "", m1_p1_n: "", m1_p2: "全网释放中资产包", m1_p2_n: "",
             buy_btn: "购买原始资产包", nav_news: "新闻", nav_blog: "博客", nav_comm: "社区", nav_serv: "客服",
             price_t: "AIT 今日价格 ¥1.4", ait_info: "总发行570,000,000枚，已产出120,000枚，已销毁20,000枚", act_info: "总发行210,000,000枚", date_l: "预期上线日期",
-            bind_w: "绑定钱包", chain_w: "链上钱包", m4_t: "链上商城", m4_d: "在这里您可以实现使用AIT或ACT购买您需要的一切。",
+            bind_w: "绑定关系", chain_w: "链上钱包", m4_t: "链上商城", m4_d: "在这里您可以实现使用AIT或ACT购买您需要的一切。",
             addr_btn: "收货地址", shop_btn: "在线商城", whitepaper: "白皮书", explorer: "区块链浏览器",
-            buy_opt: "选择购买数量", wallet_t: "绑定钱包", addr_t: "收货地址登记", submit: "提交", warn: "请勿重复提交此表单", success: "提交成功！"
+            buy_opt: "选择购买数量", wallet_t: "绑定关系", addr_t: "收货地址登记", submit: "提交", warn: "请勿重复提交此表单", success: "提交成功！"
         },
         'zh-TW': { title: "Fosal On-chain supply ecosystem", desc: "Fosal On-chain supply ecosystem是以區塊鏈技術為依託的去中心化鏈上商城與供應鏈整合平台，同時賦能消費者、商家與供應鏈的新型商業生態專案。", m1_title: "礦機詳情", buy_btn: "購買原始礦機", nav_news: "新聞", nav_blog: "博客", nav_comm: "社區", nav_serv: "客服", price_t: "AIT 今日幣價 ¥1.4", bind_w: "綁定錢包", addr_btn: "收貨地址", shop_btn: "在線商城", whitepaper: "白皮書", explorer: "區塊鏈瀏覽器", submit: "提交", warn: "請勿重複提交", success: "提交成功！" },
         'ja': { title: "Fosal On-chain supply ecosystem", desc: "Fosal オンチェーン サプライ エコシステムは、ブロックチェーン テクノロジーに基づく分散型オンチェーン マーケットプレイスおよびサプライ チェーン統合プラットフォームであり、消費者、販売者、サプライ チェーンに力を与えます。", m1_title: "マイナーの詳細", buy_btn: "マイナーを購入", nav_news: "ニュース", nav_blog: "ブログ", nav_comm: "コミュニティ", nav_serv: "サポート", price_t: "AIT 今日の価格 ¥1.4", bind_w: "ウォレット連携", addr_btn: "配送先住所", shop_btn: "オンラインショップ", whitepaper: "白書", explorer: "エクスプローラー", submit: "送信", warn: "重複送信禁止", success: "送信完了！" },
@@ -585,4 +585,5 @@ document.getElementById('googleFormAddr').onsubmit = function(e) {
 </script>
 </body>
 </html>
+
 
