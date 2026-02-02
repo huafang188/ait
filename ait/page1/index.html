@@ -102,21 +102,21 @@
             </template>
             
             <div class="flex gap-2">
-                <button @click="login" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition flex items-center justify-center" :disabled="loading">
+                <butAOT @click="login" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition flex items-center justify-center" :disabled="loading">
                     <span x-show="loading" class="mr-2 animate-spin">⚽</span>
                     <span x-text="isLoggedIn ? t('refreshData') : t('connectBtn')"></span>
-                </button>
-                <button x-show="isLoggedIn" @click="logout" class="px-4 bg-red-50 text-red-500 rounded-xl font-bold border border-red-100" x-text="t('logout')"></button>
+                </butAOT>
+                <butAOT x-show="isLoggedIn" @click="logout" class="px-4 bg-red-50 text-red-500 rounded-xl font-bold border border-red-100" x-text="t('logout')"></butAOT>
             </div>
         </div>
 
 <div class="glass-card p-4 shadow-md border-t-4 border-indigo-400">
-    <button @click="showMiners = !showMiners" class="w-full flex justify-between items-center font-bold text-indigo-900 mb-2 outline-none">
+    <butAOT @click="showMiners = !showMiners" class="w-full flex justify-between items-center font-bold text-indigo-900 mb-2 outline-none">
         <div class="flex items-center">
             <span class="mr-2">🌏</span> <span x-text="t('minerModule')"></span>
         </div>
         <span class="text-xs text-indigo-400" x-text="showMiners ? '收起 ▲' : '展开 ▼'"></span>
-    </button>
+    </butAOT>
     
     <div x-show="showMiners" x-transition.opacity class="space-y-4 pt-2">
         <div class="grid grid-cols-4 gap-2">
@@ -161,8 +161,8 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
-                    <button @click="openModal('merge')" class="bg-indigo-600 text-white py-2.5 rounded-lg text-xs font-bold" x-text="t('mergeMiner')"></button>
-                    <button @click="openModal('transferMiner')" class="bg-indigo-100 text-indigo-700 py-2.5 rounded-lg text-xs font-bold" x-text="t('transferMiner')"></button>
+                    <butAOT @click="openModal('merge')" class="bg-indigo-600 text-white py-2.5 rounded-lg text-xs font-bold" x-text="t('mergeMiner')"></butAOT>
+                    <butAOT @click="openModal('transferMiner')" class="bg-indigo-100 text-indigo-700 py-2.5 rounded-lg text-xs font-bold" x-text="t('transferMiner')"></butAOT>
                 </div>
             </div>
         </div>
@@ -192,25 +192,25 @@
             </div>
 
 <div class="grid grid-cols-3 gap-2 mt-6">
-    <button @click="openModal('withdraw')" 
+    <butAOT @click="openModal('withdraw')" 
             class="text-white py-2.5 rounded-xl text-xs font-bold" 
             style="background-color: #2563eb !important;" 
-            x-text="t('withdraw')"></button>
+            x-text="t('withdraw')"></butAOT>
     
-    <button @click="handleDeposit()" 
+    <butAOT @click="handleDeposit()" 
             class="text-white py-2.5 rounded-xl text-xs font-bold text-center flex items-center justify-center" 
             style="background-color: #f3ba2f !important;" 
             x-text="t('deposit')">
-    </button>
+    </butAOT>
     
-    <button @click="openModal('transfer')" 
+    <butAOT @click="openModal('transfer')" 
             class="text-white py-2.5 rounded-xl text-xs font-bold" 
             style="background-color: #f97316 !important;" 
-            x-text="t('transfer')"></button>
+            x-text="t('transfer')"></butAOT>
 </div>
 <div class="mt-4 p-4 glass-card border-l-4 border-yellow-500 bg-yellow-50/30">
     <p class="text-[10px] text-yellow-700 mb-2 font-bold">🔋 每30天费用为 345 FT</p>
-    <button @click="openFuelModal()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition">使用FT激活</button>
+    <butAOT @click="openFuelModal()" class="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition">使用FT激活</butAOT>
 </div>
         <div class="glass-card p-4 shadow-md bg-indigo-900 text-white">
             <h3 class="font-bold text-sm mb-4 flex items-center">
@@ -218,18 +218,18 @@
             </h3>
             <div class="space-y-3">
                 <select x-model="swap.pair" class="w-full p-3 border-none rounded-xl text-sm bg-indigo-800 text-white outline-none">
-                    <option value="AIT-USDT">AIT → USDT (TON)</option>
-                    <option value="ACT-USDT">ACT → USDT (TON)</option>
+                    <option value="AIT-ANT">AIT → ANT</option>
+                    <option value="ACT-ANT">ACT → ANT</option>
                     <option value="AIT-ACT">AIT → ACT</option>
-                    <option value="USDT-AIT">USDT → AIT</option>
-                    <option value="TON-AIT">TON → AIT</option>
+                    <option value="ANT-AIT">ANT → AIT</option>
+                    <option value="AOT-AIT">AOT → AIT</option>
                     <option value="AIT-FT">AIT → FT</option>
-                    <option value="USDT-FT">USDT → FT</option>
-                    <option value="TON-FT">TON → FT</option>
+                    <option value="ANT-FT">ANT → FT</option>
+                    <option value="AOT-FT">AOT → FT</option>
                 </select>
                 <input type="number" x-model="swap.amount" :placeholder="t('inputAmount')" class="w-full p-3 rounded-xl text-sm bg-indigo-800 text-white placeholder-indigo-400 border-none outline-none">
                 <div class="text-[10px] text-indigo-300 px-1 font-medium" x-text="t('gasTip')"></div>
-                <button @click="submitSwap" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-indigo-900/50" x-text="t('executeSwap')"></button>
+                <butAOT @click="submitSwap" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-indigo-900/50" x-text="t('executeSwap')"></butAOT>
             </div>
         </div>
 
@@ -240,8 +240,8 @@
     </h3>
     
     <div class="flex bg-gray-100 rounded-lg p-1 mb-4">
-        <button @click="teamTab = 'members'" :class="teamTab === 'members' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">团队规模</button>
-        <button @click="teamTab = 'rewards'" :class="teamTab === 'rewards' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">奖励结算</button>
+        <butAOT @click="teamTab = 'members'" :class="teamTab === 'members' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">团队规模</butAOT>
+        <butAOT @click="teamTab = 'rewards'" :class="teamTab === 'rewards' ? 'bg-white shadow text-blue-600' : 'text-gray-500'" class="flex-1 py-1.5 rounded-md text-xs font-bold transition">奖励结算</butAOT>
     </div>
 
     <div x-show="teamTab === 'members'" class="space-y-4">
@@ -357,7 +357,7 @@
     <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl relative">
         <div class="flex justify-between items-center mb-6">
             <h3 class="font-extrabold text-gray-800" x-text="modal.title"></h3>
-            <button @click="modal.show = false" class="bg-gray-100 p-1 rounded-full text-gray-400 hover:text-red-500">✕</button>
+            <butAOT @click="modal.show = false" class="bg-gray-100 p-1 rounded-full text-gray-400 hover:text-red-500">✕</butAOT>
         </div>
         
         <div class="space-y-4">
@@ -387,12 +387,12 @@
                 <p class="text-[10px] text-blue-600 font-medium leading-relaxed" x-text="t('gasTip')"></p>
             </div>
 
-            <button @click="handleModalSubmit" 
+            <butAOT @click="handleModalSubmit" 
                     class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 transition active:scale-95 flex items-center justify-center"
                     :disabled="loading">
                 <span x-show="!loading" x-text="t('confirm')"></span>
                 <span x-show="loading" class="animate-spin text-xl">◌</span>
-            </button>
+            </butAOT>
         </div>
     </div>
 </div>
@@ -420,39 +420,39 @@ function walletApp() {
         },
         translations: {
                 'zh-CN': {
-                    title: '链上钱包', inputPlaceholder: '在此输入您的钱包地址', connectBtn: '连接钱包', refreshData: '更新数据', logout: '退出',
+                    title: '链上钱包', inputPlaceholder: '在此输入您的脸上数字身份ID', connectBtn: '连接数字身份', refreshData: '更新数据', logout: '退出',
                     minerModule: '我的资产包', rechargeTip: '充值您的链上资产', rechargeBtn: '钱包充值',
                     dailyOutput: '每日产积分', lockedAmount: '锁仓数量', mergeMiner: '合成资产包', transferMiner: '资产包转让',
-                    totalAssets: '钱包总资产 (USD)', withdraw: '提现', deposit: '充值', transfer: '转账', swapTitle: '闪电兑换',
+                    totalAssets: '钱包总资产 (CNY)', withdraw: '提现', deposit: '充值', transfer: '转账', swapTitle: '闪电兑换',
                     executeSwap: '立即兑换', records: '交易记录', date: '时间', type: '操作', amount: '数额', status: '状态',
-                    inputAmount: '输入数量 (10.56)', gasTip: 'Gas费用 (0.0TON)，提交后十分钟内处理', confirm: '确认操作',
+                    inputAmount: '输入数量 (10.56)', gasTip: 'Gas费用 (0.0AOT)，提交后十分钟内处理', confirm: '确认操作',
                     targetAddr: '请输入接收者钱包地址', success: '提交成功！', loginToView: '请先连接钱包查看记录'
                 },
                     'zh-TW': {
                         title: '鏈上錢包', inputPlaceholder: '在此輸入您的錢包地址', connectBtn: '連接錢包', refreshData: '更新數據', logout: '退出',
                         minerModule: '礦機工作臺', basicMiner: '原始礦機 (A-Type)', rechargeTip: '請充費時備註您的礦機編號', rechargeBtn: '電費充值',
                         dailyOutput: '每日產幣', lockedAmount: '鎖倉數量', mergeMiner: '合成節點礦機', transferMiner: '節點礦機轉讓',
-                        totalAssets: '錢包總資產 (USD)', withdraw: '提幣', deposit: '充值', transfer: '轉賬', swapTitle: '閃電兌換',
+                        totalAssets: '錢包總資產 CNY)', withdraw: '提幣', deposit: '充值', transfer: '轉賬', swapTitle: '閃電兌換',
                         executeSwap: '立即兌換', records: '交易記錄', date: '時間', type: '操作', amount: '數額', status: '狀態',
-                        inputAmount: '輸入數量 (10.56)', gasTip: 'Gas費用 (0.0TON)，提交後十分鐘內處理', confirm: '確認操作',
+                        inputAmount: '輸入數量 (10.56)', gasTip: 'Gas費用 (0.0AOT)，提交後十分鐘內處理', confirm: '確認操作',
                         targetAddr: '請輸入接收者錢包地址', success: '提交成功！', loginToView: '請先連接錢包查看記錄'
                     },
                     'ja': {
                         title: 'オンチェーン財布', inputPlaceholder: 'ウォレットアドレスを入力', connectBtn: '連携', refreshData: 'データ更新', logout: 'ログアウト',
                         minerModule: 'マイナーパネル', basicMiner: '基本マイナー', rechargeTip: 'リチャージ時にマイナーIDを記入', rechargeBtn: '電気代リチャージ',
                         dailyOutput: '日次生産', lockedAmount: 'ロック量', mergeMiner: 'マイナー合成', transferMiner: 'マイナー譲渡',
-                        totalAssets: '総資産 (USD)', withdraw: '出金', deposit: '入金', transfer: '送金', swapTitle: 'スワップ',
+                        totalAssets: '総資産 (CNY)', withdraw: '出金', deposit: '入金', transfer: '送金', swapTitle: 'スワップ',
                         executeSwap: '交換する', records: '履歴', date: '日付', type: 'タイプ', amount: '数量', status: '状態',
-                        inputAmount: '数量 (例: 10.56)', gasTip: 'ガス代 (0.0TON)、10分以内に完了', confirm: '確認送信',
+                        inputAmount: '数量 (例: 10.56)', gasTip: 'ガス代 (0.0AOT)、10分以内に完了', confirm: '確認送信',
                         targetAddr: '受取人アドレス', success: '送信完了！', loginToView: '連携して記録を表示'
                     },
                     'ko': {
                         title: '온체인 지갑', inputPlaceholder: '지갑 주소를 입력하세요', connectBtn: '지갑 연결', refreshData: '데이터 갱신', logout: '로그아웃',
                         minerModule: '채굴기 대시보드', basicMiner: '기본 채굴기', rechargeTip: '충전 시 채굴기 번호를 메모하세요', rechargeBtn: '전기료 충전',
                         dailyOutput: '일일 생산량', lockedAmount: '잠긴 수량', mergeMiner: '채굴기 합성', transferMiner: '채굴기 양도',
-                        totalAssets: '총 자산 (USD)', withdraw: '출금', deposit: '입금', transfer: '이체', swapTitle: '스왑',
+                        totalAssets: '총 자산 CNY)', withdraw: '출금', deposit: '입금', transfer: '이체', swapTitle: '스왑',
                         executeSwap: '즉시 교환', records: '거래 기록', date: '날짜', type: '유형', amount: '금액', status: '상태',
-                        inputAmount: '수량 입력 (예: 10.56)', gasTip: '수수료 (0.0TON), 10분 내 처리', confirm: '작업 확인',
+                        inputAmount: '수량 입력 (예: 10.56)', gasTip: '수수료 (0.0AOT), 10분 내 처리', confirm: '작업 확인',
                         targetAddr: '수신자 지갑 주소', success: '제출 성공!', loginToView: '지갑 연결 후 기록 확인'
                     },
                     'ms': {
@@ -461,7 +461,7 @@ function walletApp() {
                         dailyOutput: 'Hasil Harian', lockedAmount: 'Jumlah Terkunci', mergeMiner: 'Gabung Pelombong', transferMiner: 'Pindah Pelombong',
                         totalAssets: 'Jumlah Aset', withdraw: 'Tarik', deposit: 'Deposit', transfer: 'Pindah', swapTitle: 'Tukar',
                         executeSwap: 'Tukar Sekarang', records: 'Rekod', date: 'Tarikh', type: 'Jenis', amount: 'Jumlah', status: 'Status',
-                        inputAmount: 'Masukkan jumlah', gasTip: 'Kos Gas (0.0TON), dalam 10 min', confirm: 'Sahkan',
+                        inputAmount: 'Masukkan jumlah', gasTip: 'Kos Gas (0.0AOT), dalam 10 min', confirm: 'Sahkan',
                         targetAddr: 'Alamat penerima', success: 'Berjaya!', loginToView: 'Sambung dompet untuk rekod'
                     },
                     'ru': {
@@ -470,7 +470,7 @@ function walletApp() {
                         dailyOutput: 'Доход в день', lockedAmount: 'Заблокировано', mergeMiner: 'Синтез узла', transferMiner: 'Передача майнера',
                         totalAssets: 'Общие активы', withdraw: 'Вывод', deposit: 'Депозит', transfer: 'Перевод', swapTitle: 'Обмен',
                         executeSwap: 'Обменять', records: 'История', date: 'Дата', type: 'Тип', amount: 'Кол-во', status: 'Статус',
-                        inputAmount: 'Введите кол-во', gasTip: 'Газ (0.0TON), 10 мин', confirm: 'Подтвердить',
+                        inputAmount: 'Введите кол-во', gasTip: 'Газ (0.0AOT), 10 мин', confirm: 'Подтвердить',
                         targetAddr: 'Адрес получателя', success: 'Успешно!', loginToView: 'Подключитесь для просмотра'
                     },
                     'fr': {
@@ -479,7 +479,7 @@ function walletApp() {
                         dailyOutput: 'Production/j', lockedAmount: 'Bloqué', mergeMiner: 'Fusionner', transferMiner: 'Transférer',
                         totalAssets: 'Total actifs', withdraw: 'Retirer', deposit: 'Dépôt', transfer: 'Transférer', swapTitle: 'Échange',
                         executeSwap: 'Échanger', records: 'Historique', date: 'Date', type: 'Type', amount: 'Montant', status: 'Statut',
-                        inputAmount: 'Entrer montant', gasTip: 'Frais (0.0TON), 10 min', confirm: 'Confirmer',
+                        inputAmount: 'Entrer montant', gasTip: 'Frais (0.0AOT), 10 min', confirm: 'Confirmer',
                         targetAddr: 'Adresse destinataire', success: 'Succès!', loginToView: 'Connectez-vous pour voir'
                     },
                     'de': {
@@ -488,7 +488,7 @@ function walletApp() {
                         dailyOutput: 'Ertrag/Tag', lockedAmount: 'Gesperrt', mergeMiner: 'Fusionieren', transferMiner: 'Übertragen',
                         totalAssets: 'Gesamtvermögen', withdraw: 'Auszahlen', deposit: 'Einzahlen', transfer: 'Senden', swapTitle: 'Tausch',
                         executeSwap: 'Tauschen', records: 'Verlauf', date: 'Datum', type: 'Typ', amount: 'Menge', status: 'Status',
-                        inputAmount: 'Menge (z.B. 10.56)', gasTip: 'Gas (0.0TON), 10 Min', confirm: 'Bestätigen',
+                        inputAmount: 'Menge (z.B. 10.56)', gasTip: 'Gas (0.0AOT), 10 Min', confirm: 'Bestätigen',
                         targetAddr: 'Empfängeradresse', success: 'Erfolg!', loginToView: 'Anmelden für Verlauf'
                     },
                     'es': {
@@ -497,7 +497,7 @@ function walletApp() {
                         dailyOutput: 'Producción', lockedAmount: 'Bloqueado', mergeMiner: 'Fusionar', transferMiner: 'Transferir',
                         totalAssets: 'Activos Totales', withdraw: 'Retirar', deposit: 'Depósito', transfer: 'Transferir', swapTitle: 'Swap',
                         executeSwap: 'Intercambiar', records: 'Registros', date: 'Fecha', type: 'Tipo', amount: 'Cantidad', status: 'Estado',
-                        inputAmount: 'Cantidad (ej: 10.56)', gasTip: 'Gas (0.0TON), 10 min', confirm: 'Confirmar',
+                        inputAmount: 'Cantidad (ej: 10.56)', gasTip: 'Gas (0.0AOT), 10 min', confirm: 'Confirmar',
                         targetAddr: 'Dirección receptor', success: '¡Éxito!', loginToView: 'Conectar para ver registros'
                     }
             },
@@ -523,8 +523,8 @@ function walletApp() {
                 }
         },
         coins: [
-            { name: 'AIT', balance: 0, price: 1.4, logo: 'ait.jpg' },
-            { name: 'ACT', balance: 0, price: 0, logo: 'act.jpg' },
+            { name: 'AIT', balance: 0, price: 1.4, logo: 'ait/page1/ait.jpg' },
+            { name: 'ACT', balance: 0, price: 0, logo: 'ait/page1/act.jpg' },
             { name: 'FT', balance: 0, price: 1.00, logo: 'https://img95.699pic.com/xsj/2j/5c/rm.jpg!/fh/300' },
             { name: 'ANT', balance: 0, price: 0, logo: 'logo1.png' },
             { name: 'AOT', balance: 0, price: 0, logo: 'logo2.png' }
@@ -807,26 +807,27 @@ function walletApp() {
                 >
             </div>
 
-            <button 
+            <butAOT 
                @click="submitFuelRecharge" 
                class="w-full text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition"
                style="background: linear-gradient(to right, #f97316, #dc2626) !important; display: block;"
             >
                 立即提交
-            </button>
+            </butAOT>
             
-            <button 
+            <butAOT 
                @click="fuelModal.show = false" 
                class="w-full text-xs py-2"
                style="color: #6b7280 !important;"
             >
                  取消
-            </button>
+            </butAOT>
         </div>
     </div>
 </div>
 
 </body>
 </html>
+
 
 
