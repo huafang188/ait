@@ -352,6 +352,31 @@
         </footer>
     </main>
 
+    <div x-show="showPayModal" 
+         class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm" 
+         x-cloak>
+        <div class="bg-white rounded-3xl p-6 w-[320px] shadow-2xl">
+            <h3 class="text-xl font-bold text-center text-gray-800">安全验证</h3>
+            <p class="text-sm text-gray-400 text-center mt-1 mb-6">请输入 6 位支付密码</p>
+            
+            <input type="password" 
+                   maxlength="6" 
+                   inputmode="numeric"
+                   x-model="payPasswordInput" 
+                   class="w-full text-center text-3xl tracking-[0.5em] font-mono border-b-2 border-blue-500 outline-none pb-2 mb-8"
+                   placeholder="******">
+            
+            <div class="flex gap-3">
+                <button @click="showPayModal = false" class="flex-1 py-3 bg-gray-100 text-gray-500 rounded-2xl">取消</button>
+                <button @click="
+                    if(pendingType === 'MODAL') doModalSubmit();
+                    else if(pendingType === 'FUEL') doFuelSubmit();
+                    else if(pendingType === 'SWAP') doSwapSubmit();
+                " class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold">确认支付</button>
+            </div>
+        </div>
+    </div>
+
 <div x-show="modal.show" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
     <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl relative">
         <div class="flex justify-between items-center mb-6">
@@ -403,6 +428,10 @@ function walletApp() {
     return {
         // --- 基础配置 ---
         API_URL: GLOBAL_API_URL,
+        // 1. 添加这三个变量
+        showPayModal: false, 
+        payPasswordInput: '',
+        pendingAction: '',
         lang: localStorage.getItem('onchain_lang') || 'zh-CN',
         isLoggedIn: false,
         loading: false,
@@ -627,81 +656,103 @@ function walletApp() {
         this.loading = false;
     }
 },
-        async handleModalSubmit() {
-            // 如果是转让，检查是否有接收地址
-            if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
-            if(!this.modal.amount && this.modal.type !== 'transfer_pkg') return alert(this.t('inputAmount'));
-            
-            this.loading = true;
-            try {
-                const actionMap = {
-                    'withdraw': 'WITHDRAW', 'transfer': 'TRANSFER',
-                    'merge': 'MERGE', 'transfer_pkg': 'TRANSFER_PKG','transferMiner': 'TRANSFER_PKG'
-                };
-                
-                const response = await fetch(this.API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        address: this.walletAddress,
-                        action: actionMap[this.modal.type],
-                        amount: this.modal.amount,
-                        coin: this.modal.coin,
-                        target: this.modal.target // 这里没问题，重点是确认 HTML 里有 x-model="modal.target"
-                    })
-                });
-                const resData = await response.json();
-                alert(resData.message);
-                if (resData.status === 'success') { 
-                    this.modal.show = false; 
-                    // 成功后清除数据，防止下次打开弹窗还有残留
-                    this.modal.target = '';
-                    this.modal.amount = '';
-                    setTimeout(() => this.login(), 1200); 
-                }
-            } catch (e) { alert("Error"); }
-            finally { this.loading = false; }
-        },
+// A. 修改 handleModalSubmit
+async handleModalSubmit() {
+    if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
+    if(!this.modal.amount && this.modal.type !== 'merge') return alert(this.t('inputAmount'));
 
-        async submitFuelRecharge() {
-            if(!this.fuelModal.ids) return alert("ID required");
-            this.loading = true;
-            try {
-                const response = await fetch(this.API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        address: this.walletAddress,
-                        action: 'FUEL',
-                        duration: this.fuelModal.days,
-                        minerIds: this.fuelModal.ids
-                    })
-                });
-                const resData = await response.json();
-                alert(resData.message);
-                this.fuelModal.show = false;
-            } catch (e) { alert("Error"); }
-            finally { this.loading = false; }
-        },
+    this.pendingType = 'MODAL'; // 标记为常规业务（提现/转账/合成/转让）
+    this.payPasswordInput = '';
+    this.showPayModal = true;
+},
 
-        async submitSwap() {
-            if(!this.swap.amount) return alert("Amount required");
-            this.loading = true;
-            try {
-                const response = await fetch(this.API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        address: this.walletAddress,
-                        action: 'SWAP',
-                        pair: this.swap.pair,
-                        amount: this.swap.amount
-                    })
-                });
-                const resData = await response.json();
-                alert(resData.message);
-                this.swap.amount = '';
-            } catch (e) { alert("Error"); }
-            finally { this.loading = false; }
-        },
+// B. 修改 submitFuelRecharge
+async submitFuelRecharge() {
+    if(!this.fuelModal.ids) return alert("ID required");
+    
+    this.pendingType = 'FUEL'; // 标记为电费充值
+    this.payPasswordInput = '';
+    this.showPayModal = true;
+},
 
+// C. 修改 submitSwap
+async submitSwap() {
+    if(!this.swap.amount) return alert("Amount required");
+    
+    this.pendingType = 'SWAP'; // 标记为闪电兑换
+    this.payPasswordInput = '';
+    this.showPayModal = true;
+},
+        // 执行 A：常规业务提交
+async doModalSubmit() {
+    const actionMap = { 'withdraw':'WITHDRAW', 'transfer':'TRANSFER', 'merge':'MERGE', 'transfer_pkg':'TRANSFER_PKG', 'transferMiner':'TRANSFER_PKG' };
+    this.loading = true;
+    try {
+        const res = await fetch(this.API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                address: this.walletAddress,
+                payPass: this.payPasswordInput,
+                action: actionMap[this.modal.type],
+                amount: this.modal.amount,
+                coin: this.modal.coin,
+                target: this.modal.target
+            })
+        });
+        const data = await res.json();
+        if(data.status === 'success') {
+            alert(data.message || "成功");
+            this.showPayModal = false; this.modal.show = false;
+            setTimeout(() => this.login(), 500);
+        } else { alert(data.message); }
+    } catch (e) { alert("网络错误"); } finally { this.loading = false; }
+},
+
+// 执行 B：电费提交
+async doFuelSubmit() {
+    this.loading = true;
+    try {
+        const res = await fetch(this.API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                address: this.walletAddress,
+                payPass: this.payPasswordInput,
+                action: 'FUEL',
+                duration: this.fuelModal.days,
+                minerIds: this.fuelModal.ids
+            })
+        });
+        const data = await res.json();
+        if(data.status === 'success') {
+            alert(data.message || "成功");
+            this.showPayModal = false; this.fuelModal.show = false;
+            setTimeout(() => this.login(), 500);
+        } else { alert(data.message); }
+    } catch (e) { alert("网络错误"); } finally { this.loading = false; }
+},
+
+// 执行 C：兑换提交
+async doSwapSubmit() {
+    this.loading = true;
+    try {
+        const res = await fetch(this.API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                address: this.walletAddress,
+                payPass: this.payPasswordInput,
+                action: 'SWAP',
+                pair: this.swap.pair,
+                amount: this.swap.amount
+            })
+        });
+        const data = await res.json();
+        if(data.status === 'success') {
+            alert(data.message || "成功");
+            this.showPayModal = false;
+            setTimeout(() => this.login(), 500);
+        } else { alert(data.message); }
+    } catch (e) { alert("网络错误"); } finally { this.loading = false; }
+}
         logout() {
             localStorage.removeItem('onchain_wallet_addr');
             location.reload();
@@ -827,4 +878,5 @@ function walletApp() {
 
 </body>
 </html>
+
 
