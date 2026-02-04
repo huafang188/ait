@@ -656,115 +656,94 @@ function walletApp() {
         this.loading = false;
     }
 },
-// A. 修改 handleModalSubmit
-async handleModalSubmit() {
-    if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
-    if(!this.modal.amount && this.modal.type !== 'merge') return alert(this.t('inputAmount'));
+// 2. 拦截逻辑 (替换原有函数)
+        async handleModalSubmit() {
+            if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
+            if(!this.modal.amount && this.modal.type !== 'merge') return alert(this.t('inputAmount'));
+            this.pendingType = 'MODAL';
+            this.payPasswordInput = '';
+            this.showPayModal = true;
+        },
 
-    this.pendingType = 'MODAL'; // 标记为常规业务（提现/转账/合成/转让）
-    this.payPasswordInput = '';
-    this.showPayModal = true;
-},
+        async submitFuelRecharge() {
+            if(!this.fuelModal.ids) return alert("ID required");
+            this.pendingType = 'FUEL';
+            this.payPasswordInput = '';
+            this.showPayModal = true;
+        },
 
-// B. 修改 submitFuelRecharge
-async submitFuelRecharge() {
-    if(!this.fuelModal.ids) return alert("ID required");
-    
-    this.pendingType = 'FUEL'; // 标记为电费充值
-    this.payPasswordInput = '';
-    this.showPayModal = true;
-},
-
-// C. 修改 submitSwap
-async submitSwap() {
-    if(!this.swap.amount) return alert("Amount required");
-    
-    this.pendingType = 'SWAP'; // 标记为闪电兑换
-    this.payPasswordInput = '';
-    this.showPayModal = true;
-},
+        async submitSwap() {
+            if(!this.swap.amount) return alert("Amount required");
+            this.pendingType = 'SWAP';
+            this.payPasswordInput = '';
+            this.showPayModal = true;
+        },
         // 执行 A：常规业务提交
-async doModalSubmit() {
-    const actionMap = { 'withdraw':'WITHDRAW', 'transfer':'TRANSFER', 'merge':'MERGE', 'transfer_pkg':'TRANSFER_PKG', 'transferMiner':'TRANSFER_PKG' };
-    this.loading = true;
-    try {
-        const res = await fetch(this.API_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                address: this.walletAddress,
-                payPass: this.payPasswordInput,
-                action: actionMap[this.modal.type],
+// 3. 执行逻辑 (新加的函数)
+        async doModalSubmit() {
+            const actionMap = { 'withdraw':'WITHDRAW', 'transfer':'TRANSFER', 'merge':'MERGE', 'transfer_pkg':'TRANSFER_PKG', 'transferMiner':'TRANSFER_PKG' };
+            await this.sendRequest(actionMap[this.modal.type], {
                 amount: this.modal.amount,
                 coin: this.modal.coin,
                 target: this.modal.target
-            })
-        });
-        const data = await res.json();
-        if(data.status === 'success') {
-            alert(data.message || "成功");
-            this.showPayModal = false; this.modal.show = false;
-            setTimeout(() => this.login(), 500);
-        } else { alert(data.message); }
-    } catch (e) { alert("网络错误"); } finally { this.loading = false; }
-},
+            });
+            this.modal.show = false;
+        },
 
-// 执行 B：电费提交
-async doFuelSubmit() {
-    this.loading = true;
-    try {
-        const res = await fetch(this.API_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                address: this.walletAddress,
-                payPass: this.payPasswordInput,
-                action: 'FUEL',
+        async doFuelSubmit() {
+            await this.sendRequest('FUEL', {
                 duration: this.fuelModal.days,
                 minerIds: this.fuelModal.ids
-            })
-        });
-        const data = await res.json();
-        if(data.status === 'success') {
-            alert(data.message || "成功");
-            this.showPayModal = false; this.fuelModal.show = false;
-            setTimeout(() => this.login(), 500);
-        } else { alert(data.message); }
-    } catch (e) { alert("网络错误"); } finally { this.loading = false; }
-},
+            });
+            this.fuelModal.show = false;
+        },
 
-// 执行 C：兑换提交
-async doSwapSubmit() {
-    this.loading = true;
-    try {
-        const res = await fetch(this.API_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                address: this.walletAddress,
-                payPass: this.payPasswordInput,
-                action: 'SWAP',
+        async doSwapSubmit() {
+            await this.sendRequest('SWAP', {
                 pair: this.swap.pair,
                 amount: this.swap.amount
-            })
-        });
-        const data = await res.json();
-        if(data.status === 'success') {
-            alert(data.message || "成功");
-            this.showPayModal = false;
-            setTimeout(() => this.login(), 500);
-        } else { alert(data.message); }
-    } catch (e) { alert("网络错误"); } finally { this.loading = false; }
-}
-        logout() {
-            localStorage.removeItem('onchain_wallet_addr');
-            location.reload();
-        }, // <--- 确保这里有逗号
+            });
+        },
 
-        // 补上这个函数
-        shortenAddress(addr) {
-            if (!addr) return '';
-            return addr.slice(0, 6) + '...' + addr.slice(-4);
-        }
-    };
-}
+        // 4. 统一发送请求函数 (为了代码整洁)
+        async sendRequest(action, params) {
+            this.loading = true;
+            try {
+                const res = await fetch(this.API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        address: this.walletAddress,
+                        payPass: this.payPasswordInput,
+                        action: action,
+                        ...params
+                    })
+                });
+                const data = await res.json();
+                if(data.status === 'success') {
+                    alert(data.message || "Success");
+                    this.showPayModal = false;
+                    setTimeout(() => this.login(), 500);
+                } else {
+                    alert(data.message);
+                }
+            } catch (e) {
+                alert("Network Error");
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        // 5. 其他原有函数 (确保 logout 之前有逗号！)
+        login: async function() { /* ...你的登录代码... */ }, // 注意结尾逗号
+        
+        logout() { // 这里就是报错的地方，确保它前面有逗号
+            this.walletAddress = '';
+            this.isLoggedIn = false;
+            localStorage.clear();
+        },
+        
+    }; // return 结束
+} // walletApp 结束
 </script>
 
 <script>
@@ -878,5 +857,6 @@ async doSwapSubmit() {
 
 </body>
 </html>
+
 
 
