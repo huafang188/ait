@@ -429,9 +429,9 @@ function walletApp() {
         // --- 基础配置 ---
         API_URL: GLOBAL_API_URL,
         // 1. 添加这三个变量
-        showPayModal: false, 
-        payPasswordInput: '',
-        pendingAction: '',
+        showPayModal: false,    // 控制密码弹窗显示
+        payPasswordInput: '',   // 绑定输入框的密码
+        pendingType: '',        // 记录当前操作类型 ('MODAL', 'FUEL', 'SWAP')
         lang: localStorage.getItem('onchain_lang') || 'zh-CN',
         isLoggedIn: false,
         loading: false,
@@ -857,6 +857,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
