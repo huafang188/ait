@@ -781,31 +781,46 @@ t(key) {
 },
 
 
-        // --- 6. 执行逻辑 ---
+// --- 6. 执行逻辑 ---
 async doModalSubmit() {
-    // 强制同步 action 映射
     const actionMap = { 
         'withdraw': 'WITHDRAW', 
         'transfer': 'TRANSFER', 
         'merge': 'MERGE', 
         'transfer_pkg': 'TRANSFER_PKG',
-        'transferMiner': 'TRANSFER_PKG' // <--- 兼容你 HTML 里的写法
+        'transferMiner': 'TRANSFER_PKG',
+        'fuel': 'FUEL',  // 补上 FT 激活
+        'swap': 'SWAP'   // 补上 兑换
     };
 
     const targetAction = actionMap[this.modal.type];
 
-    // A. 如果是普通的弹窗操作
-    if (this.pendingType === 'MODAL') {
-        if (!targetAction) return alert("无效的弹窗类型: " + this.modal.type);
+    // C. 购买资产包独立逻辑 (解决无法跳转二维码)
+    if (this.pendingType === 'BUY') {
+        await this.sendRequest('BUY_PKG', {
+            name: this.pkgForm.name,
+            amount: this.pkgForm.amount,
+            shippingAddr: this.pkgForm.shippingAddr,
+            sqbId: this.pkgForm.sqbId
+        });
+        return;
+    }
+
+    // A. 普通弹窗（提现、转账、转让、激活、兑换）
+    if (this.pendingType === 'MODAL' || this.pendingType === 'FUEL' || this.pendingType === 'SWAP') {
+        if (!targetAction) return alert("无效的操作类型: " + this.modal.type);
         
         await this.sendRequest(targetAction, {
             amount: this.modal.amount,
             coin: this.modal.coin,
-            target: this.modal.target
+            target: this.modal.target,
+            pair: this.modal.pair,         // 适配兑换
+            duration: this.modal.duration, // 适配激活
+            minerIds: this.modal.minerIds  // 适配激活
         });
         this.modal.show = false;
     } 
-    // B. 如果是法币提现操作
+    // B. 法币提现
     else if (this.pendingType === 'FIAT') {
         await this.sendRequest('FIAT_WITHDRAW', {
             name: this.fiatForm.name,
@@ -819,64 +834,45 @@ async doModalSubmit() {
     }
 },
 
-// 建议也修改一下 sendRequest，确保密码是最高优先级且不被 params 覆盖
+// 彻底修正 sendRequest
 async sendRequest(action, params) {
     if (!this.payPasswordInput) return alert("请输入支付密码");
     this.loading = true;
     try {
-        const payload = { 
-            address: this.walletAddress, 
+        // 1. 构造统一的 Payload
+        const payload = {
+            address: this.walletAddress,
             action: action,
-            ...params, 
-            payPass: this.payPasswordInput // 放在最后，确保覆盖 params 中可能的空密码
+            payPass: this.payPasswordInput,
+            ...params
         };
         
         const res = await fetch(this.API_URL, {
             method: 'POST',
-            body: JSON.stringify({ address: this.walletAddress, payPass: this.payPasswordInput, action, ...params })
+            body: JSON.stringify(payload) // 使用构造好的对象
         });
-                const data = await res.json();
-                if(data.status === 'success') {
-                    alert("Success");
-                    this.showPayModal = false;
-                    this.login();
-                } else { alert(data.message); }
-            } catch (e) { alert("Error"); } 
-            finally { this.loading = false; }
-        },
-        // 打开修改密码弹窗
-openChangePass() {
-    this.passForm = { oldPass: '', newPass: '', confirmPass: '' };
-    this.showChangePassModal = true;
-},
-
-// 提交修改请求
-async submitChangePass() {
-    if (!this.passForm.oldPass || !this.passForm.newPass) return alert("请完整填写密码");
-    if (this.passForm.newPass !== this.passForm.confirmPass) return alert("两次新密码输入不一致");
-    
-    this.loading = true;
-    try {
-        const res = await fetch(this.API_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: 'CHANGE_PAY_PASS',
-                address: this.walletAddress,
-                oldPass: this.passForm.oldPass,
-                newPass: this.passForm.newPass
-            })
-        });
+        
         const data = await res.json();
-        if (data.status === 'success') {
-            alert("密码修改成功");
-            this.showChangePassModal = false;
-        } else {
-            alert(data.message);
+        
+        if(data.status === 'success') {
+            // 2. 针对 BUY_PKG 的特殊处理：展示二维码
+            if (action === 'BUY_PKG' && data.showQR) {
+                this.showPayModal = false;
+                this.showQRModal = true; // 确保你前端有这个展示二维码的变量
+                return; 
+            }
+
+            alert("Success");
+            this.showPayModal = false;
+            this.login(); // 刷新数据
+        } else { 
+            alert(data.message); 
         }
-    } catch (e) {
-        alert("网络请求失败");
-    } finally {
-        this.loading = false;
+    } catch (e) { 
+        console.error(e);
+        alert("请求失败，请检查网络"); 
+    } finally { 
+        this.loading = false; 
     }
 },
         logout() {
@@ -1004,6 +1000,7 @@ async submitChangePass() {
 
 </body>
 </html>
+
 
 
 
