@@ -470,6 +470,7 @@
                     if(pendingType === 'MODAL') doModalSubmit();
                     else if(pendingType === 'FUEL') doFuelSubmit();
                     else if(pendingType === 'SWAP') doSwapSubmit();
+                    else if(pendingType === 'FIAT') doModalSubmit(); // <-- 增加这一行
                 " class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold">确认支付</button>
             </div>
         </div>
@@ -983,6 +984,7 @@ async submitChangePass() {
 
 </body>
 </html>
+
 
 
 
