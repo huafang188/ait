@@ -401,38 +401,129 @@ const GLOBAL_API_URL = 'https://api.fosal.fit';
 
 function walletApp() {
     return {
-        // --- 1. 基础配置与 UI 状态 ---
+        // --- 基础配置 ---
         API_URL: GLOBAL_API_URL,
         lang: localStorage.getItem('onchain_lang') || 'zh-CN',
         isLoggedIn: false,
         loading: false,
         walletAddress: '',
         showMiners: false,
-        
-        // 支付验证拦截器状态
-        showPayModal: false,
-        payPasswordInput: '',
-        pendingAction: null, // 存放被拦截的动作：{ action: '', params: {} }
-
-        // 业务弹窗状态
+        swap: { pair: 'AIT-USDT', amount: '' },
         fuelModal: { show: false, days: 30, ids: '' },
         modal: { show: false, type: '', title: '', amount: '', target: '', coin: 'AIT' },
-        swap: { pair: 'AIT-USDT', amount: '' },
 
-        // --- 2. 数据模型 (严格对应后端字段) ---
+        // --- 多语言字典 ---
+        languages: {
+            'zh-CN': '简体中文', 'zh-TW': '繁體中文', 'ja': '日本語', 'ko': '한국어',
+            'ms': 'Melayu', 'ru': 'Русский', 'fr': 'Français', 'de': 'Deutsch', 'es': 'Español'
+        },
+        translations: {
+                'zh-CN': {
+                    title: '链上钱包', inputPlaceholder: '在此输入您数字身份DID', connectBtn: '连接蚂蚁链', refreshData: '更新数据', logout: '退出',
+                    minerModule: '我的资产包', rechargeTip: '充值您的链上资产', rechargeBtn: '钱包充值',
+                    dailyOutput: '每日产积分', lockedAmount: '锁仓数量', mergeMiner: '合成资产包', transferMiner: '资产包转让',
+                    totalAssets: '钱包总资产 (USD)', withdraw: '提现', deposit: '充值', transfer: '转账', swapTitle: '闪电兑换',
+                    executeSwap: '立即兑换', records: '交易记录', date: '时间', type: '操作', amount: '数额', status: '状态',
+                    inputAmount: '输入数量 (10.56)', gasTip: 'Gas费用 (0.0AOT)，提交后十分钟内处理', confirm: '确认操作',
+                    targetAddr: '请输入接收者钱包地址', success: '提交成功！', loginToView: '请先连接钱包查看记录'
+                },
+                    'zh-TW': {
+                        title: '鏈上錢包', inputPlaceholder: '在此輸入您的錢包地址', connectBtn: '連接錢包', refreshData: '更新數據', logout: '退出',
+                        minerModule: '礦機工作臺', basicMiner: '原始礦機 (A-Type)', rechargeTip: '請充費時備註您的礦機編號', rechargeBtn: '電費充值',
+                        dailyOutput: '每日產幣', lockedAmount: '鎖倉數量', mergeMiner: '合成節點礦機', transferMiner: '節點礦機轉讓',
+                        totalAssets: '錢包總資產 (USD)', withdraw: '提幣', deposit: '充值', transfer: '轉賬', swapTitle: '閃電兌換',
+                        executeSwap: '立即兌換', records: '交易記錄', date: '時間', type: '操作', amount: '數額', status: '狀態',
+                        inputAmount: '輸入數量 (10.56)', gasTip: 'Gas費用 (0.0TON)，提交後十分鐘內處理', confirm: '確認操作',
+                        targetAddr: '請輸入接收者錢包地址', success: '提交成功！', loginToView: '請先連接錢包查看記錄'
+                    },
+                    'ja': {
+                        title: 'オンチェーン財布', inputPlaceholder: 'ウォレットアドレスを入力', connectBtn: '連携', refreshData: 'データ更新', logout: 'ログアウト',
+                        minerModule: 'マイナーパネル', basicMiner: '基本マイナー', rechargeTip: 'リチャージ時にマイナーIDを記入', rechargeBtn: '電気代リチャージ',
+                        dailyOutput: '日次生産', lockedAmount: 'ロック量', mergeMiner: 'マイナー合成', transferMiner: 'マイナー譲渡',
+                        totalAssets: '総資産 (USD)', withdraw: '出金', deposit: '入金', transfer: '送金', swapTitle: 'スワップ',
+                        executeSwap: '交換する', records: '履歴', date: '日付', type: 'タイプ', amount: '数量', status: '状態',
+                        inputAmount: '数量 (例: 10.56)', gasTip: 'ガス代 (0.0TON)、10分以内に完了', confirm: '確認送信',
+                        targetAddr: '受取人アドレス', success: '送信完了！', loginToView: '連携して記録を表示'
+                    },
+                    'ko': {
+                        title: '온체인 지갑', inputPlaceholder: '지갑 주소를 입력하세요', connectBtn: '지갑 연결', refreshData: '데이터 갱신', logout: '로그아웃',
+                        minerModule: '채굴기 대시보드', basicMiner: '기본 채굴기', rechargeTip: '충전 시 채굴기 번호를 메모하세요', rechargeBtn: '전기료 충전',
+                        dailyOutput: '일일 생산량', lockedAmount: '잠긴 수량', mergeMiner: '채굴기 합성', transferMiner: '채굴기 양도',
+                        totalAssets: '총 자산 (USD)', withdraw: '출금', deposit: '입금', transfer: '이체', swapTitle: '스왑',
+                        executeSwap: '즉시 교환', records: '거래 기록', date: '날짜', type: '유형', amount: '금액', status: '상태',
+                        inputAmount: '수량 입력 (예: 10.56)', gasTip: '수수료 (0.0TON), 10분 내 처리', confirm: '작업 확인',
+                        targetAddr: '수신자 지갑 주소', success: '제출 성공!', loginToView: '지갑 연결 후 기록 확인'
+                    },
+                    'ms': {
+                        title: 'Dompet On-chain', inputPlaceholder: 'Masukkan alamat dompet', connectBtn: 'Sambung', refreshData: 'Kemaskini', logout: 'Keluar',
+                        minerModule: 'Panel Pelombong', basicMiner: 'Pelombong Asal', rechargeTip: 'Nota nombor pelombong semasa mengecas', rechargeBtn: 'Tambah Nilai',
+                        dailyOutput: 'Hasil Harian', lockedAmount: 'Jumlah Terkunci', mergeMiner: 'Gabung Pelombong', transferMiner: 'Pindah Pelombong',
+                        totalAssets: 'Jumlah Aset', withdraw: 'Tarik', deposit: 'Deposit', transfer: 'Pindah', swapTitle: 'Tukar',
+                        executeSwap: 'Tukar Sekarang', records: 'Rekod', date: 'Tarikh', type: 'Jenis', amount: 'Jumlah', status: 'Status',
+                        inputAmount: 'Masukkan jumlah', gasTip: 'Kos Gas (0.0TON), dalam 10 min', confirm: 'Sahkan',
+                        targetAddr: 'Alamat penerima', success: 'Berjaya!', loginToView: 'Sambung dompet untuk rekod'
+                    },
+                    'ru': {
+                        title: 'On-chain Кошелек', inputPlaceholder: 'Введите адрес кошелька', connectBtn: 'Подключить', refreshData: 'Обновить', logout: 'Выйти',
+                        minerModule: 'Панель майнера', basicMiner: 'Базовый майнер', rechargeTip: 'Указывайте ID майнера при оплате', rechargeBtn: 'Оплата эл-энергии',
+                        dailyOutput: 'Доход в день', lockedAmount: 'Заблокировано', mergeMiner: 'Синтез узла', transferMiner: 'Передача майнера',
+                        totalAssets: 'Общие активы', withdraw: 'Вывод', deposit: 'Депозит', transfer: 'Перевод', swapTitle: 'Обмен',
+                        executeSwap: 'Обменять', records: 'История', date: 'Дата', type: 'Тип', amount: 'Кол-во', status: 'Статус',
+                        inputAmount: 'Введите кол-во', gasTip: 'Газ (0.0TON), 10 мин', confirm: 'Подтвердить',
+                        targetAddr: 'Адрес получателя', success: 'Успешно!', loginToView: 'Подключитесь для просмотра'
+                    },
+                    'fr': {
+                        title: 'Portefeuille On-chain', inputPlaceholder: 'Entrez l\'adresse', connectBtn: 'Connecter', refreshData: 'Actualiser', logout: 'Quitter',
+                        minerModule: 'Tableau de bord', basicMiner: 'Mineur de base', rechargeTip: 'Notez le numéro du mineur', rechargeBtn: 'Recharger',
+                        dailyOutput: 'Production/j', lockedAmount: 'Bloqué', mergeMiner: 'Fusionner', transferMiner: 'Transférer',
+                        totalAssets: 'Total actifs', withdraw: 'Retirer', deposit: 'Dépôt', transfer: 'Transférer', swapTitle: 'Échange',
+                        executeSwap: 'Échanger', records: 'Historique', date: 'Date', type: 'Type', amount: 'Montant', status: 'Statut',
+                        inputAmount: 'Entrer montant', gasTip: 'Frais (0.0TON), 10 min', confirm: 'Confirmer',
+                        targetAddr: 'Adresse destinataire', success: 'Succès!', loginToView: 'Connectez-vous pour voir'
+                    },
+                    'de': {
+                        title: 'On-chain Wallet', inputPlaceholder: 'Adresse eingeben', connectBtn: 'Verbinden', refreshData: 'Aktualisieren', logout: 'Logout',
+                        minerModule: 'Miner-Panel', basicMiner: 'Basis-Miner', rechargeTip: 'Miner-ID bei Zahlung angeben', rechargeBtn: 'Aufladen',
+                        dailyOutput: 'Ertrag/Tag', lockedAmount: 'Gesperrt', mergeMiner: 'Fusionieren', transferMiner: 'Übertragen',
+                        totalAssets: 'Gesamtvermögen', withdraw: 'Auszahlen', deposit: 'Einzahlen', transfer: 'Senden', swapTitle: 'Tausch',
+                        executeSwap: 'Tauschen', records: 'Verlauf', date: 'Datum', type: 'Typ', amount: 'Menge', status: 'Status',
+                        inputAmount: 'Menge (z.B. 10.56)', gasTip: 'Gas (0.0TON), 10 Min', confirm: 'Bestätigen',
+                        targetAddr: 'Empfängeradresse', success: 'Erfolg!', loginToView: 'Anmelden für Verlauf'
+                    },
+                    'es': {
+                        title: 'Billetera On-chain', inputPlaceholder: 'Dirección de billetera', connectBtn: 'Conectar', refreshData: 'Actualizar', logout: 'Salir',
+                        minerModule: 'Panel Minería', basicMiner: 'Minero Base', rechargeTip: 'Indique ID del minero', rechargeBtn: 'Recargar',
+                        dailyOutput: 'Producción', lockedAmount: 'Bloqueado', mergeMiner: 'Fusionar', transferMiner: 'Transferir',
+                        totalAssets: 'Activos Totales', withdraw: 'Retirar', deposit: 'Depósito', transfer: 'Transferir', swapTitle: 'Swap',
+                        executeSwap: 'Intercambiar', records: 'Registros', date: 'Fecha', type: 'Tipo', amount: 'Cantidad', status: 'Estado',
+                        inputAmount: 'Cantidad (ej: 10.56)', gasTip: 'Gas (0.0TON), 10 min', confirm: 'Confirmar',
+                        targetAddr: 'Dirección receptor', success: '¡Éxito!', loginToView: 'Conectar para ver registros'
+                    }
+            },
+        // --- 数据模型 ---
         userData: {
+            // --- 支付验证状态 ---
+            showPayModal: false,
+            payPasswordInput: '',
+            pendingAction: null,
             miners: [],
             totalValue: '0.00',
-            dailyOutput: '0.00',
-            lockedAmount: '0.00',
-            v1_count: 0,
-            v1_miners: 0,
-            v1_daily_output: '0.00',
-            v2_plus_count: 0,
-            v2_plus_miners: 0,
-            v2_plus_daily_output: '0.00',
-            team_reward_rate: 0,
-            team_daily_amount: '0.00'
+            dailyOutput: '0',
+            lockedAmount: '0',
+            fuelModal: { show: false, days: '30', ids: '' },
+            modal: { show: false, type: '', title: '', amount: '', target: '', coin: 'AIT' },
+            swap: { pair: 'AIT-USDT', amount: '' },
+            team: {
+            // --- 团队数据 (对应 L-S 列键名) ---
+            v1_count: 0,                // L列
+            v1_miners: 0,               // M列
+            v1_daily_output: '0.00',    // N列
+            v2_plus_count: 0,           // O列
+            v2_plus_miners: 0,          // P列
+            v2_plus_daily_output: '0.00',// Q列
+            team_reward_rate: 0,        // R列
+            team_daily_amount: '0.00',  // S列
+                }
         },
         coins: [
             { name: 'AIT', balance: 0, price: 1.4, logo: '/ait.png' },
@@ -443,65 +534,118 @@ function walletApp() {
         ],
         logs: [],
 
-        // --- 3. 语言字典 (确保 t(key) 不会报错) ---
-        languages: { 'zh-CN': '简体中文', 'zh-TW': '繁體中文', 'ja': '日本語' /* ...其他语言省略... */ },
-        translations: {
-            'zh-CN': {
-                withdraw: '提现', transfer: '转账', merge: '合成资产包', 
-                transfer_pkg: '资产包转让', transferMiner: '资产包转让',
-                inputAmount: '请输入数量', targetAddr: '请输入接收地址',
-                success: '操作成功', gasTip: 'Gas费用 (0.0AOT)...'
+        // --- 核心方法 ---
+        init() {
+            const saved = localStorage.getItem('onchain_wallet_addr');
+            if(saved) {
+                this.walletAddress = saved;
+                this.login();
             }
         },
 
-        // --- 4. 初始化与登录 ---
-        init() {
-            const saved = localStorage.getItem('onchain_wallet_addr');
-            if(saved) { this.walletAddress = saved; this.login(); }
+        openModal(type) {
+            if(!this.isLoggedIn) return alert("请先连接钱包");
+                this.modal.type = type;
+                this.modal.title = this.t(type); // 确保你的 t(key) 性能正常
+                this.modal.show = true; // 关键：这是打开弹窗的开关
+        },
+        openFuelModal() { 
+                this.fuelModal.show = true; 
         },
         t(key) {
             return (this.translations[this.lang] && this.translations[this.lang][key]) || (this.translations['zh-CN'] && this.translations['zh-CN'][key]) || key;
         },
 
-        async login() {
-            if(!this.walletAddress || this.walletAddress.length < 5) return;
-            this.loading = true;
-            try {
-                const response = await fetch(this.API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'LOGIN', address: this.walletAddress })
+ async login() {
+    if(!this.walletAddress || this.walletAddress.length < 5) return;
+    this.loading = true;
+    try {
+        const response = await fetch(this.API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'LOGIN', address: this.walletAddress })
+        });
+        const data = await response.json();
+        
+        if(data.status === "success" && data.user) {
+            // 1. 基础资产数据 (保留2位小数)
+            this.userData.totalValue = parseFloat(data.user.totalValue || 0).toFixed(2);
+            this.userData.dailyOutput = parseFloat(data.user.dailyOutput || 0).toFixed(2);
+            this.userData.lockedAmount = parseFloat(data.user.lockedAmount || 0).toFixed(2);
+            
+            // 2. 团队 L-S 列数据
+            this.userData.v1_count = data.user.v1_count || 0;
+            this.userData.v1_miners = data.user.v1_miners || 0;
+            // N列：1代每日总产币 (保留2位小数)
+            this.userData.v1_daily_output = parseFloat(data.user.v1_daily_output || 0).toFixed(2);
+            
+            this.userData.v2_plus_count = data.user.v2_plus_count || 0;
+            this.userData.v2_plus_miners = data.user.v2_plus_miners || 0;
+            // Q列：2代及以上每日总产币 (保留2位小数)
+            this.userData.v2_plus_daily_output = parseFloat(data.user.v2_plus_daily_output || 0).toFixed(2);
+            
+            // R列：收益比例 (保留1位小数)
+            this.userData.team_reward_rate = (parseFloat(data.user.team_reward_rate || 0) * 100).toFixed(0);
+            // S列：每日奖励金额 (保留2位小数)
+            this.userData.team_daily_amount = parseFloat(data.user.team_daily_amount || 0).toFixed(2);
+
+            // 3. 矿机与日志
+            this.userData.miners = data.miners || [];
+            if (data.logs && data.logs.length > 0) {
+                this.logs = data.logs.map(log => {
+                    // 使用正则匹配：(符号?)(数字)(空格)(币种)
+                    // 例如："-10.5 AIT" -> ["-10.5 AIT", "-", "10.5", " AIT"]
+                    const match = String(log.amount).match(/^([+-]?)([\d\.]+)(.*)$/);
+        
+                    if (match) {
+                        const symbol = match[1];      // 符号 (+ 或 -)
+                        const value = parseFloat(match[2]); // 数值 (10.5)
+                        const suffix = match[3];      // 后缀 ( AIT)
+            
+                        return {
+                            ...log,
+                            // 重新拼接：符号 + 两位小数 + 后缀
+                            amount: `${symbol}${value.toFixed(2)}${suffix}`
+                        };
+                    }
+                    return log; // 如果匹配失败，返回原样
                 });
-                const data = await response.json();
-                if(data.status === "success" && data.user) {
-                    this.userData = { ...this.userData, ...data.user };
-                    this.userData.miners = data.miners || [];
-                    this.logs = data.logs || [];
-                    this.coins.forEach(c => {
-                        if(data.user.balances && data.user.balances[c.name]) 
-                            c.balance = parseFloat(data.user.balances[c.name]).toFixed(2);
-                    });
-                    this.isLoggedIn = true;
-                    localStorage.setItem('onchain_wallet_addr', this.walletAddress);
+            } else {
+                this.logs = [];
+            }
+            // 4. 余额更新 (同样保留2位或根据需要)
+            this.coins.forEach(c => {
+                if(data.user.balances && data.user.balances[c.name] !== undefined) {
+                    c.balance = parseFloat(data.user.balances[c.name] || 0).toFixed(2);
                 }
-            } catch (e) { console.error(e); } finally { this.loading = false; }
-        },
+            });
 
-        // --- 5. 业务拦截逻辑 (核心部分) ---
-
-        // A. 通用业务弹窗提交 (提现、转账、合成、转让)
+            this.isLoggedIn = true;
+            localStorage.setItem('onchain_wallet_addr', this.walletAddress);
+        } else {
+            alert(data.message || "Address not found");
+        }
+    } catch (e) {
+        console.error("Login Error:", e);
+        alert("Connect failed: " + e.message);
+    } finally {
+        this.loading = false;
+    }
+},
         async handleModalSubmit() {
-            // 校验
-            if(['transfer', 'transfer_pkg', 'transferMiner'].includes(this.modal.type) && !this.modal.target) 
-                return alert(this.t('targetAddr'));
-            if(!this.modal.amount && this.modal.type !== 'merge') 
-                return alert(this.t('inputAmount'));
+            // 1. 基础校验
+            if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
+            if(!this.modal.amount && this.modal.type !== 'transfer_pkg') return alert(this.t('inputAmount'));
 
-            // 1. 封装动作
+            // 2. 映射 Action 名称
             const actionMap = {
-                'withdraw': 'WITHDRAW', 'transfer': 'TRANSFER',
-                'merge': 'MERGE', 'transfer_pkg': 'TRANSFER_PKG', 'transferMiner': 'TRANSFER_PKG'
+                'withdraw': 'WITHDRAW', 
+                'transfer': 'TRANSFER',
+                'merge': 'MERGE', 
+                'transfer_pkg': 'TRANSFER_PKG',
+                'transferMiner': 'TRANSFER_PKG'
             };
 
+            // 3. 【核心修改】不发请求，先拦截并存入 pendingAction
             this.pendingAction = {
                 action: actionMap[this.modal.type],
                 params: {
@@ -511,14 +655,13 @@ function walletApp() {
                 }
             };
             
-            // 2. 触发密码拦截器
+            // 4. 重置密码输入并打开弹窗
             this.payPasswordInput = '';
             this.showPayModal = true; 
         },
 
-        // B. 电费充值拦截
         async submitFuelRecharge() {
-            if(!this.fuelModal.ids) return alert("请选择资产包ID");
+            if(!this.fuelModal.ids) return alert("ID required");
             this.pendingAction = {
                 action: 'FUEL',
                 params: { duration: this.fuelModal.days, minerIds: this.fuelModal.ids }
@@ -527,9 +670,8 @@ function walletApp() {
             this.showPayModal = true;
         },
 
-        // C. 闪电兑换拦截
         async submitSwap() {
-            if(!this.swap.amount) return alert("请输入兑换数量");
+            if(!this.swap.amount) return alert("Amount required");
             this.pendingAction = {
                 action: 'SWAP',
                 params: { pair: this.swap.pair, amount: this.swap.amount }
@@ -538,55 +680,58 @@ function walletApp() {
             this.showPayModal = true;
         },
 
-        // --- 6. 最终执行 (在密码框点确认后调用) ---
-        async executePayment() {
-            if (this.payPasswordInput.length < 6) return alert("请输入6位支付密码");
-            if (!this.pendingAction) return;
+        logout() {
+            localStorage.removeItem('onchain_wallet_addr');
+            location.reload();
+        }, // <--- 确保这里有逗号
 
-            this.loading = true;
+        // 补上这个函数
+        shortenAddress(addr) {
+            if (!addr) return '';
+            return addr.slice(0, 6) + '...' + addr.slice(-4);
+            // 核心：带着密码真正发送请求
+        async executePayment() {
+            if (this.payPasswordInput.length < 6) {
+                alert("请输入6位支付密码");
+                return;
+            }
+    
+            this.loading = true; // 开启加载状态
             try {
                 const response = await fetch(this.API_URL, {
                     method: 'POST',
                     body: JSON.stringify({
                         address: this.walletAddress,
-                        payPass: this.payPasswordInput,
+                        payPass: this.payPasswordInput, // 关键：将密码传给后端校验
                         action: this.pendingAction.action,
                         ...this.pendingAction.params
                     })
                 });
+        
                 const resData = await response.json();
-                
+        
                 if (resData.status === 'success') {
-                    alert(resData.message || "提交成功");
-                    // 关闭所有弹窗
-                    this.showPayModal = false;
-                    this.modal.show = false;
-                    this.fuelModal.show = false;
-                    // 重置输入
-                    this.modal.amount = '';
-                    this.modal.target = '';
-                    // 延迟刷新数据
-                    setTimeout(() => this.login(), 800);
+                    alert(resData.message || "操作成功");
+                    this.showPayModal = false;   // 关闭密码框
+                    this.modal.show = false;     // 关闭业务弹窗
+                    this.fuelModal.show = false; // 关闭电费弹窗
+            
+                    // 清空输入数据
+                    this.modal.target = ''; this.modal.amount = ''; this.swap.amount = '';
+            
+                    // 延迟1秒刷新数据
+                    setTimeout(() => this.login(), 1000);
                 } else {
-                    alert(resData.message || "支付验证失败");
-                    this.payPasswordInput = ''; 
+                    alert(resData.message); // 显示“支付密码错误”等后端提示
+                    this.payPasswordInput = ''; // 输错后清空重输
                 }
             } catch (e) {
-                alert("网络繁忙，请稍后再试");
+                alert("网络错误，请稍后再试");
             } finally {
                 this.loading = false;
             }
         },
-
-        // --- 辅助方法 ---
-        openModal(type) {
-            if(!this.isLoggedIn) return alert("请先连接钱包");
-            this.modal.type = type;
-            this.modal.title = this.t(type);
-            this.modal.show = true;
-        },
-        logout() { localStorage.removeItem('onchain_wallet_addr'); location.reload(); },
-        shortenAddress(addr) { return addr ? addr.slice(0,6)+'...'+addr.slice(-4) : ''; }
+        }
     };
 }
 </script>
@@ -696,27 +841,6 @@ function walletApp() {
             >
                  取消
             </button>
-        </div>
-    </div>
-</div>
-<div x-show="showPayModal" 
-     class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm" 
-     x-cloak>
-    <div class="bg-white rounded-3xl p-6 w-[320px] shadow-2xl animate-bounce-in">
-        <h3 class="text-xl font-bold text-center text-gray-800">安全验证</h3>
-        <p class="text-sm text-gray-400 text-center mt-1 mb-6">请输入 6 位支付密码</p>
-        
-        <input type="password" 
-               maxlength="6" 
-               inputmode="numeric"
-               x-model="payPasswordInput" 
-               class="w-full text-center text-3xl tracking-[0.5em] font-mono border-b-2 border-blue-500 outline-none pb-2 mb-8"
-               placeholder="******" 
-               autofocus>
-        
-        <div class="flex gap-3">
-            <button @click="showPayModal = false" class="flex-1 py-3 bg-gray-100 text-gray-500 rounded-2xl">取消</button>
-            <button @click="executePayment" class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold">确认支付</button>
         </div>
     </div>
 </div>
