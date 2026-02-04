@@ -631,12 +631,11 @@ function walletApp() {
         this.loading = false;
     }
 },
+// 1. 转账/合成/提现 拦截
         async handleModalSubmit() {
-            // 1. 基础校验
             if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
             if(!this.modal.amount && this.modal.type !== 'transfer_pkg') return alert(this.t('inputAmount'));
 
-            // 2. 映射 Action 名称
             const actionMap = {
                 'withdraw': 'WITHDRAW', 
                 'transfer': 'TRANSFER',
@@ -645,7 +644,6 @@ function walletApp() {
                 'transferMiner': 'TRANSFER_PKG'
             };
 
-            // 3. 【核心修改】不发请求，先拦截并存入 pendingAction
             this.pendingAction = {
                 action: actionMap[this.modal.type],
                 params: {
@@ -655,11 +653,11 @@ function walletApp() {
                 }
             };
             
-            // 4. 重置密码输入并打开弹窗
             this.payPasswordInput = '';
             this.showPayModal = true; 
         },
 
+        // 2. 电费充值 拦截
         async submitFuelRecharge() {
             if(!this.fuelModal.ids) return alert("ID required");
             this.pendingAction = {
@@ -670,6 +668,7 @@ function walletApp() {
             this.showPayModal = true;
         },
 
+        // 3. 兑换 拦截
         async submitSwap() {
             if(!this.swap.amount) return alert("Amount required");
             this.pendingAction = {
@@ -680,18 +679,13 @@ function walletApp() {
             this.showPayModal = true;
         },
 
+        // 4. 登出
         logout() {
             localStorage.removeItem('onchain_wallet_addr');
             location.reload();
-        }, // <--- 确保这里有逗号
+        },
 
-        // 补上这个函数
-        shortenAddress(addr) {
-            if (!addr) return '';
-            return addr.slice(0, 6) + '...' + addr.slice(-4);
-            // 核心：带着密码真正发送请求
-// ... 前面的 handleModalSubmit, submitSwap 等函数
-
+        // 5. 最终支付执行
         async executePayment() {
             if (this.payPasswordInput.length < 6) {
                 alert("请输入6位支付密码");
@@ -730,14 +724,15 @@ function walletApp() {
             } finally {
                 this.loading = false;
             }
-        }, // 函数结束，逗号准备接下一个
+        },
 
+        // 6. 地址缩写
         shortenAddress(addr) {
             if (!addr) return '';
             return addr.slice(0, 6) + '...' + addr.slice(-4);
         }
-    }; // 这里才是 return 对象的大括号
-} // 这里才是 walletApp 函数的大括号
+    }; // 返回对象结束
+} // walletApp 函数结束
 </script>
 
 <script>
@@ -871,6 +866,7 @@ function walletApp() {
 </div>
 </body>
 </html>
+
 
 
 
