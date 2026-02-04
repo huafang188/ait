@@ -619,10 +619,19 @@ function walletApp() {
             this.modal.show = true;
         },
         openFuelModal() { this.fuelModal.show = true; },
-        t(key) {
-            const translations = { 'zh-CN': { 'withdraw': 'Withdraw' }, 'zh-CN': { 'withdraw': '提现' } }; // 示例，请补充完整
-            return (translations[this.lang] && translations[this.lang][key]) || key;
-        },
+t(key) {
+    // 1. 优先尝试从全局 translations 变量获取
+    // 2. 如果没有全局变量，检查 this 内部是否有 translations
+    const source = window.translations || this.translations || {};
+    
+    try {
+        return (source[this.lang] && source[this.lang][key]) || 
+               (source['zh-CN'] && source['zh-CN'][key]) || 
+               key;
+    } catch (e) {
+        return key; // 万一报错，至少保证显示原始 ID
+    }
+},
 
         // --- 5. 拦截逻辑 ---
         async handleModalSubmit() {
@@ -788,6 +797,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
