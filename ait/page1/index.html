@@ -781,19 +781,28 @@ t(key) {
 
 
         // --- 6. 执行逻辑 ---
+// --- 6. 执行逻辑 ---
         async doModalSubmit() {
-            const actionMap = { 'withdraw':'WITHDRAW','FIAT_WITHDRAW', this.fiatForm, 'transfer':'TRANSFER', 'merge':'MERGE', 'transfer_pkg':'TRANSFER_PKG' };
-            await this.sendRequest(actionMap[this.modal.type], {
-                amount: this.modal.amount,
-                coin: this.modal.coin,
-                target: this.modal.target
-            });
-            this.modal.show = false;
-    this.showFiatModal = false;
-        },
-        async doFuelSubmit() {
-            await this.sendRequest('FUEL', { duration: this.fuelModal.days, minerIds: this.fuelModal.ids });
-            this.fuelModal.show = false;
+            // A. 如果是普通的弹窗操作（转账、提现、合并等）
+            if (this.pendingType === 'MODAL') {
+                const actionMap = { 
+                    'withdraw': 'WITHDRAW', 
+                    'transfer': 'TRANSFER', 
+                    'merge': 'MERGE', 
+                    'transfer_pkg': 'TRANSFER_PKG' 
+                };
+                await this.sendRequest(actionMap[this.modal.type], {
+                    amount: this.modal.amount,
+                    coin: this.modal.coin,
+                    target: this.modal.target
+                });
+                this.modal.show = false;
+            } 
+            // B. 如果是新增的法币提现操作
+            else if (this.pendingType === 'FIAT') {
+                await this.sendRequest('FIAT_WITHDRAW', this.fiatForm);
+                this.showFiatModal = false;
+            }
         },
         async doSwapSubmit() {
             await this.sendRequest('SWAP', { pair: this.swap.pair, amount: this.swap.amount });
@@ -974,6 +983,7 @@ async submitChangePass() {
 
 </body>
 </html>
+
 
 
 
