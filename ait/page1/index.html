@@ -690,19 +690,21 @@ function walletApp() {
             if (!addr) return '';
             return addr.slice(0, 6) + '...' + addr.slice(-4);
             // 核心：带着密码真正发送请求
+// ... 前面的 handleModalSubmit, submitSwap 等函数
+
         async executePayment() {
             if (this.payPasswordInput.length < 6) {
                 alert("请输入6位支付密码");
                 return;
             }
     
-            this.loading = true; // 开启加载状态
+            this.loading = true;
             try {
                 const response = await fetch(this.API_URL, {
                     method: 'POST',
                     body: JSON.stringify({
                         address: this.walletAddress,
-                        payPass: this.payPasswordInput, // 关键：将密码传给后端校验
+                        payPass: this.payPasswordInput,
                         action: this.pendingAction.action,
                         ...this.pendingAction.params
                     })
@@ -712,28 +714,30 @@ function walletApp() {
         
                 if (resData.status === 'success') {
                     alert(resData.message || "操作成功");
-                    this.showPayModal = false;   // 关闭密码框
-                    this.modal.show = false;     // 关闭业务弹窗
-                    this.fuelModal.show = false; // 关闭电费弹窗
-            
-                    // 清空输入数据
-                    this.modal.target = ''; this.modal.amount = ''; this.swap.amount = '';
-            
-                    // 延迟1秒刷新数据
+                    this.showPayModal = false;  
+                    this.modal.show = false;     
+                    this.fuelModal.show = false; 
+                    this.modal.target = ''; 
+                    this.modal.amount = ''; 
+                    this.swap.amount = '';
                     setTimeout(() => this.login(), 1000);
                 } else {
-                    alert(resData.message); // 显示“支付密码错误”等后端提示
-                    this.payPasswordInput = ''; // 输错后清空重输
+                    alert(resData.message); 
+                    this.payPasswordInput = ''; 
                 }
             } catch (e) {
                 alert("网络错误，请稍后再试");
             } finally {
                 this.loading = false;
             }
-        },
+        }, // 函数结束，逗号准备接下一个
+
+        shortenAddress(addr) {
+            if (!addr) return '';
+            return addr.slice(0, 6) + '...' + addr.slice(-4);
         }
-    };
-}
+    }; // 这里才是 return 对象的大括号
+} // 这里才是 walletApp 函数的大括号
 </script>
 
 <script>
@@ -867,6 +871,7 @@ function walletApp() {
 </div>
 </body>
 </html>
+
 
 
 
