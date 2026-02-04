@@ -401,7 +401,7 @@ const GLOBAL_API_URL = 'https://api.fosal.fit';
 
 function walletApp() {
     return {
-        // --- 1. 基础状态 (统一放在根部，方便 HTML 调用) ---
+        // --- 1. 基础配置与 UI 状态 ---
         API_URL: GLOBAL_API_URL,
         lang: localStorage.getItem('onchain_lang') || 'zh-CN',
         isLoggedIn: false,
@@ -409,23 +409,22 @@ function walletApp() {
         walletAddress: '',
         showMiners: false,
         
-        // 支付弹窗控制
+        // 支付验证拦截器状态
         showPayModal: false,
         payPasswordInput: '',
-        pendingAction: null,
+        pendingAction: null, // 存放被拦截的动作：{ action: '', params: {} }
 
-        // 业务弹窗控制
+        // 业务弹窗状态
         fuelModal: { show: false, days: 30, ids: '' },
         modal: { show: false, type: '', title: '', amount: '', target: '', coin: 'AIT' },
         swap: { pair: 'AIT-USDT', amount: '' },
 
-        // --- 2. 数据存储 ---
+        // --- 2. 数据模型 (严格对应后端字段) ---
         userData: {
             miners: [],
             totalValue: '0.00',
             dailyOutput: '0.00',
             lockedAmount: '0.00',
-            // 团队数据
             v1_count: 0,
             v1_miners: 0,
             v1_daily_output: '0.00',
@@ -444,34 +443,22 @@ function walletApp() {
         ],
         logs: [],
 
-        // --- 3. 多语言 ---
-        languages: {
-            'zh-CN': '简体中文', 'zh-TW': '繁體中文', 'ja': '日本語', 'ko': '한국어',
-            'ms': 'Melayu', 'ru': 'Русский', 'fr': 'Français', 'de': 'Deutsch', 'es': 'Español'
-        },
+        // --- 3. 语言字典 (确保 t(key) 不会报错) ---
+        languages: { 'zh-CN': '简体中文', 'zh-TW': '繁體中文', 'ja': '日本語' /* ...其他语言省略... */ },
         translations: {
             'zh-CN': {
-                title: '链上钱包', inputPlaceholder: '在此输入您数字身份DID', connectBtn: '连接蚂蚁链', refreshData: '更新数据', logout: '退出',
-                minerModule: '我的资产包', rechargeTip: '充值您的链上资产', rechargeBtn: '钱包充值',
-                dailyOutput: '每日产积分', lockedAmount: '锁仓数量', mergeMiner: '合成资产包', transferMiner: '资产包转让',
-                totalAssets: '钱包总资产 (USD)', withdraw: '提现', deposit: '充值', transfer: '转账', swapTitle: '闪电兑换',
-                executeSwap: '立即兑换', records: '交易记录', date: '时间', type: '操作', amount: '数额', status: '状态',
-                inputAmount: '输入数量 (10.56)', gasTip: 'Gas费用 (0.0AOT)，提交后十分钟内处理', confirm: '确认操作',
-                targetAddr: '请输入接收者钱包地址', success: '提交成功！', loginToView: '请先连接钱包查看记录',
-                merge: '合成资产包', transferMiner: '资产包转让'
-            },
-            // ... 其他语言保持不变 ...
-        },
-
-        // --- 4. 核心逻辑 ---
-        init() {
-            const saved = localStorage.getItem('onchain_wallet_addr');
-            if(saved) {
-                this.walletAddress = saved;
-                this.login();
+                withdraw: '提现', transfer: '转账', merge: '合成资产包', 
+                transfer_pkg: '资产包转让', transferMiner: '资产包转让',
+                inputAmount: '请输入数量', targetAddr: '请输入接收地址',
+                success: '操作成功', gasTip: 'Gas费用 (0.0AOT)...'
             }
         },
 
+        // --- 4. 初始化与登录 ---
+        init() {
+            const saved = localStorage.getItem('onchain_wallet_addr');
+            if(saved) { this.walletAddress = saved; this.login(); }
+        },
         t(key) {
             return (this.translations[this.lang] && this.translations[this.lang][key]) || (this.translations['zh-CN'] && this.translations['zh-CN'][key]) || key;
         },
@@ -485,62 +472,34 @@ function walletApp() {
                     body: JSON.stringify({ action: 'LOGIN', address: this.walletAddress })
                 });
                 const data = await response.json();
-                
                 if(data.status === "success" && data.user) {
-                    // 映射用户数据
-                    const u = data.user;
-                    this.userData.totalValue = parseFloat(u.totalValue || 0).toFixed(2);
-                    this.userData.dailyOutput = parseFloat(u.dailyOutput || 0).toFixed(2);
-                    this.userData.lockedAmount = parseFloat(u.lockedAmount || 0).toFixed(2);
-                    this.userData.v1_count = u.v1_count || 0;
-                    this.userData.v1_miners = u.v1_miners || 0;
-                    this.userData.v1_daily_output = parseFloat(u.v1_daily_output || 0).toFixed(2);
-                    this.userData.v2_plus_count = u.v2_plus_count || 0;
-                    this.userData.v2_plus_miners = u.v2_plus_miners || 0;
-                    this.userData.v2_plus_daily_output = parseFloat(u.v2_plus_daily_output || 0).toFixed(2);
-                    this.userData.team_reward_rate = (parseFloat(u.team_reward_rate || 0) * 100).toFixed(0);
-                    this.userData.team_daily_amount = parseFloat(u.team_daily_amount || 0).toFixed(2);
-
+                    this.userData = { ...this.userData, ...data.user };
                     this.userData.miners = data.miners || [];
                     this.logs = data.logs || [];
-                    
-                    // 更新余额
                     this.coins.forEach(c => {
-                        if(u.balances && u.balances[c.name] !== undefined) {
-                            c.balance = parseFloat(u.balances[c.name] || 0).toFixed(2);
-                        }
+                        if(data.user.balances && data.user.balances[c.name]) 
+                            c.balance = parseFloat(data.user.balances[c.name]).toFixed(2);
                     });
-
                     this.isLoggedIn = true;
                     localStorage.setItem('onchain_wallet_addr', this.walletAddress);
-                } else {
-                    alert(data.message || "Address not found");
                 }
-            } catch (e) {
-                alert("Connect failed: " + e.message);
-            } finally {
-                this.loading = false;
-            }
+            } catch (e) { console.error(e); } finally { this.loading = false; }
         },
 
-        // --- 5. 交互方法 ---
-        openModal(type) {
-            if(!this.isLoggedIn) return alert("请先连接钱包");
-            this.modal.type = type;
-            this.modal.title = this.t(type);
-            this.modal.show = true;
-        },
+        // --- 5. 业务拦截逻辑 (核心部分) ---
 
+        // A. 通用业务弹窗提交 (提现、转账、合成、转让)
         async handleModalSubmit() {
-            if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
-            if(!this.modal.amount && !['merge', 'transfer_pkg', 'transferMiner'].includes(this.modal.type)) return alert(this.t('inputAmount'));
+            // 校验
+            if(['transfer', 'transfer_pkg', 'transferMiner'].includes(this.modal.type) && !this.modal.target) 
+                return alert(this.t('targetAddr'));
+            if(!this.modal.amount && this.modal.type !== 'merge') 
+                return alert(this.t('inputAmount'));
 
+            // 1. 封装动作
             const actionMap = {
-                'withdraw': 'WITHDRAW', 
-                'transfer': 'TRANSFER',
-                'merge': 'MERGE', 
-                'transfer_pkg': 'TRANSFER_PKG',
-                'transferMiner': 'TRANSFER_PKG'
+                'withdraw': 'WITHDRAW', 'transfer': 'TRANSFER',
+                'merge': 'MERGE', 'transfer_pkg': 'TRANSFER_PKG', 'transferMiner': 'TRANSFER_PKG'
             };
 
             this.pendingAction = {
@@ -551,12 +510,26 @@ function walletApp() {
                     target: this.modal.target
                 }
             };
+            
+            // 2. 触发密码拦截器
             this.payPasswordInput = '';
             this.showPayModal = true; 
         },
 
+        // B. 电费充值拦截
+        async submitFuelRecharge() {
+            if(!this.fuelModal.ids) return alert("请选择资产包ID");
+            this.pendingAction = {
+                action: 'FUEL',
+                params: { duration: this.fuelModal.days, minerIds: this.fuelModal.ids }
+            };
+            this.payPasswordInput = '';
+            this.showPayModal = true;
+        },
+
+        // C. 闪电兑换拦截
         async submitSwap() {
-            if(!this.swap.amount) return alert("Amount required");
+            if(!this.swap.amount) return alert("请输入兑换数量");
             this.pendingAction = {
                 action: 'SWAP',
                 params: { pair: this.swap.pair, amount: this.swap.amount }
@@ -565,8 +538,11 @@ function walletApp() {
             this.showPayModal = true;
         },
 
+        // --- 6. 最终执行 (在密码框点确认后调用) ---
         async executePayment() {
             if (this.payPasswordInput.length < 6) return alert("请输入6位支付密码");
+            if (!this.pendingAction) return;
+
             this.loading = true;
             try {
                 const response = await fetch(this.API_URL, {
@@ -578,32 +554,40 @@ function walletApp() {
                         ...this.pendingAction.params
                     })
                 });
-                const res = await response.json();
-                if (res.status === 'success') {
-                    alert(res.message || "操作成功");
+                const resData = await response.json();
+                
+                if (resData.status === 'success') {
+                    alert(resData.message || "提交成功");
+                    // 关闭所有弹窗
                     this.showPayModal = false;
                     this.modal.show = false;
                     this.fuelModal.show = false;
-                    setTimeout(() => this.login(), 500);
+                    // 重置输入
+                    this.modal.amount = '';
+                    this.modal.target = '';
+                    // 延迟刷新数据
+                    setTimeout(() => this.login(), 800);
                 } else {
-                    alert(res.message);
+                    alert(resData.message || "支付验证失败");
+                    this.payPasswordInput = ''; 
                 }
             } catch (e) {
-                alert("网络错误");
+                alert("网络繁忙，请稍后再试");
             } finally {
                 this.loading = false;
             }
         },
 
-        logout() {
-            localStorage.removeItem('onchain_wallet_addr');
-            location.reload();
+        // --- 辅助方法 ---
+        openModal(type) {
+            if(!this.isLoggedIn) return alert("请先连接钱包");
+            this.modal.type = type;
+            this.modal.title = this.t(type);
+            this.modal.show = true;
         },
-
-        shortenAddress(addr) {
-            return addr ? addr.slice(0, 6) + '...' + addr.slice(-4) : '';
-        }
-    }
+        logout() { localStorage.removeItem('onchain_wallet_addr'); location.reload(); },
+        shortenAddress(addr) { return addr ? addr.slice(0,6)+'...'+addr.slice(-4) : ''; }
+    };
 }
 </script>
 
@@ -738,10 +722,3 @@ function walletApp() {
 </div>
 </body>
 </html>
-
-
-
-
-
-
-
