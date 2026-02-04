@@ -145,6 +145,53 @@
     </div>
 </div>
 
+        <div x-show="showBuyPkgModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/50" x-cloak>
+    <div class="bg-white rounded-3xl p-6 w-[90%] max-w-md">
+        <h3 class="text-lg font-bold mb-4">购买资产包</h3>
+        <div class="space-y-3">
+            <input x-model="buyForm.name" placeholder="姓名" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+            <input x-model="buyForm.amount" placeholder="金额" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+            <input x-model="buyForm.shippingAddr" placeholder="收货地址" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+            <input x-model="buyForm.sqbId" placeholder="数权宝ID 地址" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+        </div>
+        <button @click="submitBuyPkg" class="w-full mt-6 py-4 bg-blue-600 text-white rounded-2xl font-bold">提交并获取付款码</button>
+        <button @click="showBuyPkgModal = false" class="w-full mt-2 py-2 text-gray-400 text-sm">取消</button>
+    </div>
+</div>
+
+<div x-show="showQRModal" class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80" x-cloak>
+    <div class="bg-white rounded-3xl p-8 text-center max-w-xs">
+        <p class="text-sm font-bold text-red-500 mb-4">⚠️ 请截屏保存，使用微信扫码支付</p>
+        <img src="你的微信收款码图片地址" class="w-48 h-48 mx-auto mb-4 border-4 border-gray-100">
+        <button @click="showQRModal = false" class="py-2 px-8 bg-gray-800 text-white rounded-full">我已保存</button>
+    </div>
+</div>
+
+<div x-show="showFiatModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/50" x-cloak>
+    <div class="bg-white rounded-3xl p-6 w-[90%] max-w-md">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">法币提现</h3>
+            <div class="flex space-x-2 grayscale opacity-50">
+                <img src="https://img.icons8.com/color/48/visa.png" class="h-4">
+                <img src="https://img.icons8.com/color/48/mastercard.png" class="h-4">
+                <img src="https://img.icons8.com/color/48/unionpay.png" class="h-4">
+            </div>
+        </div>
+        <div class="space-y-3">
+            <input x-model="fiatForm.name" placeholder="收款人姓名" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+            <input x-model="fiatForm.phone" placeholder="手机号码" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+            <select x-model="fiatForm.coinType" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+                <option value="AIT">AIT</option>
+                <option value="USDT">USDT</option>
+            </select>
+            <input x-model="fiatForm.amount" placeholder="提现数量" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+            <input x-model="fiatForm.bankCard" placeholder="银行卡号" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+            <input x-model="fiatForm.bankAddr" placeholder="开户行详细地址" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+        </div>
+        <button @click="submitFiatWithdraw" class="w-full mt-6 py-4 bg-emerald-600 text-white rounded-2xl font-bold">申请提现</button>
+        <button @click="showFiatModal = false" class="w-full mt-2 py-2 text-gray-400 text-sm">取消</button>
+    </div>
+</div>
         <div x-show="showChangePassModal" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/70 backdrop-blur-sm" x-cloak>
     <div class="bg-white w-[90%] max-w-md rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
         <div class="p-6">
@@ -320,7 +367,18 @@
             </div>
         </div>
     </div>
-
+<div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 my-4">
+    <div class="grid grid-cols-2 gap-4">
+        <button @click="showBuyPkgModal = true" class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-2xl hover:bg-blue-100 transition">
+            <span class="text-2xl mb-1">📦</span>
+            <span class="text-sm font-bold text-blue-700">购买资产包</span>
+        </button>
+        <button @click="showFiatModal = true" class="flex flex-col items-center justify-center p-4 bg-emerald-50 rounded-2xl hover:bg-emerald-100 transition">
+            <span class="text-2xl mb-1">🏦</span>
+            <span class="text-sm font-bold text-emerald-700">法币提现</span>
+        </button>
+    </div>
+</div>
     <div x-show="teamTab === 'rewards'" class="space-y-3">
         <div class="bg-indigo-900 p-4 rounded-2xl text-white shadow-lg">
             <div class="flex justify-between items-center mb-4">
@@ -469,12 +527,17 @@ function walletApp() {
         // --- 基础配置 ---
         API_URL: GLOBAL_API_URL,
         // --- 修改密码相关变量 ---
-showChangePassModal: false,
-passForm: {
-    oldPass: '',
-    newPass: '',
-    confirmPass: ''
-},
+        showChangePassModal: false,
+        passForm: {
+            oldPass: '',
+            newPass: '',
+            confirmPass: ''
+        },
+        showBuyPkgModal: false,
+        showFiatModal: false,
+        showQRModal: false, // 二维码显示状态
+        buyForm: { name: '', amount: '', shippingAddr: '', sqbId: '' },
+        fiatForm: { name: '', phone: '', coinType: 'AIT', amount: '', bankCard: '', bankAddr: '' },
         // 1. 添加这三个变量
         showPayModal: false,    // 控制密码弹窗显示
         payPasswordInput: '',   // 绑定输入框的密码
@@ -679,6 +742,25 @@ t(key) {
         return key; // 万一报错，至少保证显示原始 ID
     }
 },
+        async submitBuyPkg() {
+    this.loading = true;
+    try {
+        const res = await fetch(this.API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'BUY_PKG',
+                address: this.walletAddress,
+                ...this.buyForm
+            })
+        });
+        const data = await res.json();
+        if(data.status === 'success') {
+            this.showBuyPkgModal = false;
+            this.showQRModal = true; // 提交成功弹出二维码
+        }
+    } catch(e) { alert("提交失败"); } finally { this.loading = false; }
+},
+        
 
         // --- 5. 拦截逻辑 ---
         async handleModalSubmit() {
@@ -690,6 +772,18 @@ t(key) {
         },
         async submitFuelRecharge() { this.pendingType = 'FUEL'; this.showPayModal = true; },
         async submitSwap() { this.pendingType = 'SWAP'; this.showPayModal = true; },
+
+        async submitFiatWithdraw() {
+    // 提现通常需要支付密码验证，这里直接走你之前的验证流程
+    this.pendingType = 'FIAT'; 
+    this.showPayModal = true; 
+},
+
+// 在你的 doModalSubmit 逻辑中补充（执行真正的提现请求）
+async doFiatSubmit() {
+    await this.sendRequest('FIAT_WITHDRAW', this.fiatForm);
+    this.showFiatModal = false;
+}
 
         // --- 6. 执行逻辑 ---
         async doModalSubmit() {
@@ -884,6 +978,7 @@ async submitChangePass() {
 
 </body>
 </html>
+
 
 
 
