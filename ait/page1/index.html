@@ -72,7 +72,7 @@
     
 </head>
 
-<body x-data="walletApp()" x-init="init()">
+<body x-data="()" x-init="init()">
     <div id="tsparticles"></div>
 
     <header class="flex justify-between items-center p-4 sticky top-0 z-50 glass-card mx-2 mt-2 shadow-sm">
@@ -502,6 +502,10 @@ function walletApp() {
             },
         // --- 数据模型 ---
         userData: {
+            // --- 支付验证状态 ---
+            showPayModal: false,
+            payPasswordInput: '',
+            pendingAction: null,
             miners: [],
             totalValue: '0.00',
             dailyOutput: '0',
@@ -628,78 +632,52 @@ function walletApp() {
     }
 },
         async handleModalSubmit() {
-            // 如果是转让，检查是否有接收地址
+            // 1. 基础校验
             if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
             if(!this.modal.amount && this.modal.type !== 'transfer_pkg') return alert(this.t('inputAmount'));
-            
-            this.loading = true;
-            try {
-                const actionMap = {
-                    'withdraw': 'WITHDRAW', 'transfer': 'TRANSFER',
-                    'merge': 'MERGE', 'transfer_pkg': 'TRANSFER_PKG','transferMiner': 'TRANSFER_PKG'
-                };
-                
-                const response = await fetch(this.API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        address: this.walletAddress,
-                        action: actionMap[this.modal.type],
-                        amount: this.modal.amount,
-                        coin: this.modal.coin,
-                        target: this.modal.target // 这里没问题，重点是确认 HTML 里有 x-model="modal.target"
-                    })
-                });
-                const resData = await response.json();
-                alert(resData.message);
-                if (resData.status === 'success') { 
-                    this.modal.show = false; 
-                    // 成功后清除数据，防止下次打开弹窗还有残留
-                    this.modal.target = '';
-                    this.modal.amount = '';
-                    setTimeout(() => this.login(), 1200); 
+
+            // 2. 映射 Action 名称
+            const actionMap = {
+                'withdraw': 'WITHDRAW', 
+                'transfer': 'TRANSFER',
+                'merge': 'MERGE', 
+                'transfer_pkg': 'TRANSFER_PKG',
+                'transferMiner': 'TRANSFER_PKG'
+            };
+
+            // 3. 【核心修改】不发请求，先拦截并存入 pendingAction
+            this.pendingAction = {
+                action: actionMap[this.modal.type],
+                params: {
+                    amount: this.modal.amount,
+                    coin: this.modal.coin,
+                    target: this.modal.target
                 }
-            } catch (e) { alert("Error"); }
-            finally { this.loading = false; }
+            };
+            
+            // 4. 重置密码输入并打开弹窗
+            this.payPasswordInput = '';
+            this.showPayModal = true; 
         },
 
         async submitFuelRecharge() {
             if(!this.fuelModal.ids) return alert("ID required");
-            this.loading = true;
-            try {
-                const response = await fetch(this.API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        address: this.walletAddress,
-                        action: 'FUEL',
-                        duration: this.fuelModal.days,
-                        minerIds: this.fuelModal.ids
-                    })
-                });
-                const resData = await response.json();
-                alert(resData.message);
-                this.fuelModal.show = false;
-            } catch (e) { alert("Error"); }
-            finally { this.loading = false; }
+            this.pendingAction = {
+                action: 'FUEL',
+                params: { duration: this.fuelModal.days, minerIds: this.fuelModal.ids }
+            };
+            this.payPasswordInput = '';
+            this.showPayModal = true;
         },
 
         async submitSwap() {
             if(!this.swap.amount) return alert("Amount required");
-            this.loading = true;
-            try {
-                const response = await fetch(this.API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        address: this.walletAddress,
-                        action: 'SWAP',
-                        pair: this.swap.pair,
-                        amount: this.swap.amount
-                    })
-                });
-                const resData = await response.json();
-                alert(resData.message);
-                this.swap.amount = '';
-            } catch (e) { alert("Error"); }
-            finally { this.loading = false; }
+            this.pendingAction = {
+                action: 'SWAP',
+                params: { pair: this.swap.pair, amount: this.swap.amount }
+            };
+            this.payPasswordInput = '';
+            this.showPayModal = true;
         },
 
         logout() {
@@ -711,6 +689,48 @@ function walletApp() {
         shortenAddress(addr) {
             if (!addr) return '';
             return addr.slice(0, 6) + '...' + addr.slice(-4);
+            // 核心：带着密码真正发送请求
+        async executePayment() {
+            if (this.payPasswordInput.length < 6) {
+                alert("请输入6位支付密码");
+                return;
+            }
+    
+            this.loading = true; // 开启加载状态
+            try {
+                const response = await fetch(this.API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        address: this.walletAddress,
+                        payPass: this.payPasswordInput, // 关键：将密码传给后端校验
+                        action: this.pendingAction.action,
+                        ...this.pendingAction.params
+                    })
+                });
+        
+                const resData = await response.json();
+        
+                if (resData.status === 'success') {
+                    alert(resData.message || "操作成功");
+                    this.showPayModal = false;   // 关闭密码框
+                    this.modal.show = false;     // 关闭业务弹窗
+                    this.fuelModal.show = false; // 关闭电费弹窗
+            
+                    // 清空输入数据
+                    this.modal.target = ''; this.modal.amount = ''; this.swap.amount = '';
+            
+                    // 延迟1秒刷新数据
+                    setTimeout(() => this.login(), 1000);
+                } else {
+                    alert(resData.message); // 显示“支付密码错误”等后端提示
+                    this.payPasswordInput = ''; // 输错后清空重输
+                }
+            } catch (e) {
+                alert("网络错误，请稍后再试");
+            } finally {
+                this.loading = false;
+            }
+        },
         }
     };
 }
@@ -824,8 +844,29 @@ function walletApp() {
         </div>
     </div>
 </div>
-
+<div x-show="showPayModal" 
+     class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm" 
+     x-cloak>
+    <div class="bg-white rounded-3xl p-6 w-[320px] shadow-2xl animate-bounce-in">
+        <h3 class="text-xl font-bold text-center text-gray-800">安全验证</h3>
+        <p class="text-sm text-gray-400 text-center mt-1 mb-6">请输入 6 位支付密码</p>
+        
+        <input type="password" 
+               maxlength="6" 
+               inputmode="numeric"
+               x-model="payPasswordInput" 
+               class="w-full text-center text-3xl tracking-[0.5em] font-mono border-b-2 border-blue-500 outline-none pb-2 mb-8"
+               placeholder="******" 
+               autofocus>
+        
+        <div class="flex gap-3">
+            <button @click="showPayModal = false" class="flex-1 py-3 bg-gray-100 text-gray-500 rounded-2xl">取消</button>
+            <button @click="executePayment" class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold">确认支付</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
+
 
 
