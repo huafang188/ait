@@ -631,7 +631,7 @@ function walletApp() {
         this.loading = false;
     }
 },
-// 1. 转账/合成/提现 拦截
+// --- 1. 业务逻辑拦截 ( handleModalSubmit ) ---
         async handleModalSubmit() {
             if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
             if(!this.modal.amount && this.modal.type !== 'transfer_pkg') return alert(this.t('inputAmount'));
@@ -657,7 +657,7 @@ function walletApp() {
             this.showPayModal = true; 
         },
 
-        // 2. 电费充值 拦截
+        // --- 2. 电费逻辑 ---
         async submitFuelRecharge() {
             if(!this.fuelModal.ids) return alert("ID required");
             this.pendingAction = {
@@ -668,7 +668,7 @@ function walletApp() {
             this.showPayModal = true;
         },
 
-        // 3. 兑换 拦截
+        // --- 3. 兑换逻辑 ---
         async submitSwap() {
             if(!this.swap.amount) return alert("Amount required");
             this.pendingAction = {
@@ -679,19 +679,12 @@ function walletApp() {
             this.showPayModal = true;
         },
 
-        // 4. 登出
-        logout() {
-            localStorage.removeItem('onchain_wallet_addr');
-            location.reload();
-        },
-
-        // 5. 最终支付执行
+        // --- 4. 关键：支付执行函数 ---
         async executePayment() {
             if (this.payPasswordInput.length < 6) {
                 alert("请输入6位支付密码");
                 return;
             }
-    
             this.loading = true;
             try {
                 const response = await fetch(this.API_URL, {
@@ -703,9 +696,7 @@ function walletApp() {
                         ...this.pendingAction.params
                     })
                 });
-        
                 const resData = await response.json();
-        
                 if (resData.status === 'success') {
                     alert(resData.message || "操作成功");
                     this.showPayModal = false;  
@@ -726,7 +717,12 @@ function walletApp() {
             }
         },
 
-        // 6. 地址缩写
+        // --- 5. 辅助函数 ---
+        logout() {
+            localStorage.removeItem('onchain_wallet_addr');
+            location.reload();
+        },
+
         shortenAddress(addr) {
             if (!addr) return '';
             return addr.slice(0, 6) + '...' + addr.slice(-4);
@@ -866,6 +862,7 @@ function walletApp() {
 </div>
 </body>
 </html>
+
 
 
 
