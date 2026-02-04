@@ -782,39 +782,59 @@ t(key) {
 
 
         // --- 6. 执行逻辑 ---
-// --- 6. 执行逻辑 ---
-        async doModalSubmit() {
-            // A. 如果是普通的弹窗操作（转账、提现、合并等）
-            if (this.pendingType === 'MODAL') {
-                const actionMap = { 
-                    'withdraw': 'WITHDRAW', 
-                    'transfer': 'TRANSFER', 
-                    'merge': 'MERGE', 
-                    'transfer_pkg': 'TRANSFER_PKG' 
-                };
-                await this.sendRequest(actionMap[this.modal.type], {
-                    amount: this.modal.amount,
-                    coin: this.modal.coin,
-                    target: this.modal.target
-                });
-                this.modal.show = false;
-            } 
-            // B. 如果是新增的法币提现操作
-            else if (this.pendingType === 'FIAT') {
-                await this.sendRequest('FIAT_WITHDRAW', this.fiatForm);
-                this.showFiatModal = false;
-            }
-        },
-        async doSwapSubmit() {
-            await this.sendRequest('SWAP', { pair: this.swap.pair, amount: this.swap.amount });
-        },
-        async sendRequest(action, params) {
-            this.loading = true;
-            try {
-                const res = await fetch(this.API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ address: this.walletAddress, payPass: this.payPasswordInput, action, ...params })
-                });
+async doModalSubmit() {
+    // 强制同步 action 映射
+    const actionMap = { 
+        'withdraw': 'WITHDRAW', 
+        'transfer': 'TRANSFER', 
+        'merge': 'MERGE', 
+        'transfer_pkg': 'TRANSFER_PKG',
+        'transferMiner': 'TRANSFER_PKG' // <--- 兼容你 HTML 里的写法
+    };
+
+    const targetAction = actionMap[this.modal.type];
+
+    // A. 如果是普通的弹窗操作
+    if (this.pendingType === 'MODAL') {
+        if (!targetAction) return alert("无效的弹窗类型: " + this.modal.type);
+        
+        await this.sendRequest(targetAction, {
+            amount: this.modal.amount,
+            coin: this.modal.coin,
+            target: this.modal.target
+        });
+        this.modal.show = false;
+    } 
+    // B. 如果是法币提现操作
+    else if (this.pendingType === 'FIAT') {
+        await this.sendRequest('FIAT_WITHDRAW', {
+            name: this.fiatForm.name,
+            phone: this.fiatForm.phone,
+            coinType: this.fiatForm.coinType,
+            amount: this.fiatForm.amount,
+            bankCard: this.fiatForm.bankCard,
+            bankAddr: this.fiatForm.bankAddr
+        });
+        this.showFiatModal = false;
+    }
+},
+
+// 建议也修改一下 sendRequest，确保密码是最高优先级且不被 params 覆盖
+async sendRequest(action, params) {
+    if (!this.payPasswordInput) return alert("请输入支付密码");
+    this.loading = true;
+    try {
+        const payload = { 
+            address: this.walletAddress, 
+            action: action,
+            ...params, 
+            payPass: this.payPasswordInput // 放在最后，确保覆盖 params 中可能的空密码
+        };
+        
+        const res = await fetch(this.API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ address: this.walletAddress, payPass: this.payPasswordInput, action, ...params })
+        });
                 const data = await res.json();
                 if(data.status === 'success') {
                     alert("Success");
@@ -984,6 +1004,7 @@ async submitChangePass() {
 
 </body>
 </html>
+
 
 
 
