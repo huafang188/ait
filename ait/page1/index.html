@@ -581,82 +581,82 @@ function walletApp() {
             return (this.translations[this.lang] && this.translations[this.lang][key]) || (this.translations['zh-CN'] && this.translations['zh-CN'][key]) || key;
         },
 
- async login() {
-    if(!this.walletAddress || this.walletAddress.length < 5) return;
-    this.loading = true;
-    try {
-        const response = await fetch(this.API_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'LOGIN', address: this.walletAddress })
-        });
-        const data = await response.json();
-        
-        if(data.status === "success" && data.user) {
-            // 1. 基础资产数据 (保留2位小数)
-            this.userData.totalValue = parseFloat(data.user.totalValue || 0).toFixed(2);
-            this.userData.dailyOutput = parseFloat(data.user.dailyOutput || 0).toFixed(2);
-            this.userData.lockedAmount = parseFloat(data.user.lockedAmount || 0).toFixed(2);
-            
-            // 2. 团队 L-S 列数据
-            this.userData.v1_count = data.user.v1_count || 0;
-            this.userData.v1_miners = data.user.v1_miners || 0;
-            // N列：1代每日总产币 (保留2位小数)
-            this.userData.v1_daily_output = parseFloat(data.user.v1_daily_output || 0).toFixed(2);
-            
-            this.userData.v2_plus_count = data.user.v2_plus_count || 0;
-            this.userData.v2_plus_miners = data.user.v2_plus_miners || 0;
-            // Q列：2代及以上每日总产币 (保留2位小数)
-            this.userData.v2_plus_daily_output = parseFloat(data.user.v2_plus_daily_output || 0).toFixed(2);
-            
-            // R列：收益比例 (保留1位小数)
-            this.userData.team_reward_rate = (parseFloat(data.user.team_reward_rate || 0) * 100).toFixed(0);
-            // S列：每日奖励金额 (保留2位小数)
-            this.userData.team_daily_amount = parseFloat(data.user.team_daily_amount || 0).toFixed(2);
-
-            // 3. 矿机与日志
-            this.userData.miners = data.miners || [];
-            if (data.logs && data.logs.length > 0) {
-                this.logs = data.logs.map(log => {
-                    // 使用正则匹配：(符号?)(数字)(空格)(币种)
-                    // 例如："-10.5 AIT" -> ["-10.5 AIT", "-", "10.5", " AIT"]
-                    const match = String(log.amount).match(/^([+-]?)([\d\.]+)(.*)$/);
-        
-                    if (match) {
-                        const symbol = match[1];      // 符号 (+ 或 -)
-                        const value = parseFloat(match[2]); // 数值 (10.5)
-                        const suffix = match[3];      // 后缀 ( AIT)
-            
-                        return {
-                            ...log,
-                            // 重新拼接：符号 + 两位小数 + 后缀
-                            amount: `${symbol}${value.toFixed(2)}${suffix}`
-                        };
-                    }
-                    return log; // 如果匹配失败，返回原样
+        async login() {
+            if(!this.walletAddress || this.walletAddress.length < 5) return;
+            this.loading = true;
+            try {
+                const response = await fetch(this.API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'LOGIN', address: this.walletAddress })
                 });
-            } else {
-                this.logs = [];
-            }
-            // 4. 余额更新 (同样保留2位或根据需要)
-            this.coins.forEach(c => {
-                if(data.user.balances && data.user.balances[c.name] !== undefined) {
-                    c.balance = parseFloat(data.user.balances[c.name] || 0).toFixed(2);
-                }
-            });
+                const data = await response.json();
+        
+                if(data.status === "success" && data.user) {
+                    // 1. 基础资产数据 (保留2位小数)
+                    this.userData.totalValue = parseFloat(data.user.totalValue || 0).toFixed(2);
+                    this.userData.dailyOutput = parseFloat(data.user.dailyOutput || 0).toFixed(2);
+                    this.userData.lockedAmount = parseFloat(data.user.lockedAmount || 0).toFixed(2);
+            
+                    // 2. 团队 L-S 列数据
+                    this.userData.v1_count = data.user.v1_count || 0;
+                    this.userData.v1_miners = data.user.v1_miners || 0;
+                    // N列：1代每日总产币 (保留2位小数)
+                    this.userData.v1_daily_output = parseFloat(data.user.v1_daily_output || 0).toFixed(2);
+            
+                    this.userData.v2_plus_count = data.user.v2_plus_count || 0;
+                    this.userData.v2_plus_miners = data.user.v2_plus_miners || 0;
+                    // Q列：2代及以上每日总产币 (保留2位小数)
+                    this.userData.v2_plus_daily_output = parseFloat(data.user.v2_plus_daily_output || 0).toFixed(2);
+            
+                    // R列：收益比例 (保留1位小数)
+                    this.userData.team_reward_rate = (parseFloat(data.user.team_reward_rate || 0) * 100).toFixed(0);
+                    // S列：每日奖励金额 (保留2位小数)
+                    this.userData.team_daily_amount = parseFloat(data.user.team_daily_amount || 0).toFixed(2);
 
-            this.isLoggedIn = true;
-            localStorage.setItem('onchain_wallet_addr', this.walletAddress);
-        } else {
-            alert(data.message || "Address not found");
-        }
-    } catch (e) {
-        console.error("Login Error:", e);
-        alert("Connect failed: " + e.message);
-    } finally {
+                    // 3. 矿机与日志
+                    this.userData.miners = data.miners || [];
+                    if (data.logs && data.logs.length > 0) {
+                        this.logs = data.logs.map(log => {
+                            // 使用正则匹配：(符号?)(数字)(空格)(币种)
+                            // 例如："-10.5 AIT" -> ["-10.5 AIT", "-", "10.5", " AIT"]
+                            const match = String(log.amount).match(/^([+-]?)([\d\.]+)(.*)$/);
+        
+                            if (match) {
+                                const symbol = match[1];      // 符号 (+ 或 -)
+                                const value = parseFloat(match[2]); // 数值 (10.5)
+                                const suffix = match[3];      // 后缀 ( AIT)
+            
+                                return {
+                                    ...log,
+                                    // 重新拼接：符号 + 两位小数 + 后缀
+                                    amount: `${symbol}${value.toFixed(2)}${suffix}`
+                                };
+                            }
+                            return log; // 如果匹配失败，返回原样
+                        });
+                    } else {
+                        this.logs = [];
+                    }
+                    // 4. 余额更新 (同样保留2位或根据需要)
+                    this.coins.forEach(c => {
+                        if(data.user.balances && data.user.balances[c.name] !== undefined) {
+                            c.balance = parseFloat(data.user.balances[c.name] || 0).toFixed(2);
+                        }
+                    });
+
+                    this.isLoggedIn = true;
+                    localStorage.setItem('onchain_wallet_addr', this.walletAddress);
+                } else {
+                    alert(data.message || "Address not found");
+                }
+            } catch (e) {
+                console.error("Login Error:", e);
+                alert("Connect failed: " + e.message);
+            } finally {
         this.loading = false;
-    }
-},
-// 2. 拦截逻辑 (替换原有函数)
+            }
+        },
+        // 2. 拦截逻辑 (替换原有函数)
         async handleModalSubmit() {
             if(this.modal.type === 'transfer_pkg' && !this.modal.target) return alert("请输入接收地址");
             if(!this.modal.amount && this.modal.type !== 'merge') return alert(this.t('inputAmount'));
@@ -857,6 +857,7 @@ function walletApp() {
 
 </body>
 </html>
+
 
 
 
