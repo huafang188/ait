@@ -100,6 +100,9 @@
                     <span class="text-[10px] bg-green-500 text-white px-2 py-0.5 rounded-full font-bold">Online</span>
                 </div>
             </template>
+            <button @click="openChangePass()" class="text-xs text-blue-600 font-medium underline">
+                修改支付密码
+            </button>
             
             <div class="flex gap-2">
                 <button @click="login" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition flex items-center justify-center" :disabled="loading">
@@ -138,6 +141,43 @@
                     </div>
                 </template>
             </template>
+        </div>
+    </div>
+</div>
+
+        <div x-show="showChangePassModal" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/70 backdrop-blur-sm" x-cloak>
+    <div class="bg-white w-[90%] max-w-md rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+        <div class="p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">修改支付密码</h3>
+            
+            <div class="bg-amber-50 border-l-4 border-amber-400 p-3 mb-4">
+                <div class="flex">
+                    <span class="text-amber-400 mr-2">⚠️</span>
+                    <p class="text-xs text-amber-700 font-medium">
+                        请务必牢记新密码。支付密码一旦丢失将无法通过任何方式找回，您的资产将无法操作。
+                    </p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400 ml-1">原支付密码</label>
+                    <input type="password" x-model="passForm.oldPass" placeholder="请输入当前密码" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 ml-1">新支付密码</label>
+                    <input type="password" x-model="passForm.newPass" placeholder="建议6位以上数字/字母" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 ml-1">确认新密码</label>
+                    <input type="password" x-model="passForm.confirmPass" placeholder="请再次输入新密码" class="w-full p-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+            </div>
+
+            <div class="flex space-x-3 mt-6">
+                <button @click="showChangePassModal = false" class="flex-1 py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold">取消</button>
+                <button @click="submitChangePass" class="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-200">确认修改</button>
+            </div>
         </div>
     </div>
 </div>
@@ -428,6 +468,13 @@ function walletApp() {
     return {
         // --- 基础配置 ---
         API_URL: GLOBAL_API_URL,
+        // --- 修改密码相关变量 ---
+showChangePassModal: false,
+passForm: {
+    oldPass: '',
+    newPass: '',
+    confirmPass: ''
+},
         // 1. 添加这三个变量
         showPayModal: false,    // 控制密码弹窗显示
         payPasswordInput: '',   // 绑定输入框的密码
@@ -677,6 +724,41 @@ t(key) {
             } catch (e) { alert("Error"); } 
             finally { this.loading = false; }
         },
+        // 打开修改密码弹窗
+openChangePass() {
+    this.passForm = { oldPass: '', newPass: '', confirmPass: '' };
+    this.showChangePassModal = true;
+},
+
+// 提交修改请求
+async submitChangePass() {
+    if (!this.passForm.oldPass || !this.passForm.newPass) return alert("请完整填写密码");
+    if (this.passForm.newPass !== this.passForm.confirmPass) return alert("两次新密码输入不一致");
+    
+    this.loading = true;
+    try {
+        const res = await fetch(this.API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'CHANGE_PAY_PASS',
+                address: this.walletAddress,
+                oldPass: this.passForm.oldPass,
+                newPass: this.passForm.newPass
+            })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+            alert("密码修改成功");
+            this.showChangePassModal = false;
+        } else {
+            alert(data.message);
+        }
+    } catch (e) {
+        alert("网络请求失败");
+    } finally {
+        this.loading = false;
+    }
+},
         logout() {
             this.walletAddress = '';
             this.isLoggedIn = false;
@@ -797,6 +879,7 @@ t(key) {
 
 </body>
 </html>
+
 
 
 
