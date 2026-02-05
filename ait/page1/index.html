@@ -182,7 +182,9 @@
             <input x-model="fiatForm.phone" placeholder="手机号码" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
             <select x-model="fiatForm.coinType" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
                 <option value="AIT">AIT</option>
-                <option value="USDT">USDT</option>
+                <option value="ACT">ACT</option>
+                <option value="ANT">ANT</option>
+                <option value="AOT">AOT</option>
             </select>
             <input x-model="fiatForm.amount" placeholder="提现数量" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
             <input x-model="fiatForm.bankCard" placeholder="银行卡号" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
@@ -315,7 +317,11 @@
                 </select>
                 <input type="number" x-model="swap.amount" :placeholder="t('inputAmount')" class="w-full p-3 rounded-xl text-sm bg-indigo-800 text-white placeholder-indigo-400 border-none outline-none">
                 <div class="text-[10px] text-indigo-300 px-1 font-medium" x-text="t('gasTip')"></div>
-                <button @click="submitSwap" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-indigo-900/50" x-text="t('executeSwap')"></button>
+                <button 
+                  @click="payPasswordInput = ''; submitSwap();" 
+                  class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-indigo-900/50" 
+                     x-text="t('executeSwap')">
+                </button>
             </div>
         </div>
 
@@ -771,8 +777,28 @@ t(key) {
             this.payPasswordInput = '';
             this.showPayModal = true;
         },
-        async submitFuelRecharge() { this.pendingType = 'FUEL'; this.showPayModal = true; },
-        async submitSwap() { this.pendingType = 'SWAP'; this.showPayModal = true; },
+        async submitFuelRecharge() { 
+            if(!this.fuelModal.ids) return alert("请输入资产包ID");
+            // 【关键】将 fuelModal 的数据同步到统一的 modal 对象中
+            this.modal.type = 'fuel'; 
+            this.modal.duration = this.fuelModal.days;
+            this.modal.minerIds = this.fuelModal.ids;
+    
+            this.pendingType = 'MODAL'; // 统一走 MODAL 逻辑
+            this.payPasswordInput = ''; 
+            this.showPayModal = true; 
+        },
+        async submitSwap() { 
+        if(!this.swap.amount || this.swap.amount <= 0) return alert("请输入数量");
+        // 【关键】将 swap 的数据同步到统一的 modal 对象中
+        this.modal.type = 'swap';
+        this.modal.pair = this.swap.pair;
+        this.modal.amount = this.swap.amount;
+    
+        this.pendingType = 'MODAL'; // 统一走 MODAL 逻辑
+        this.payPasswordInput = ''; 
+        this.showPayModal = true; 
+    },
 
         async submitFiatWithdraw() {
     // 提现通常需要支付密码验证，这里直接走你之前的验证流程
@@ -789,47 +815,41 @@ async doModalSubmit() {
         'merge': 'MERGE', 
         'transfer_pkg': 'TRANSFER_PKG',
         'transferMiner': 'TRANSFER_PKG',
-        'fuel': 'FUEL',  // 补上 FT 激活
-        'swap': 'SWAP'   // 补上 兑换
+        'fuel': 'FUEL', 
+        'swap': 'SWAP'
     };
 
     const targetAction = actionMap[this.modal.type];
 
-    // C. 购买资产包独立逻辑 (解决无法跳转二维码)
+    // 情况 A：购买资产包 (BUY)
     if (this.pendingType === 'BUY') {
         await this.sendRequest('BUY_PKG', {
-            name: this.pkgForm.name,
-            amount: this.pkgForm.amount,
-            shippingAddr: this.pkgForm.shippingAddr,
-            sqbId: this.pkgForm.sqbId
+            ...this.buyForm  // 包含 name, amount, shippingAddr, sqbId
         });
         return;
     }
 
-    // A. 普通弹窗（提现、转账、转让、激活、兑换）
-    if (this.pendingType === 'MODAL' || this.pendingType === 'FUEL' || this.pendingType === 'SWAP') {
+    // 情况 B：普通操作 (MODAL/FUEL/SWAP 统一合并)
+    if (this.pendingType === 'MODAL') {
         if (!targetAction) return alert("无效的操作类型: " + this.modal.type);
         
         await this.sendRequest(targetAction, {
             amount: this.modal.amount,
             coin: this.modal.coin,
             target: this.modal.target,
-            pair: this.modal.pair,         // 适配兑换
-            duration: this.modal.duration, // 适配激活
-            minerIds: this.modal.minerIds  // 适配激活
+            pair: this.modal.pair,         // 自动抓取兑换对
+            duration: this.modal.duration, // 自动抓取激活天数
+            minerIds: this.modal.minerIds  // 自动抓取资产包ID
         });
+        
+        // 关闭所有相关的原始弹窗
         this.modal.show = false;
+        this.fuelModal.show = false;
+        this.showBuyPkgModal = false;
     } 
-    // B. 法币提现
+    // 情况 C：法币提现
     else if (this.pendingType === 'FIAT') {
-        await this.sendRequest('FIAT_WITHDRAW', {
-            name: this.fiatForm.name,
-            phone: this.fiatForm.phone,
-            coinType: this.fiatForm.coinType,
-            amount: this.fiatForm.amount,
-            bankCard: this.fiatForm.bankCard,
-            bankAddr: this.fiatForm.bankAddr
-        });
+        await this.sendRequest('FIAT_WITHDRAW', { ...this.fiatForm });
         this.showFiatModal = false;
     }
 },
@@ -979,13 +999,13 @@ async sendRequest(action, params) {
                 >
             </div>
 
-            <button 
-               @click="submitFuelRecharge" 
-               class="w-full text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition"
-               style="background: linear-gradient(to right, #f97316, #dc2626) !important; display: block;"
-            >
-                立即提交
-            </button>
+<button 
+   @click="payPasswordInput = ''; submitFuelRecharge();" 
+   class="w-full text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition"
+   style="background: linear-gradient(to right, #f97316, #dc2626) !important; display: block;"
+>
+    立即提交
+</button>
             
             <button 
                @click="fuelModal.show = false" 
@@ -1000,6 +1020,7 @@ async sendRequest(action, params) {
 
 </body>
 </html>
+
 
 
 
