@@ -473,15 +473,14 @@
                    class="w-full text-center text-3xl tracking-[0.5em] font-mono border-b-2 border-blue-500 outline-none pb-2 mb-8"
                    placeholder="******">
             
-            <div class="flex gap-3">
-                <button @click="showPayModal = false" class="flex-1 py-3 bg-gray-100 text-gray-500 rounded-2xl">取消</button>
-                <button @click="
-                    if(pendingType === 'MODAL') doModalSubmit();
-                    else if(pendingType === 'FUEL') doFuelSubmit();
-                    else if(pendingType === 'SWAP') doSwapSubmit();
-                    else if(pendingType === 'FIAT') doModalSubmit(); // <-- 增加这一行
-                " class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold">确认支付</button>
-            </div>
+<div class="flex gap-3">
+    <button @click="showPayModal = false" class="flex-1 py-3 bg-gray-100 text-gray-500 rounded-2xl">
+        取消
+    </button>
+    <button @click="doModalSubmit()" class="flex-1 py-3 bg-blue-600 text-white rounded-2xl font-bold">
+        确认支付
+    </button>
+</div>
         </div>
     </div>
 
@@ -1029,3 +1028,4 @@ async sendRequest(action, params) {
 
 </body>
 </html>
+
