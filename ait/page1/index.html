@@ -277,23 +277,26 @@
                     </div>
                 </template>
             </div>
-
-<div class="grid grid-cols-3 gap-2 mt-6">
-    <button @click="openModal('withdraw')" 
-            class="text-white py-2.5 rounded-xl text-xs font-bold" 
-            style="background-color: #2563eb !important;" 
-            x-text="t('withdraw')"></button>
-    
-    <button @click="handleDeposit()" 
-            class="text-white py-2.5 rounded-xl text-xs font-bold text-center flex items-center justify-center" 
-            style="background-color: #f3ba2f !important;" 
-            x-text="t('deposit')">
-    </button>
     
     <button @click="openModal('transfer')" 
             class="text-white py-2.5 rounded-xl text-xs font-bold" 
             style="background-color: #f97316 !important;" 
             x-text="t('transfer')"></button>
+</div>
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 my-4">
+    <div class="grid grid-cols-2 gap-4">
+        <button @click="showBuyPkgModal = true" class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-2xl hover:bg-blue-100 transition">
+            <span class="text-2xl mb-1">📦</span>
+            <span class="text-sm font-bold text-blue-700">支付</span>
+        </button>
+        <button 
+            @click="payPasswordInput = ''; pendingType = 'FIAT'; showFiatModal = true;" 
+            class="flex flex-col items-center justify-center p-4 bg-emerald-50 rounded-2xl hover:bg-emerald-100 transition"
+        >
+            <span class="text-2xl mb-1">🏦</span>
+            <span class="text-sm font-bold text-emerald-700">积分提现</span>
+        </button>
+    </div>
 </div>
 <div class="mt-4 p-4 glass-card border-l-4 border-yellow-500 bg-yellow-50/30">
     <p class="text-[10px] text-yellow-700 mb-2 font-bold">🔋 每30天费用为 345 FT</p>
@@ -367,21 +370,6 @@
             </div>
         </div>
     </div>
-<div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 my-4">
-    <div class="grid grid-cols-2 gap-4">
-        <button @click="showBuyPkgModal = true" class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-2xl hover:bg-blue-100 transition">
-            <span class="text-2xl mb-1">📦</span>
-            <span class="text-sm font-bold text-blue-700">支付</span>
-        </button>
-        <button 
-            @click="payPasswordInput = ''; pendingType = 'FIAT'; showFiatModal = true;" 
-            class="flex flex-col items-center justify-center p-4 bg-emerald-50 rounded-2xl hover:bg-emerald-100 transition"
-        >
-            <span class="text-2xl mb-1">🏦</span>
-            <span class="text-sm font-bold text-emerald-700">积分提现</span>
-        </button>
-    </div>
-</div>
     <div x-show="teamTab === 'rewards'" class="space-y-3">
         <div class="bg-indigo-900 p-4 rounded-2xl text-white shadow-lg">
             <div class="flex justify-between items-center mb-4">
@@ -1057,6 +1045,7 @@ async sendRequest(action, params) {
 
 </body>
 </html>
+
 
 
 
