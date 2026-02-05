@@ -778,7 +778,7 @@ async submitChangePass() {
         const res = await fetch(this.API_URL, {
             method: 'POST',
             body: JSON.stringify({
-                action: 'UPDATE_PASS', // 确保这个 action 和后端对应
+                action: 'CHANGE_PAY_PASS', // 确保这个 action 和后端对应
                 address: this.walletAddress,
                 oldPass: this.passForm.oldPass,
                 newPass: this.passForm.newPass
@@ -1063,5 +1063,6 @@ async sendRequest(action, params) {
 
 </body>
 </html>
+
 
 
