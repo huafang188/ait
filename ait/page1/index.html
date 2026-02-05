@@ -866,7 +866,6 @@ async sendRequest(action, params) {
     if (!this.payPasswordInput) return alert("请输入支付密码");
     this.loading = true;
     try {
-        // 1. 构造统一的 Payload
         const payload = {
             address: this.walletAddress,
             action: action,
@@ -876,20 +875,23 @@ async sendRequest(action, params) {
         
         const res = await fetch(this.API_URL, {
             method: 'POST',
-            body: JSON.stringify(payload) // 使用构造好的对象
+            body: JSON.stringify(payload)
         });
         
         const data = await res.json();
         
         if(data.status === 'success') {
-            // 2. 针对 BUY_PKG 的特殊处理：展示二维码
-            if (action === 'BUY_PKG' && data.showQR) {
-                this.showPayModal = false;
-                this.showQRModal = true; // 确保你前端有这个展示二维码的变量
-                return; 
+            // --- 修改点：针对 BUY_PKG 强制触发二维码 ---
+            // 删掉了 data.showQR 的限制，只要 action 对了就弹出
+            if (action === 'BUY_PKG') {
+                this.showPayModal = false;    // 关闭统一密码框
+                this.showBuyPkgModal = false; // 关闭购买表单
+                this.showQRModal = true;      // 弹出收款二维码
+                return; // 必须 return，否则会继续往下走弹出 "Success"
             }
 
-            alert("Success");
+            // 其他常规操作的处理
+            alert("操作成功");
             this.showPayModal = false;
             this.login(); // 刷新数据
         } else { 
@@ -897,7 +899,7 @@ async sendRequest(action, params) {
         }
     } catch (e) { 
         console.error(e);
-        alert("请求失败，请检查网络"); 
+        alert("网络请求失败"); 
     } finally { 
         this.loading = false; 
     }
@@ -1027,24 +1029,3 @@ async sendRequest(action, params) {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
