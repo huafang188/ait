@@ -151,8 +151,8 @@
         <div class="space-y-3">
             <input x-model="buyForm.name" placeholder="姓名" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
             <input x-model="buyForm.amount" placeholder="金额" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
-            <input x-model="buyForm.shippingAddr" placeholder="收货地址" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
-            <input x-model="buyForm.sqbId" placeholder="数权宝ID 地址" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+            <input x-model="buyForm.shippingAddr" placeholder="手机号码" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+            <input x-model="buyForm.sqbId" placeholder="收货地址" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
         </div>
         <button @click="submitBuyPkg" class="w-full mt-6 py-4 bg-blue-600 text-white rounded-2xl font-bold">提交并获取付款码</button>
         <button @click="showBuyPkgModal = false" class="w-full mt-2 py-2 text-gray-400 text-sm">取消</button>
@@ -1043,6 +1043,7 @@ async sendRequest(action, params) {
 
 </body>
 </html>
+
 
 
 
