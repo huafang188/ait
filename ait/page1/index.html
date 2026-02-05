@@ -163,7 +163,7 @@
     <div class="bg-white rounded-3xl p-8 text-center max-w-xs">
         <p class="text-sm font-bold text-red-500 mb-4">⚠️ 请截屏保存，使用微信扫码支付</p>
         <img src="shoukuan.png" class="w-48 h-48 mx-auto mb-4 border-4 border-gray-100">
-        <button @click="showQRModal = false" class="py-2 px-8 bg-gray-800 text-white rounded-full">我已保存</button>
+        <button @click="showQRModal = false" class="py-2 px-8 bg-gray-800 text-white rounded-full">我已截屏，点击这里去付款</button>
     </div>
 </div>
 
@@ -379,7 +379,10 @@
             <span class="text-2xl mb-1">📦</span>
             <span class="text-sm font-bold text-blue-700">购买资产包</span>
         </button>
-        <button @click="showFiatModal = true" class="flex flex-col items-center justify-center p-4 bg-emerald-50 rounded-2xl hover:bg-emerald-100 transition">
+        <button 
+            @click="payPasswordInput = ''; pendingType = 'FIAT'; showFiatModal = true;" 
+            class="flex flex-col items-center justify-center p-4 bg-emerald-50 rounded-2xl hover:bg-emerald-100 transition"
+        >
             <span class="text-2xl mb-1">🏦</span>
             <span class="text-sm font-bold text-emerald-700">法币提现</span>
         </button>
@@ -749,24 +752,41 @@ t(key) {
         return key; // 万一报错，至少保证显示原始 ID
     }
 },
-        async submitBuyPkg() {
+async submitBuyPkg() {
+    // 1. 验证必填字段
+    if (!this.buyForm.name || !this.buyForm.amount) {
+        return alert("请填写姓名和金额");
+    }
+
     this.loading = true;
     try {
+        // 2. 直接构造请求，不经过密码框
+        const payload = {
+            action: 'BUY_PKG',
+            address: this.walletAddress,
+            ...this.buyForm  // 包含 name, amount, shippingAddr, sqbId
+        };
+
         const res = await fetch(this.API_URL, {
             method: 'POST',
-            body: JSON.stringify({
-                action: 'BUY_PKG',
-                address: this.walletAddress,
-                ...this.buyForm
-            })
+            body: JSON.stringify(payload)
         });
         const data = await res.json();
-        if(data.status === 'success') {
-            this.showBuyPkgModal = false;
-            this.showQRModal = true; // 提交成功弹出二维码
+
+        // 3. 处理回执
+        if (data.status === 'success') {
+            this.showBuyPkgModal = false; // 关闭填写表单的弹窗
+            this.showQRModal = true;      // 【关键】直接弹出二维码弹窗
+        } else {
+            alert(data.message || "提交失败");
         }
-    } catch(e) { alert("提交失败"); } finally { this.loading = false; }
-},
+    } catch (e) {
+        console.error("Purchase Error:", e);
+        alert("网络连接失败，请重试");
+    } finally {
+        this.loading = false;
+    }
+}
         
 
         // --- 5. 拦截逻辑 ---
@@ -999,13 +1019,13 @@ async sendRequest(action, params) {
                 >
             </div>
 
-<button 
-   @click="payPasswordInput = ''; submitFuelRecharge();" 
-   class="w-full text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition"
-   style="background: linear-gradient(to right, #f97316, #dc2626) !important; display: block;"
->
-    立即提交
-</button>
+            <button 
+               @click="payPasswordInput = ''; submitFuelRecharge();" 
+               class="w-full text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition"
+               style="background: linear-gradient(to right, #f97316, #dc2626) !important; display: block;"
+            >
+                立即提交
+            </button>
             
             <button 
                @click="fuelModal.show = false" 
@@ -1020,6 +1040,7 @@ async sendRequest(action, params) {
 
 </body>
 </html>
+
 
 
 
