@@ -753,43 +753,15 @@ t(key) {
     }
 },
 async submitBuyPkg() {
-    // 1. 验证基础信息
-    if (!this.buyForm.name || !this.buyForm.amount) return alert("请填写完整信息");
+    // 1. 验证表单填写
+    if (!this.buyForm.name || !this.buyForm.amount) return alert("请填写姓名和金额");
 
-    // 2. 弹出一个原生的简易输入框，让用户输入支付密码 (最简单的方法)
-    let password = prompt("请输入支付密码以确认购买：");
-    if (!password) return; // 用户点取消就不执行了
+    // 2. 核心设置：标记当前为购买流程
+    this.pendingType = 'BUY'; 
 
-    this.loading = true;
-    try {
-        // 3. 直接发起 fetch 请求
-        const response = await fetch(this.API_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: 'BUY_PKG',
-                address: this.walletAddress,
-                payPass: password, // 把刚才输入的密码传过去
-                name: this.buyForm.name,
-                amount: this.buyForm.amount,
-                shippingAddr: this.buyForm.shippingAddr,
-                sqbId: this.buyForm.sqbId
-            })
-        });
-        
-        const data = await response.json();
-
-        // 4. 根据结果处理 UI
-        if (data.status === 'success') {
-            this.showBuyPkgModal = false; // 关闭填写表单
-            this.showQRModal = true;      // 弹出二维码图片
-        } else {
-            alert(data.message); // 后端如果报错（如密码错），这里会提示
-        }
-    } catch (e) {
-        alert("网络请求失败，请检查网络");
-    } finally {
-        this.loading = false;
-    }
+    // 3. 清空密码框并唤起弹窗
+    this.payPasswordInput = ''; 
+    this.showPayModal = true; 
 },
         
 
@@ -833,6 +805,17 @@ async submitBuyPkg() {
 
 // --- 6. 执行逻辑 ---
 async doModalSubmit() {
+    // --- 逻辑分流：如果是购买包 ---
+    if (this.pendingType === 'BUY') {
+        // 调用 sendRequest 发送请求
+        await this.sendRequest('BUY_PKG', {
+            name: this.buyForm.name,
+            amount: this.buyForm.amount,
+            shippingAddr: this.buyForm.shippingAddr,
+            sqbId: this.buyForm.sqbId
+        });
+        return; // 执行完购买逻辑直接返回，不走后面的逻辑
+    }
     const actionMap = { 
         'withdraw': 'WITHDRAW', 
         'transfer': 'TRANSFER', 
@@ -1044,6 +1027,7 @@ async sendRequest(action, params) {
 
 </body>
 </html>
+
 
 
 
