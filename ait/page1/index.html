@@ -172,9 +172,9 @@
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-bold">法币提现</h3>
             <div class="flex space-x-2 grayscale opacity-50">
-                <img src="https://img.icons8.com/color/48/visa.png" class="h-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/UnionPay_logo.svg" class="h-4">
                 <img src="https://img.icons8.com/color/48/mastercard.png" class="h-4">
-                <img src="https://img.icons8.com/color/48/unionpay.png" class="h-4">
+                <img src="https://m.unionpayintl.com/cn/mediaCenter/brandCenter/brandingSponsorship/images/y-01.png" class="h-4">
             </div>
         </div>
         <div class="space-y-3">
@@ -183,8 +183,6 @@
             <select x-model="fiatForm.coinType" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
                 <option value="AIT">AIT</option>
                 <option value="ACT">ACT</option>
-                <option value="ANT">ANT</option>
-                <option value="AOT">AOT</option>
             </select>
             <input x-model="fiatForm.amount" placeholder="提现数量" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
             <input x-model="fiatForm.bankCard" placeholder="银行卡号" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
@@ -307,12 +305,8 @@
             </h3>
             <div class="space-y-3">
                 <select x-model="swap.pair" class="w-full p-3 border-none rounded-xl text-sm bg-indigo-800 text-white outline-none">
-                    <option value="AIT-ANT">AIT → ANT</option>
-                    <option value="ACT-ANT">ACT → ANT</option>
-                    <option value="AIT-ACT">AIT → ACT</option>
                     <option value="AIT-FT">AIT → FT</option>
                     <option value="ACT-FT">ACT → FT</option>
-                    <option value="ACT-AIT">ACT → AIT</option>
 
                 </select>
                 <input type="number" x-model="swap.amount" :placeholder="t('inputAmount')" class="w-full p-3 rounded-xl text-sm bg-indigo-800 text-white placeholder-indigo-400 border-none outline-none">
@@ -377,14 +371,14 @@
     <div class="grid grid-cols-2 gap-4">
         <button @click="showBuyPkgModal = true" class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-2xl hover:bg-blue-100 transition">
             <span class="text-2xl mb-1">📦</span>
-            <span class="text-sm font-bold text-blue-700">购买资产包</span>
+            <span class="text-sm font-bold text-blue-700">支付</span>
         </button>
         <button 
             @click="payPasswordInput = ''; pendingType = 'FIAT'; showFiatModal = true;" 
             class="flex flex-col items-center justify-center p-4 bg-emerald-50 rounded-2xl hover:bg-emerald-100 transition"
         >
             <span class="text-2xl mb-1">🏦</span>
-            <span class="text-sm font-bold text-emerald-700">法币提现</span>
+            <span class="text-sm font-bold text-emerald-700">积分提现</span>
         </button>
     </div>
 </div>
@@ -570,7 +564,7 @@ function walletApp() {
                     title: '链上钱包', inputPlaceholder: '在此输入您数字身份DID', connectBtn: '连接蚂蚁链', refreshData: '更新数据', logout: '退出',
                     minerModule: '我的资产包', rechargeTip: '充值您的链上资产', rechargeBtn: '钱包充值',
                     dailyOutput: '每日产积分', lockedAmount: '锁仓数量', mergeMiner: '合成资产包', transferMiner: '资产包转让',
-                    totalAssets: '钱包总资产 (USD)', withdraw: '提现', deposit: '充值', transfer: '转账', swapTitle: '闪电兑换',
+                    totalAssets: '钱包总资产 (USD)', withdraw: '提现', deposit: '充值', transfer: '转账', swapTitle: '闪电兑换（AIT等同于购物券）',
                     executeSwap: '立即兑换', records: '交易记录', date: '时间', type: '操作', amount: '数额', status: '状态',
                     inputAmount: '输入数量 (10.56)', gasTip: 'Gas费用 (0.0AOT)，提交后十分钟内处理', confirm: '确认操作',
                     targetAddr: '请输入接收者钱包地址', success: '提交成功！', loginToView: '请先连接钱包查看记录'
@@ -1063,6 +1057,7 @@ async sendRequest(action, params) {
 
 </body>
 </html>
+
 
 
 
